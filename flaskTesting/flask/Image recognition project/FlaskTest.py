@@ -6,13 +6,15 @@ import faceRecognition as fr
 import cv2
 import numpy as np
 
-app = Flask(__name__, template_folder='C:/Users/Asus/Downloads/flaskTesting/flask/Image recognition project')
+app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis', static_folder='C:/xampp/htdocs/thesis')
+#app.run(host='localhost', port=80) 
 
+location = "C:/xampp/htdocs/thesis/"
 app.secret_key = 'Pogi Si Gibson'
 
-root_dir = "C:/Users/Asus/Downloads/flaskTesting/flask/Image recognition project"
-parent_dir = "C:/Users/Asus/Downloads/flaskTesting/flask/Image recognition project/TemporaryImages"
-resizedFolder = "C:/Users/Asus/Downloads/flaskTesting/flask/Image recognition project/resizedTrainingImages"
+root_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project"
+parent_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/TemporaryImages"
+resizedFolder = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/resizedTrainingImages"
 
 
 
@@ -21,8 +23,8 @@ resizedFolder = "C:/Users/Asus/Downloads/flaskTesting/flask/Image recognition pr
 @app.route('/')
 
 def index():
-    return render_template('dashboard.html')
-
+    return render_template('index.php')
+   
 
 
 
@@ -289,6 +291,10 @@ def dashboard():
     return render_template('dashboard.html')
 
 
+
+
+
+
 #------------------------------------------------------------
 @app.route('/ClosingCamera')
 def ClosingCamera():
@@ -322,5 +328,7 @@ def gen(camera):
 
 
 
+#if __name__ == '__main__':
+#    app.run(debug=True)
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host = '0.0.0.0', port = 80, debug = True)

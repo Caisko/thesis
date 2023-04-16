@@ -4,8 +4,8 @@ import faceRecognition as fr
 import cv2
 import shutil
 
-root_dir = "C:/Users/Hp/Downloads/school/flaskTesting/flask/Image recognition project"
-parent_dir = "C:/Users/Hp/Downloads/school/flaskTesting/flask/Image recognition project/TemporaryImages"
+root_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project"
+parent_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/TemporaryImages"
 # blackpicture = cv2.imread('Black.jpg')
 
 def main():
