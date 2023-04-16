@@ -1,0 +1,145 @@
+<html>
+<body style="background-color: rgb(153, 218, 156);">
+
+
+  <div id="ScanningFacePage">
+    <h3 style="font-family: Arial; position: absolute; left: 39.5%; top: 2.5%;">Scan Face Here</h3><br>
+    <img id = "bg" src = "{{ url_for('video_feed')}}" style = "position: absolute; top: 10%; left: 3%; ">
+      
+
+    <h3 style="font-family: Arial; position: absolute; top: 9%; left: 54%;"><div id="Name"></div></h3>
+    <h3 style="font-family: Arial; position: absolute; top: 13%; left: 54%;"><div id="ID Number"></div></h3>
+    
+
+    <button id="captureButton"  style="width: 150x; height: 30px; position: absolute; top: 85%; left: 23%;">Capture</button>
+    <button onclick="showQRscanningPage()" id = "Proceed" style = "width: 150x; height: 30px; display: none; position: absolute; bottom: 10%; right: 10%; ">Proceed</button>
+    
+    
+    <form style="font-family: Arial; position: absolute; top: 5%; left: 3%;">
+      Search ID Number: <input type = "text" style = "width: 150px;" id = "Search_ID"></input>
+      <button type = "button" onclick = "SearchIDnumber()">Search</button>
+    </form>
+
+
+  </div>
+  <div id = "QRscanningPage" style = "display: none;">
+    <h3 style="font-family: Arial; position: absolute; left: 23%; top: 2%;">Scan QR Codes Here</h3><br>
+        <button onclick="ShowFaceScanningPage()">Show Page 1</button>
+  </div>
+  
+    
+    <script>
+      window.onbeforeunload = function() {
+            // Close the camera here
+             // Send an AJAX request to the /capture_images route
+          const closecamera = new XMLHttpRequest();
+          closecamera.open('GET', '/ClosingCamera');
+          closecamera.send();
+          
+            
+        }
+
+        captureButton.addEventListener('click', () => {
+          captureButton.style.display = 'none';
+      
+          // Send an AJAX request to the /capture_images route
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', '/scancapture');
+          xhr.send();
+          
+        });
+        
+
+
+    
+      let intervalId;
+
+      captureButton.addEventListener('click', () => {
+
+          RecieveMessage();
+
+
+      
+      });
+
+
+      function showQRscanningPage() {
+      document.getElementById('ScanningFacePage').style.display = 'none';
+      document.getElementById('QRscanningPage').style.display = 'block';
+    }
+    function ShowFaceScanningPage() {
+      document.getElementById('ScanningFacePage').style.display = 'block';
+      document.getElementById('QRscanningPage').style.display = 'none';
+    }
+
+
+
+
+
+
+    function SearchIDnumber(){
+      var Search_ID = document.getElementById('Search_ID').value;
+
+      fetch('/SearchIDnumber', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({Search_ID: Search_ID})
+
+        
+      });
+      RecieveMessage()
+    }
+
+
+
+
+
+
+
+
+    function RecieveMessage(){
+          intervalId = setInterval(function() {
+            var CaptureMessageScan = new XMLHttpRequest();
+            CaptureMessageScan.open("GET", "/CaptureMessageScan");
+            CaptureMessageScan.onload = function() {
+            if (CaptureMessageScan.status === 200) {
+              var response = JSON.parse(CaptureMessageScan.responseText);
+              document.getElementById("Name").innerText = response.CapturingMessageScan;
+              document.getElementById("ID Number").innerText = response.MessageIDnumber;
+              if(response.ScanAgain == true){
+                captureButton.style.display = 'inline';
+              }
+              if (response.CapturingMessageScan !== 'Image Captured. Recognizing...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' ) {
+                Proceed.style.display = 'inline';
+              }
+              else{
+                Proceed.style.display = 'none';
+              }
+              if (response.CapturingMessageScan !== 'Image Captured. Recognizing...'){
+                clearInterval(intervalId)
+              }
+              
+            }
+          }
+
+            
+            CaptureMessageScan.onerror = function() {
+              console.error('An error occurred while sending the CaptureMessage request');
+            }
+            CaptureMessageScan.send();
+          }, 1000);
+        }
+
+
+
+
+
+        
+       
+
+      </script>
+      
+</body>
+</html>

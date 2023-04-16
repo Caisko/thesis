@@ -1,0 +1,66 @@
+<html>
+<body style="background-color: rgb(153, 218, 156);">
+    <center><center><h3 style="font-family: Arial; margin-bottom: 0;">Register</h3><br>
+    <img id = "bg" src = "{{ url_for('video_feed')}}"><br><br>
+    <button id="captureButton"  style="width: 150x; height: 30px;">Capture</button><br>
+    <h3 style="font-family: Arial; margin-top: 0;"><div id="my-div"></div></h3>
+    </center>  
+    <script>
+      window.onbeforeunload = function() {
+            // Close the camera here
+             // Send an AJAX request to the /capture_images route
+          const closecamera = new XMLHttpRequest();
+          closecamera.open('GET', '/ClosingCamera');
+          closecamera.send();
+            
+        }
+
+        captureButton.addEventListener('click', () => {
+          captureButton.style.display = 'none';
+      
+          // Send an AJAX request to the /capture_images route
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', '/capture_images');
+          xhr.send();
+          
+        });
+        
+
+
+        let intervalStarted = false;
+      let intervalId;
+
+      captureButton.addEventListener('click', () => {
+        if (!intervalStarted) {
+          intervalStarted = true;
+          intervalId = setInterval(function() {
+            var CaptureMessage = new XMLHttpRequest();
+            CaptureMessage.open("GET", "/CaptureMessage");
+            CaptureMessage.onload = function() {
+              if (CaptureMessage.status === 200) {
+              document.getElementById("my-div").innerHTML = CaptureMessage.responseText;
+              if (CaptureMessage.responseText === 'Done Training Data!') {
+                clearInterval(intervalId);
+                setTimeout(function() {
+                  window.location.replace('/dashboard.html');
+                }, 2000);
+              }
+            }
+
+            }
+            CaptureMessage.onerror = function() {
+              console.error('An error occurred while sending the CaptureMessage request');
+            }
+            CaptureMessage.send();
+          }, 1000);
+        }
+      });
+
+
+      
+
+
+      </script>
+      
+</body>
+</html>

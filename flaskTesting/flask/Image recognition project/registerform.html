@@ -1,0 +1,27 @@
+<html>
+<body style="background-color: rgb(153, 218, 156);">
+    <center>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    {% for message in messages %}
+                        <h3>{{ message }}</h3>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+
+        <form action="/check_ID" method="post">
+            ID Number:<br>
+            <input type="text" name="id_number" pattern="[0-9]*" required><br>
+            Name:<br>
+            <input type="text" name="name" required><br><br>
+            <input type="submit" value="Submit To Start Scanning">
+          </form>
+          <br>
+          <a href="dashboard.html">Dashboard</a>
+
+        
+
+</body>
+</html>
