@@ -249,7 +249,7 @@ ob_start();
 
      <div class="row">
    <div class="col-sm">
-       <label for="yourName" class="form-label">Academic/Non Academic Category:</label>
+       <label for="yourName" class="form-label">Academicsxcz/Non Academic Category:</label>
        <select class="form-control" id="gate" name="cat" onclick="gatepass1()"  required >
        <option value="" selected disabled hidden>Choose User Category</option>
         <option value="academic" >Academic</option>
