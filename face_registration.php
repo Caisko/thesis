@@ -240,16 +240,46 @@ ob_start();
 
   <div class="card-body">
     <h5 class="card-title"><span></span></h5>
+    <?php 
+    if(isset($_POST['submit'])){
+      $id = $_POST['id_num'];
+      $sname = $_POST['sname'];
+      $mname = $_POST['mname'];
+      $gname = $_POST['gname'];
+      $status1 = $_POST['status1'];
+      $dep = $_POST['dep'];
+      $status = "SELECT * FROM borrowers where id_num = '$id'";
+      $result = mysqli_query($conn, $status);
+      $row    = mysqli_fetch_assoc($result);
+      $data = array($row['sname'],$row['mname'],$row['gname']);
+      $check = array($sname,$mname,$gname);
+      $check1 = implode($data);
+      $check2 = implode($check);
+      
+      if($row['id_num'] != $id && $check1 != $check2){
+       
 
-    <div class="d-flex align-items-center">
-  <?php 
-  
+        $sql = "INSERT INTO `borrowers`(`id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`) 
+        VALUES ('$id','$sname','$gname','$mname','$status1','$dep')";
+        if ($conn->query($sql) === TRUE) {
+          header("location:face.php");
+        } else {
+          echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+        $conn->close();
+      }else{
+        echo "Existing Data";
+      }
+      
+    }
   ?>
+    <div class="d-flex align-items-center">
+
    <form autocomplete="off" class="form-control" role="form"  method="post">
 
      <div class="row">
    <div class="col-sm">
-       <label for="yourName" class="form-label">Academicsxcz/Non Academic Category:</label>
+       <label for="yourName" class="form-label">Academics/Non Academic Category:</label>
        <select class="form-control" id="gate" name="cat" onclick="gatepass1()"  required >
        <option value="" selected disabled hidden>Choose User Category</option>
         <option value="academic" >Academic</option>
@@ -286,7 +316,7 @@ ob_start();
  
    <div class="col-sm">
    <label for="yourEmail" class="form-label">Status:</label>
-        <select class="form-control" id="yr1" name="status" required>
+        <select class="form-control"  name="status1" required>
         <option value="" selected disabled hidden>Choose Status</option>
         <option value="Permanent">Permanent</option>
         <option value="Temporary">Temporary</option>
