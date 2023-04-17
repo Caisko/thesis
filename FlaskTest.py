@@ -6,7 +6,7 @@ import faceRecognition as fr
 import cv2
 import numpy as np
 
-app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis', static_folder='C:/xampp/htdocs/thesis')
+app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project', static_folder='C:/xampp/htdocs/thesis')
 #app.run(host='localhost', port=80) 
 
 location = "C:/xampp/htdocs/thesis/"
@@ -23,7 +23,7 @@ resizedFolder = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition pro
 @app.route('/')
 
 def index():
-    return render_template('index.php')
+    return render_template('dashboard.html')
    
 
 
@@ -328,7 +328,7 @@ def gen(camera):
 
 
 
-#if __name__ == '__main__':
-#    app.run(debug=True)
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0', port = 80, debug = True)
+    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.run(host = '0.0.0.0', port = 80, debug = True)

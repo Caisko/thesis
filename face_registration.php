@@ -251,18 +251,23 @@ ob_start();
       $status = "SELECT * FROM borrowers where id_num = '$id'";
       $result = mysqli_query($conn, $status);
       $row    = mysqli_fetch_assoc($result);
-      $data = array($row['sname'],$row['mname'],$row['gname']);
-      $check = array($sname,$mname,$gname);
-      $check1 = implode($data);
-      $check2 = implode($check);
+     // $data = array($row['sname'],$row['mname'],$row['gname']);
+    //  $check = array($sname,$mname,$gname);
+     // $check1 = implode($data);
+     // $check2 = implode($check);
       
-      if($row['id_num'] != $id && $check1 != $check2){
+      if($row['id_num'] != $id ){
        
 
         $sql = "INSERT INTO `borrowers`(`id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`) 
         VALUES ('$id','$sname','$gname','$mname','$status1','$dep')";
         if ($conn->query($sql) === TRUE) {
-          header("location:face.php");
+         
+          header("Location: http://localhost:5000");
+         
+          
+          
+          
         } else {
           echo "Error: " . $sql . "<br>" . $conn->error;
         }
@@ -280,7 +285,7 @@ ob_start();
      <div class="row">
    <div class="col-sm">
        <label for="yourName" class="form-label">Academics/Non Academic Category:</label>
-       <select class="form-control" id="gate" name="cat" onclick="gatepass1()"  required >
+       <select class="form-control" id="gate" name="cat" onclick="gatepass1()"   >
        <option value="" selected disabled hidden>Choose User Category</option>
         <option value="academic" >Academic</option>
         <option value="non academic" >Non Academic</option>
@@ -299,16 +304,16 @@ ob_start();
      <div class="row">
      <div class="col-sm">
        <label for="yourName" class="form-label">Surname: </label>
-       <input type="text" class="form-control" id="yourName" name="sname" required >
+       <input type="text" class="form-control" id="yourName" name="sname"  >
      </div>
      
    <div class="col-sm">
        <label for="yourName" class="form-label">Given Name:</label>
-       <input type="text"  class="form-control" name="gname" id="id" required >
+       <input type="text"  class="form-control" name="gname" id="id"  >
      </div>
      <div class="col-sm">
        <label for="yourName" class="form-label">Middle Name:</label>
-       <input type="text"  class="form-control" name="mname" id="id" required >
+       <input type="text"  class="form-control" name="mname" id="id"  >
      </div>
      </div>
    
@@ -316,7 +321,7 @@ ob_start();
  
    <div class="col-sm">
    <label for="yourEmail" class="form-label">Status:</label>
-        <select class="form-control"  name="status1" required>
+        <select class="form-control"  name="status1" >
         <option value="" selected disabled hidden>Choose Status</option>
         <option value="Permanent">Permanent</option>
         <option value="Temporary">Temporary</option>
@@ -331,7 +336,7 @@ ob_start();
  
      <div class="col-sm">
    <label for="yourEmail" class="form-label">Department:</label>
-   <input type="text"  class="form-control" name="dep" id="id" required >
+   <input type="text"  class="form-control" name="dep" id="id"  >
      </div>
      
      </div><br>
