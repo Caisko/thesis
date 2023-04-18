@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response, request, redirect, flash, jsonify, Markup, url_for
 from FaceCamera import VideoCamera
+import requests 
 import os
 import time
 import faceRecognition as fr
@@ -126,6 +127,8 @@ def scancapture():
     global CapturingMessageScan
     global MessageIDnumber
     global ScanAgain
+    global predicted_name
+    global label
     ScanAgain = False
     MessageIDnumber = ''
     os.chdir(root_dir)
@@ -197,9 +200,10 @@ def SearchIDnumber():
     global CapturingMessageScan
     global MessageIDnumber 
     global ScanAgain
+    global predicted_name
+    global label
 
     data = request.get_json()
-    Search_ID = int(data['Search_ID'])
 
     os.chdir(root_dir)
 
@@ -230,8 +234,11 @@ def SearchIDnumber():
 
             
     try:
-        CapturingMessageScan = ("Name: " + str(records[Search_ID]))
-        MessageIDnumber = ("ID Number: " + str(Search_ID))
+        Search_ID = int(data['Search_ID'])
+        predicted_name = str(records[Search_ID])
+        label = str(Search_ID)
+        CapturingMessageScan = ("Name: " + predicted_name)
+        MessageIDnumber = ("ID Number: " + label)
         ScanAgain = True
     except:
         CapturingMessageScan = "No ID Number Found..."
@@ -314,7 +321,16 @@ def gen(camera):
         if frame is not None:
             yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        
+            
+            
+#------------------------------------------------------------
+@app.route('/ProceedQR')
+
+def ProceedQR():
+    url = 'http://localhost/thesis/Testingborrow.php'
+    data = {'name': predicted_name, 'label': label}
+    response = requests.post(url, data=data)
+    return response.content
             
         
 

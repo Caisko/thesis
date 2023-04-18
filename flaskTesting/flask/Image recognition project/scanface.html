@@ -50,6 +50,13 @@
         });
         
 
+        // Add event listener for "keydown" event on search input field
+        document.getElementById("Search_ID").addEventListener("keydown", function(event) {
+          if (event.keyCode === 13) { // If the user pressed Enter key
+            event.preventDefault(); // Prevent the form from submitting
+            document.querySelector("#Search_ID + button").click(); // Programmatically click the search button
+          }
+        });
 
     
       let intervalId;
@@ -64,8 +71,8 @@
 
 
       function showQRscanningPage() {
-      document.getElementById('ScanningFacePage').style.display = 'none';
-      document.getElementById('QRscanningPage').style.display = 'block';
+        window.location.href = 'http://localhost:5000/ProceedQR';
+        //header("Location: http://localhost:5000/ProceedQR")
     }
     function ShowFaceScanningPage() {
       document.getElementById('ScanningFacePage').style.display = 'block';
