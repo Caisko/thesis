@@ -263,7 +263,7 @@ ob_start();
         VALUES ('$id','$sname','$gname','$mname','$status1','$dep')";
         if ($conn->query($sql) === TRUE) {
          
-          header("Location: http://localhost:5000");
+          header("Location: http://localhost:5000/registerface.html");
          
           
           

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, request, redirect, flash, jsonify, Markup
+from flask import Flask, render_template, Response, request, redirect, flash, jsonify, Markup, url_for
 from FaceCamera import VideoCamera
 import os
 import time
@@ -31,33 +31,45 @@ def index():
 
 
 #------------------------------------------------------------
-@app.route('/check_ID', methods=['POST'])
-def process_form():
-  global id_number_Register
-  global NameRegister
-  global path
+#@app.route('/check_ID', methods=['POST'])
+#def process_form():
+#  global id_number_Register
+#  global NameRegister
+#  global path
   
-  id_number_Register = str(request.form.get('id_number'))
-  NameRegister = str(request.form.get('name'))
-  path = os.path.join(parent_dir,id_number_Register)
+#  id_number_Register = str(request.form.get('id_number'))
+#  NameRegister = str(request.form.get('name'))
+#  path = os.path.join(parent_dir,id_number_Register)
 
-  print(path)
-  if not os.path.exists(path):
-      return redirect('/registerface.html')
+#  print(path)
+#  if not os.path.exists(path):
+#      return redirect('/registerface.html')
       
-  else:
-      flash("ID NUMBER ALREADY TAKEN")
-      return redirect('/registerform.html')
+#  else:
+#      flash("ID NUMBER ALREADY TAKEN")
+#      return redirect('/registerform.html')
   
   
 
 
 
 #------------------------------------------------------------
-@app.route('/registerface.html')
+@app.route('/registerface.html' , methods=['POST'] )
+
+
 
 def registerface():
+    global id_number_Register
+    global NameRegister
+    global path
+    id_number_Register = request.form.get('id_number')
+    NameRegister = request.form.get('name')
+    path = os.path.join(parent_dir,id_number_Register)
+    print(f"Name: {NameRegister}")
+    print(f"ID Number: {id_number_Register}")
     return render_template('registerface.html')
+
+
 
 def gen(camera):
     #os.makedirs(path)
@@ -277,22 +289,6 @@ def Training_AI():
 
 
     
-
-
-#------------------------------------------------------------
-@app.route('/registerform.html', methods=['GET'])
-def registerform():
-    return render_template('registerform.html')
-
-
-
-@app.route('/dashboard.html')
-def dashboard():
-    return render_template('dashboard.html')
-
-
-
-
 
 
 #------------------------------------------------------------
