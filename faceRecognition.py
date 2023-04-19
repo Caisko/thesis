@@ -9,7 +9,7 @@ import numpy as np
 def faceDetection(test_img):
     gray_img=cv2.cvtColor(test_img,cv2.COLOR_BGR2GRAY)#convert color image to grayscale
     face_haar_cascade=cv2.CascadeClassifier('C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/HaarCascade/haarcascade_frontalface_default.xml')#Load haar classifier
-    faces=face_haar_cascade.detectMultiScale(gray_img,scaleFactor=1.32,minNeighbors=5)#detectMultiScale returns rectangles
+    faces=face_haar_cascade.detectMultiScale(gray_img,scaleFactor=1.05,minNeighbors=8)#detectMultiScale returns rectangles
 
     return faces,gray_img
 
@@ -17,6 +17,8 @@ def faceDetection(test_img):
 def labels_for_training_data(directory,folder):
     faces=[]
     faceID=[]
+    images_processed = 0
+    images_with_faces = 0
 
     for path,subdirnames,filenames in os.walk(directory):
         for filename in filenames:
@@ -35,12 +37,19 @@ def labels_for_training_data(directory,folder):
                     continue
                 faces_rect,gray_img=faceDetection(test_img)#Calling faceDetection function to return faces detected in particular image
                 if len(faces_rect)!=1:
+                    images_processed += 1
                     continue #Since we are assuming only single person images are being fed to classifier
                 (x,y,w,h)=faces_rect[0]
                 roi_gray=gray_img[y:y+w,x:x+h]#cropping region of interest i.e. face area from grayscale image
                 faces.append(roi_gray)
                 faceID.append(int(id))
+                images_processed += 1
+                images_with_faces += 1
+    print(f"Total images processed: {images_processed}")
+    print(f"Images with faces detected: {images_with_faces}")
     return faces,faceID
+
+
 
 
 #Below function trains haar classifier and takes faces,faceID returned by previous function as its arguments
