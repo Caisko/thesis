@@ -55,7 +55,7 @@ def index():
 
 
 #------------------------------------------------------------
-@app.route('/registerface.html' , methods=['POST'] )
+@app.route('/registerface.html' , methods=['GET'] )
 
 
 
@@ -63,8 +63,13 @@ def registerface():
     global id_number_Register
     global NameRegister
     global path
-    id_number_Register = request.form.get('id_number')
-    NameRegister = request.form.get('name')
+
+    id_number_Register = request.args.get('id')
+    sname = request.args.get('sname')
+    gname = request.args.get('gname')
+    mname = request.args.get('mname')
+    fullname = [sname, " ", gname, " ", mname]
+    NameRegister = "".join(fullname)
     path = os.path.join(parent_dir,id_number_Register)
     print(f"Name: {NameRegister}")
     print(f"ID Number: {id_number_Register}")

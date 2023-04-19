@@ -263,9 +263,21 @@ ob_start();
         VALUES ('$id','$sname','$gname','$mname','$status1','$dep')";
         if ($conn->query($sql) === TRUE) {
          
-          header("Location: http://localhost:5000/registerface.html");
-         
           
+         
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  // Redirect the user to registerface.html with form data
+  $query_string = http_build_query(array(
+    'id' => $_POST['id_num'],
+    'sname'  =>  $_POST['sname'],
+    'gname'  =>  $_POST['gname'],
+    'mname'  =>  $_POST['mname']
+  ));
+  header("Location: http://Localhost:5000/registerface.html?" . $query_string);
+  exit;
+}
+
           
           
         } else {
