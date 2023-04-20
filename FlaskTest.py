@@ -3,20 +3,25 @@ from FaceCamera import VideoCamera
 import requests 
 import os
 import time
-import faceRecognition as fr
 import cv2
 import numpy as np
+from deepface import DeepFace
+import pandas as pd
+import pickle
 
+thesis_path ="C:/xampp/htdocs/thesis"
 app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project', static_folder='C:/xampp/htdocs/thesis')
 #app.run(host='localhost', port=80) 
 
-location = "C:/xampp/htdocs/thesis/"
+
 app.secret_key = 'Pogi Si Gibson'
 
 root_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project"
 parent_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/TemporaryImages"
 resizedFolder = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/resizedTrainingImages"
 
+global model
+model = "Facenet512"
 
 
 
@@ -26,32 +31,6 @@ resizedFolder = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition pro
 def index():
     return render_template('dashboard.html')
    
-
-
-
-
-
-#------------------------------------------------------------
-#@app.route('/check_ID', methods=['POST'])
-#def process_form():
-#  global id_number_Register
-#  global NameRegister
-#  global path
-  
-#  id_number_Register = str(request.form.get('id_number'))
-#  NameRegister = str(request.form.get('name'))
-#  path = os.path.join(parent_dir,id_number_Register)
-
-#  print(path)
-#  if not os.path.exists(path):
-#      return redirect('/registerface.html')
-      
-#  else:
-#      flash("ID NUMBER ALREADY TAKEN")
-#      return redirect('/registerform.html')
-  
-  
-
 
 
 #------------------------------------------------------------
@@ -107,7 +86,7 @@ def capture_images():
     global CapturingMessage
     CapturingMessage = 'Capturing Images Please Stay still...'
     # Set the number of seconds to capture images
-    capture_duration = 7
+    capture_duration = 1
     end_time = time.time() + capture_duration
 
     count = 0
@@ -136,68 +115,132 @@ def scancapture():
     global label
     ScanAgain = False
     MessageIDnumber = ''
-    os.chdir(root_dir)
+    
 
     # os.chdir(root_dir)
+
+    frame_bytes = camera.get_frame()
+    frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
+    SingleCapture = thesis_path + '/frame.jpg'
+    cv2.imwrite(SingleCapture, frame)
+    CapturingMessageScan = 'Image Captured. Recognizing...'
+    os.chdir(root_dir)
+
     records={}
-
-
     for path,subdirnames,filenames in os.walk("TemporaryImages"):
         fullword = ""
         if len(filenames) == 0:
             continue
         else:
             containerlist = []
-            for f in filenames[0]:
-                containerlist.append(f)
-            for i in range(5):
-                containerlist.pop()
-            for elements in containerlist:
-                fullword += elements
-
-            # pangalan.append(fullword)
-            IDcontainer = int(os.path.basename(path))
-            # IDfolder.append(IDcontainer)
-            records[IDcontainer] = fullword
-
-    CapturingMessageScan = 'Image Captured. Recognizing...'
-    
-    face_recognizer= cv2.face.LBPHFaceRecognizer_create()
-    
-    try:
-        os.chdir(root_dir)
-        face_recognizer.read('trainingData.yml')#use this to load training data for subsequent runs
-        frame_bytes = camera.get_frame()
-        frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
-        faces_detected,gray_img= fr.faceDetection(frame)
-
-        if len(faces_detected) > 0:
-            
-            for face in faces_detected:
-                (x,y,w,h)=face
-                roi_gray=gray_img[y:y+h,x:x+h]
-                label,confidence= face_recognizer.predict(roi_gray)#predicting the label of given image
-                print("confidence:", 100 - confidence , "%")
-                print("label:",label)
-                predicted_name = records[label]
-
-                CapturingMessageScan = ("Name: " + predicted_name )
-                MessageIDnumber = ("ID Number: " + str(label))
+            for filename in filenames:
+                if filename.endswith('.pkl'):
+                    continue
+                else:
+                    for f in filename:
+                        containerlist.append(f)
+                    for i in range(5):
+                        containerlist.pop()
+                    for elements in containerlist:
+                        fullword += elements
+                    break
                 
-        else:
+            print("ETO ANG PATH " + path)
+            if path != 'TemporaryImages':
+                IDcontainer = int(os.path.basename(path))
+                records[IDcontainer] = fullword
+
+    
+    
+    
+    
+
+
+    # Huhulaan na kung sino
+    try:
+        results = DeepFace.find(img_path= SingleCapture, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=False)
+
+        pd.options.display.max_colwidth = None
+        result_df = pd.DataFrame(columns=['identity', 'confidence'])
+
+        if len(results) != 0:
+            for df in results:
+                df['confidence'] = (1 - df[model + '_cosine']) * 100  # Convert distance to percentage
+                result_df = pd.concat([result_df, df[['identity', 'confidence']]], ignore_index=True)
             
+            # Get the first row of result_df using iloc
+            first_row = result_df.iloc[0]
+
+            # Access the identity and confidence values of the first row using the column names
+            identity = first_row['identity']
+            confidence = first_row['confidence']
+
+            label = int(os.path.basename(os.path.dirname(identity)))
+            predicted_name = records[label]
+            print(label)
+            print(predicted_name)
+
+            print(f"Identity: {predicted_name}\n Confidence: {confidence}")
+            CapturingMessageScan = ("Name: " + predicted_name )
+            MessageIDnumber = ("ID Number: " + str(label))
+
+        else:
+                
             CapturingMessageScan = "No Face Detected Please Try again."
 
+    
+
+    except:
+        CapturingMessageScan = "No Face Detected Please Try again."
         ScanAgain = True
+        
+   
+    ScanAgain = True
+    
+
+    return 'Done'
+
+
+
+
+    
+
+    #face_recognizer= cv2.face.LBPHFaceRecognizer_create()
+    
+    # try:
+    #     os.chdir(root_dir)
+    #     face_recognizer.read('trainingData.yml')#use this to load training data for subsequent runs
+    #     frame_bytes = camera.get_frame()
+    #     frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
+    #     faces_detected,gray_img= fr.faceDetection(frame)
+
+    #     if len(faces_detected) > 0:
+            
+    #         for face in faces_detected:
+    #             (x,y,w,h)=face
+    #             roi_gray=gray_img[y:y+h,x:x+h]
+    #             label,confidence= face_recognizer.predict(roi_gray)#predicting the label of given image
+    #             print("confidence:", 100 - confidence , "%")
+    #             print("label:",label)
+    #             predicted_name = records[label]
+
+    #             CapturingMessageScan = ("Name: " + predicted_name )
+    #             MessageIDnumber = ("ID Number: " + str(label))
+                
+        # else:
+            
+        #     CapturingMessageScan = "No Face Detected Please Try again."
+
+        # ScanAgain = True
             
             
             
         
 
-    except Exception as e:
-         CapturingMessageScan = str(e)
-    #CapturingMessageScan = ''
-    return 'Done'
+    # except Exception as e:
+    #      CapturingMessageScan = str(e)
+    # CapturingMessageScan = ''
+    #return 'Done'
 
 #------------------------------------------------------------
 @app.route('/SearchIDnumber', methods =['POST'])
@@ -217,22 +260,28 @@ def SearchIDnumber():
 
 
     for path,subdirnames,filenames in os.walk("TemporaryImages"):
-        fullword = ""
-        if len(filenames) == 0:
-            continue
-        else:
-            containerlist = []
-            for f in filenames[0]:
-                containerlist.append(f)
-            for i in range(5):
-                containerlist.pop()
-            for elements in containerlist:
-                fullword += elements
+            fullword = ""
+            if len(filenames) == 0:
+                continue
+            else:
+                containerlist = []
+                for filename in filenames:
+                    if filename.endswith('.pkl'):
+                        continue
+                    else:
+                        for f in filename:
+                            containerlist.append(f)
+                        for i in range(5):
+                            containerlist.pop()
+                        for elements in containerlist:
+                            fullword += elements
+                        break
+                    
+                print("ETO ANG PATH " + path)
+                if path != 'TemporaryImages':
+                    IDcontainer = int(os.path.basename(path))
+                    records[IDcontainer] = fullword
 
-            # pangalan.append(fullword)
-            IDcontainer = int(os.path.basename(path))
-            # IDfolder.append(IDcontainer)
-            records[IDcontainer] = fullword
             
            
     
@@ -279,22 +328,51 @@ def CaptureMessageScan():
 #------------------------------------------------------------
 @app.route('/Training_AI')
 def Training_AI():
+    
     global CapturingMessage
-
+    oldpickle = parent_dir + "/representations_" + model.lower() + '.pkl'
+    newpickle = path + "/representations_" + model.lower() + '.pkl'
+    
     os.chdir(root_dir)
-    faces,faceID=fr.labels_for_training_data('TemporaryImages',id_number_Register)
+
+
+    # Pag meron nang DATA
     try:
-        face_recognizer=fr.update_classifier(faces,faceID)
-        face_recognizer.write('trainingData.yml')
+        # Old
+        with open(oldpickle, 'rb') as f:
+            oldmodel = pickle.load(f)    
+        results = DeepFace.find(img_path='C:/xampp/htdocs/thesis/keanu.jpg', db_path=path, model_name=model, distance_metric="cosine", enforce_detection=False)
+        
+        # New
+        with open(newpickle, 'rb') as f:
+            newmodel = pickle.load(f)
+        
+        finalmodel = oldmodel + newmodel
+
+        # Saving
+        with open(oldpickle, "wb+") as f:
+            pickle.dump(finalmodel, f)
+
+    # Pag wala pang DATA
     except:
-        face_recognizer=fr.train_classifier(faces,faceID)
-        face_recognizer.write('trainingData.yml')
-    print("\n------done training data-------\n")
+        results = DeepFace.find(img_path='C:/xampp/htdocs/thesis/keanu.jpg', db_path=parent_dir, model_name=model, distance_metric="cosine", enforce_detection=False)
 
     CapturingMessage = 'Done Training Data!'
+    
+    print("\n------done training data-------\n")
+    # faces,faceID=fr.labels_for_training_data('TemporaryImages',id_number_Register)
+    # try:
+    #     face_recognizer=fr.update_classifier(faces,faceID)
+    #     face_recognizer.write('trainingData.yml')
+    # except:
+    #     face_recognizer=fr.train_classifier(faces,faceID)
+    #     face_recognizer.write('trainingData.yml')
+    # print("\n------done training data-------\n")
+
+    # CapturingMessage = 'Done Training Data!'
 
     # Pause for 2 seconds
-    #sleep(2)
+    # sleep(2)
 
     # Redirect to the /registerform route
     return 'Done'
