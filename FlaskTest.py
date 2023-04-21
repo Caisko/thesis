@@ -86,7 +86,8 @@ def capture_images():
     global CapturingMessage
     CapturingMessage = 'Capturing Images Please Stay still...'
     # Set the number of seconds to capture images
-    capture_duration = 1
+    capture_duration = .4
+
     end_time = time.time() + capture_duration
 
     count = 0
@@ -150,11 +151,6 @@ def scancapture():
                 IDcontainer = int(os.path.basename(path))
                 records[IDcontainer] = fullword
 
-    
-    
-    
-    
-
 
     # Huhulaan na kung sino
     try:
@@ -202,46 +198,6 @@ def scancapture():
 
 
 
-
-    
-
-    #face_recognizer= cv2.face.LBPHFaceRecognizer_create()
-    
-    # try:
-    #     os.chdir(root_dir)
-    #     face_recognizer.read('trainingData.yml')#use this to load training data for subsequent runs
-    #     frame_bytes = camera.get_frame()
-    #     frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
-    #     faces_detected,gray_img= fr.faceDetection(frame)
-
-    #     if len(faces_detected) > 0:
-            
-    #         for face in faces_detected:
-    #             (x,y,w,h)=face
-    #             roi_gray=gray_img[y:y+h,x:x+h]
-    #             label,confidence= face_recognizer.predict(roi_gray)#predicting the label of given image
-    #             print("confidence:", 100 - confidence , "%")
-    #             print("label:",label)
-    #             predicted_name = records[label]
-
-    #             CapturingMessageScan = ("Name: " + predicted_name )
-    #             MessageIDnumber = ("ID Number: " + str(label))
-                
-        # else:
-            
-        #     CapturingMessageScan = "No Face Detected Please Try again."
-
-        # ScanAgain = True
-            
-            
-            
-        
-
-    # except Exception as e:
-    #      CapturingMessageScan = str(e)
-    # CapturingMessageScan = ''
-    #return 'Done'
-
 #------------------------------------------------------------
 @app.route('/SearchIDnumber', methods =['POST'])
 def SearchIDnumber():
@@ -255,7 +211,6 @@ def SearchIDnumber():
 
     os.chdir(root_dir)
 
-    # os.chdir(root_dir)
     records={}
 
 

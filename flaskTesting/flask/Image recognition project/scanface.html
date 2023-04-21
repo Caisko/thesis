@@ -139,7 +139,12 @@
           }, 1000);
         }
 
-
+        window.addEventListener('pageshow', function(event) {
+        // Reload the page only if the user is navigating back to it
+        if (event.persisted) {
+          location.reload();
+        }
+      }, false);
 
 
 
@@ -147,6 +152,7 @@
        
 
       </script>
+      
       
 </body>
 </html>
