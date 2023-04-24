@@ -45,7 +45,6 @@ header("location:index.php");
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -394,29 +393,48 @@ header("location:index.php");
   <div class="col-12">
               <div class="card recent-sales overflow-auto">
 
-                <div class="card-body">
-                  <h5 class="card-title">Gate Pass <span>| Move In/Out</span></h5>
+              
+              <?php
             
-                  <?php
-                   if ($row["position"] == "Priority 2"){
-                    $status = "SELECT * FROM borrowers";
+                   if ($position == "Priority 2"){
+                    $status = "SELECT max(id) as identify, `veri_status` FROM borrowers where `veri_status` = 'not'";
                     $result = mysqli_query($conn, $status);
                     $row    = mysqli_fetch_assoc($result);
+                    $last = $row['identify'];
+                    if($row['veri_status'] == 'not'){
+                   
                     ?>
                     <!-- The Modal -->
+                    
                         <div id="myModal" class="modal">
                         <!-- Modal content -->
                         <div class="modal-content">
                           <span class="close">&times;</span>
-                          <p>Some text in the Modal..</p>
-                        </div>
-                        </div>
+                          
+                          <p>Approval</p>
 
-                        
+                         
+                          <form method="post" action = "veri_path.php">
+                            <input type="text" value="<?php echo $last;?>" name="id">
+                            <input type="submit" value="Approved" name="submit">
+                            <input type="submit" value="Cancel" name="cancel">
+                          </form>
+                        </div>
+                        </div>
+                          <script>
+
+                          var modalq = document.getElementById('myModal');
+                          console.log(modalq)
+                          modalq.style.display = 'block';
+                          </script> 
                  <?php
+                    }
                    }
                   ?>
                   
+                <div class="card-body">
+                  <h5 class="card-title">Gate Pass <span>| Move In/Out </span></h5>
+            
 <div class="input-group mb-3">
 <input type="text" class="form-control" id="searchInput" placeholder="search" style="height: 40px;">
   <div class="input-group-append">
