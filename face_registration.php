@@ -2,12 +2,10 @@
 <?php
 include 'assets/connection/connect.php';
 session_start();
-$name = $_SESSION["uname"];
-$pass = $_SESSION["password"];
 
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+if (!isset($_SESSION['pincode']) && !isset($_SESSION['true'])) {
 session_destroy();
-header("location:index.php");
+header("location:borrowers.php");
 }
 
 ob_start();
@@ -50,6 +48,31 @@ ob_start();
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+  <style>
+    .modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+text-align: center;
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+    </style>
 </head>
 
 <body>
@@ -68,44 +91,11 @@ ob_start();
     
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
-
-      <?php
-      $status = "SELECT * FROM admins where id_number = '" . $_SESSION["uname"] . "'";
-      $result = mysqli_query($conn, $status);
-      $row = mysqli_fetch_assoc($result);
-      $id_admin = $row["id"];
-      ?>
         <li class="nav-item dropdown pe-3">
-
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-          <img src="assets/img/profile/<?php echo $row["profile_pic"]; ?>" alt="Profile" class="rounded-circle" style="width:40px;">
-            <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $row["id_number"]; ?></span>
-          </a><!-- End Profile Iamge Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6><?php echo $row["given_name"], " ", $row["middle_name"], " ", $row["surname"]; ?></h6>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="profile.php">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="logout.php">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
-            </li>
+        <a class="dropdown-item d-flex align-items-center" href="pin_exit.php">
+          <span class="d-none d-md-block ps-2">
+           <i class="bi bi-box-arrow-right"></i>Sign Out</span>
+</a>
 
           </ul><!-- End Profile Dropdown Items -->
         </li><!-- End Profile Nav -->
@@ -122,31 +112,21 @@ ob_start();
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="dashboard.php">
-      <i class="bi bi-grid"></i>
-      <span>Dashboard</span>
-    </a>
-  </li><!-- End Dashboard Nav -->
 
-<?php if ($row["position"] == "Priority 2") { ?>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="account.php">
-      <i class="bi bi-person-square"></i>
-      <span>Register Accounts</span>
-    </a>
-  </li><!-- End Register gate pass Nav -->
-  <li class="nav-item">
-  <a class="nav-link collapsed" href="cvsu_equipment.php">
-    <i class="bi bi-card-heading"></i>
-    <span>Add Equipment</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
+
 
 <li class="nav-item">
   <a class="nav-link collapsed" href="face_registration.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowers</span>
+    <span>Add Borrowers</span>
+  </a>
+</li><!-- End Register gate pass Nav -->
+
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="face_registration.php">
+  <i class="bi bi-person-bounding-box"></i>
+    <span>Borrowing Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
@@ -162,40 +142,9 @@ ob_start();
     <span>Return Scanning</span>
   </a>
 </li>End Register gate pass Nav -->
-<li class="nav-item">
-  <a class="nav-link collapsed" href="records.php">
-    <i class="bi bi-archive"></i>
-    <span>Records</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
-<li class="nav-item">
-  <a class="nav-link collapsed" href="inventory.php">
-  <i class="bi-list-check"></i>
-    <span>Inventory</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
 
-  <?php } else if ($row["position"] == "Unit Checker") {  ?>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="gadget.php">
-      <i class="bi bi-credit-card-2-front"></i>
-      <span>Register Gate Pass</span>
-    </a>
-  </li><!-- End Register gate pass Nav --> 
 
-  <?php } ?>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="movein.php">
-      <i class="bi bi-check-square"></i>
-      <span>Move In  Gate Pass</span>
-    </a>
-  </li><!-- End Register gate pass Nav --> 
-  
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="moveout.php">
-      <i class="bi bi-x-square"></i>
-      <span>Move Out Gate Pass</span>
-    </a>
+ 
   <!--</li> End Register gate pass Nav 
   <li class="nav-item">
     <a class="nav-link collapsed" href="check.php">
@@ -240,7 +189,16 @@ ob_start();
 
   <div class="card-body">
     <h5 class="card-title"><span></span></h5>
-    <?php 
+    <div id="myModal" class="modal">
+
+<!-- Modal content -->
+<div class="modal-content">
+
+  <p>SUCCESSFULLY REGISTER WAIT FOR ADMIN APPROVAL</p>
+</div>
+
+</div>
+   <?php 
     if(isset($_POST['submit'])){
       $id = $_POST['id_num'];
       $sname = $_POST['sname'];
@@ -248,49 +206,35 @@ ob_start();
       $gname = $_POST['gname'];
       $status1 = $_POST['status1'];
       $dep = $_POST['dep'];
-      $status = "SELECT * FROM borrowers where id_num = '$id'";
+      $status = "SELECT id_num FROM borrowers where id_num = '$id'";
       $result = mysqli_query($conn, $status);
       $row    = mysqli_fetch_assoc($result);
      // $data = array($row['sname'],$row['mname'],$row['gname']);
     //  $check = array($sname,$mname,$gname);
      // $check1 = implode($data);
      // $check2 = implode($check);
-      
-      if($row['id_num'] != $id ){
-       
-
+    
+      if($row !== null && $row['id_num'] == $id ){
+        echo "Existing Data";
+      }else{
         $sql = "INSERT INTO `borrowers`(`id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`) 
         VALUES ('$id','$sname','$gname','$mname','$status1','$dep')";
         if ($conn->query($sql) === TRUE) {
-         
-          
-         
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-  // Redirect the user to registerface.html with form data
-  $query_string = http_build_query(array(
-    'id' => $_POST['id_num'],
-    'sname'  =>  $_POST['sname'],
-    'gname'  =>  $_POST['gname'],
-    'mname'  =>  $_POST['mname']
-  ));
-  header("Location: http://Localhost:5000/registerface.html?" . $query_string);
-  exit;
-}
-
-          
-          
+          echo "<script>
+          var modalq = document.getElementById('myModal');
+           modalq.style.display = 'block';
+           </script>";
         } else {
           echo "Error: " . $sql . "<br>" . $conn->error;
         }
         $conn->close();
-      }else{
-        echo "Existing Data";
       }
       
     }
   ?>
     <div class="d-flex align-items-center">
+
+ <!-- The Modal -->
 
    <form autocomplete="off" class="form-control" role="form"  method="post">
 
@@ -316,16 +260,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      <div class="row">
      <div class="col-sm">
        <label for="yourName" class="form-label">Surname: </label>
-       <input type="text" class="form-control" id="yourName" name="sname"  >
+       <input type="text" class="form-control" id="yourName" name="sname"  required>
      </div>
      
    <div class="col-sm">
        <label for="yourName" class="form-label">Given Name:</label>
-       <input type="text"  class="form-control" name="gname" id="id"  >
+       <input type="text"  class="form-control" name="gname"  required >
      </div>
      <div class="col-sm">
        <label for="yourName" class="form-label">Middle Name:</label>
-       <input type="text"  class="form-control" name="mname" id="id"  >
+       <input type="text"  class="form-control" name="mname"   required>
      </div>
      </div>
    
@@ -333,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
    <div class="col-sm">
    <label for="yourEmail" class="form-label">Status:</label>
-        <select class="form-control"  name="status1" >
+        <select class="form-control"  name="status1" required>
         <option value="" selected disabled hidden>Choose Status</option>
         <option value="Permanent">Permanent</option>
         <option value="Temporary">Temporary</option>
@@ -348,19 +292,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
      <div class="col-sm">
    <label for="yourEmail" class="form-label">Department:</label>
-   <input type="text"  class="form-control" name="dep" id="id"  >
+   <input type="text"  class="form-control" name="dep" id="id" required >
      </div>
      
      </div><br>
       <div class="col-12">
-        <button class="btn btn-primary w-100" type="submit" name="submit">Register</button>
+        <button class="btn btn-primary w-100" type="submit"  name="submit">Register</button>
       </div>
-      
-     
     </form>
- 
-
-
   </div>
 </div>
 
