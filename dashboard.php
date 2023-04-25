@@ -57,18 +57,27 @@ header("location:index.php");
 /* Modal Content/Box */
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin:2% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 40%; /* Could be more or less, depending on screen size */
 }
-
+.title{
+  margin:auto;
+  font-size:20px;
+  font-weight: bold;
+}
+.ds{
+  margin:auto;
+  font-size:15px;
+}
 /* The Close Button */
 .close {
   color: #aaa;
   float: right;
   font-size: 28px;
-  font-weight: bold;
+  position:relative;
+  left:95%;
 }
 
 .close:hover,
@@ -76,6 +85,43 @@ header("location:index.php");
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+.but1{
+  width:49%;
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:10px;
+}
+.but1:hover{
+  background-color:skyblue;
+  color:white;
+}
+.but2{
+  width:49%;
+  width:49%;
+  border: none;
+  color:black;
+  background-color: #f4511e;
+  opacity: 0.6;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:10px;
+}
+.but2:hover{
+  opacity:1;
+  color:white;
 }
     </style>
 
@@ -397,10 +443,13 @@ header("location:index.php");
               <?php
             
                    if ($position == "Priority 2"){
-                    $status = "SELECT max(id) as identify, `veri_status` FROM borrowers where `veri_status` = 'not'";
+                    $status = "SELECT `id`,`veri_status`, `id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`
+                    FROM borrowers
+                    ORDER BY `id` DESC
+                    LIMIT 1;";
                     $result = mysqli_query($conn, $status);
                     $row    = mysqli_fetch_assoc($result);
-                    $last = $row['identify'];
+                  
                     if($row['veri_status'] == 'not'){
                    
                     ?>
@@ -409,20 +458,33 @@ header("location:index.php");
                         <div id="myModal" class="modal">
                         <!-- Modal content -->
                         <div class="modal-content">
-                          <span class="close">&times;</span>
+                      
                           
-                          <p>Approval</p>
+                          <p class="title"><i class="bi bi-question-diamond-fill"></i>  Requesting</p>
+                          <p class="ds">Do you want to accept a new borrower?</p>
 
-                         
+                         <br>
                           <form method="post" action = "veri_path.php">
-                            <input type="text" value="<?php echo $last;?>" name="id">
-                            <input type="submit" value="Approved" name="submit">
-                            <input type="submit" value="Cancel" name="cancel">
+                          
+                            <input type="hidden" class="form-control" value="<?php echo $last;?>" name="id" readonly><br>
+                            <label for="yourName" class="form-label">ID:</label>
+                            <input type="text"  class="form-control"  value="<?php echo $row['id_num'];?>" readonly ><br>
+                            <label for="yourName" class="form-label">SURNAME:</label>
+                            <input type="text"  class="form-control"  value="<?php echo $row['sname'];?>" readonly ><br>
+                            <label for="yourName" class="form-label">GIVEN NAME:</label>
+                            <input type="text"  class="form-control"  value="<?php echo $row['gname'];?>" readonly ><br>
+                            <label for="yourName" class="form-label">MIDDLE NAME:</label>
+                            <input type="text"  class="form-control"  value="<?php echo $row['mname'];?>" readonly ><br>
+                            <label for="yourName" class="form-label">STATUS:</label>
+                            <input type="text"  class="form-control"  value="<?php echo $row['status'];?>" readonly ><br>
+                            <label for="yourName" class="form-label">DEPARTMENT:</label>
+                            <input type="text"  class="form-control"  value="<?php echo $row['Deparment'];?>" readonly ><br>
+                            <input type="submit" value="Yes" name="submit" class="but1">
+                            <input type="submit" value="No" name="cancel" class="but2">
                           </form>
                         </div>
                         </div>
                           <script>
-
                           var modalq = document.getElementById('myModal');
                           console.log(modalq)
                           modalq.style.display = 'block';

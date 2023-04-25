@@ -3,11 +3,11 @@ include 'assets/connection/connect.php';
 session_start();
 if(isset($_POST['submit'])){
   $id = $_POST['id_num'];
-  $sname = $_POST['sname'];
-  $mname = $_POST['mname'];
-  $gname = $_POST['gname'];
+  strtolower($sname = $_POST['sname']);
+  strtolower($mname = $_POST['mname']);
+  strtolower($gname = $_POST['gname']);
   $status1 = $_POST['status1'];
-  $dep = $_POST['dep'];
+  strtolower($dep = $_POST['dep']);
   $status = "SELECT id_num,veri_status as veri FROM borrowers where id_num = '$id'";
   $result = mysqli_query($conn, $status);
   $row    = mysqli_fetch_assoc($result);

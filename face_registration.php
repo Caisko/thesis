@@ -14,6 +14,7 @@ ob_start();
 <html lang="en">
 
 <head>
+   <meta http-equiv="refresh" content="30">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css'>
@@ -54,24 +55,35 @@ ob_start();
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
 text-align: center;
-  padding-top: 100px; /* Location of the box */
+
+  padding-top: 250px; /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
 }
 
 .modal-content {
   background-color: #fefefe;
   margin: auto;
-  padding: 100px;
   border: 1px solid #888;
   width: 50%;
   height:250px;
 }
+#icon{
+  margin:auto;
+  font-size:50px;
+  color:#FFDB58;
+}
+#info{
+  font-size:20px;
+  position:relative;
+  top:-50px;
+}
+
 
     </style>
 </head>
@@ -195,7 +207,9 @@ text-align: center;
  <div id="myModal" class="modal">
 <!-- Modal content -->
 <div class="modal-content">
-  <p>SUCCESSFULLY REGISTER WAIT FOR ADMIN APPROVAL</p>
+<p id="icon"> 
+<i class="bi bi-info-circle-fill"></i><p> 
+  <p id="info"> SUCCESSFULLY REGISTER ! <br> WAIT FOR ADMIN APPROVAL</p>
 </div>
 </div>
 <?php
@@ -240,21 +254,10 @@ if(isset($_GET['modal']) && $_GET['modal'] == 'true'){
     var modalq = document.getElementById('myModal');
     modalq.style.display = 'block';
     var stats = '$stats';
+  
   </script>";
   
-} elseif(isset($stats) && $stats == 'verified'){
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Redirect the user to registerface.html with form data
-    $query_string = http_build_query(array(
-      'id' => $id,
-      'sname'  =>  $sname,
-      'gname'  =>  $gname,
-      'mname'  =>  $mname
-    ));
-    header("Location: http://Localhost:5000/registerface.html?" . $query_string);
-    exit;
-  }
-}
+} 
 
 // Periodically refresh the page
 echo "<script>
@@ -267,6 +270,9 @@ echo "<script>
       clearInterval(refreshIntervalId);
     }
   }, $refreshInterval);
+
+
+  
 </script>";
 ?>
 
@@ -278,7 +284,7 @@ echo "<script>
      <div class="row">
    <div class="col-sm">
        <label for="yourName" class="form-label">Academics/Non Academic Category:</label>
-       <select class="form-control" id="gate" name="cat" onclick="gatepass1()"   >
+       <select class="form-control" id="gate" name="cat"   >
        <option value="" selected disabled hidden>Choose User Category</option>
         <option value="academic" >Academic</option>
         <option value="non academic" >Non Academic</option>
@@ -373,66 +379,7 @@ echo "<script>
  
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script>
-           
-           function gatepass1() {
-              var gate1 = document.getElementById("gate").value;
-             
-              console.log(gate1); 
-              if(gate1 == "Teacher"){
-                document.getElementById("course1").disabled = true;
-                document.getElementById("yr1").disabled = true;
-                document.getElementById("section1").disabled = true;
-                document.getElementById("store").disabled = true;
-              }else if(gate1 == "Owner"){
-                document.getElementById("course1").disabled = true;
-                document.getElementById("yr1").disabled = true;
-                document.getElementById("section1").disabled = true;
-                document.getElementById("store").disabled = false;
-              } else if(gate1 == "Student"){
-                document.getElementById("store").disabled = true;
-                document.getElementById("course1").disabled = false;
-                document.getElementById("yr1").disabled = false;
-                document.getElementById("section1").disabled = false;
-              }
-            }
-            
-                  
-            function serial(){
-              var serial1 = document.getElementById("serial1").value;
-              if(serial1 == 1){
-                document.getElementById("unit").readOnly = false;
-                
-              }else{
-                document.getElementById("unit").readOnly = true;
-                
-              }
-            }
-
-            function tech(){
-              var tech2 = document.getElementById("technical").value;
-              if(tech2 == 1){
-                document.getElementById("tech1").readOnly = false;
-                
-              }else{
-                document.getElementById("tech1").readOnly = true;
-                
-              }
-            }
-                       
-                       
-            function cat(){
-              var cat = document.getElementById("gate_cat").value;
-              if(cat == "VALID UNTIL"){
-                document.getElementById("valid").readOnly = false;
-                
-              }else{
-                document.getElementById("valid").readOnly = true;
-                
-              }
-            }
-
-        </script>
+  
 </body>
 
 </html>

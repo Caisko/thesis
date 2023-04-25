@@ -49,6 +49,90 @@ ob_start();
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+    /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin:2% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+}
+.title{
+  margin:auto;
+  font-size:20px;
+  font-weight: bold;
+}
+.ds{
+  margin:auto;
+  font-size:15px;
+}
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  position:relative;
+  left:95%;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.but1{
+  width:49%;
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:10px;
+}
+.but1:hover{
+  background-color:skyblue;
+  color:white;
+}
+.but2{
+  width:49%;
+  width:49%;
+  border: none;
+  color:black;
+  background-color: #f4511e;
+  opacity: 0.6;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius:10px;
+}
+.but2:hover{
+  opacity:1;
+  color:white;
+}
+    </style>
 </head>
 
 <body>
@@ -73,6 +157,7 @@ ob_start();
       $result = mysqli_query($conn, $status);
       $row = mysqli_fetch_assoc($result);
       $id_admin = $row["id"];
+      $position = $row["position"];
       ?>
         <li class="nav-item dropdown pe-3">
 
@@ -235,6 +320,59 @@ ob_start();
 <div class="card info-card customers-card">
 
   <div class="card-body">
+  <?php
+            
+            if ($position == "Priority 2"){
+              $status = "SELECT `id`,`veri_status`, `id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`
+              FROM borrowers
+              ORDER BY `id` DESC
+              LIMIT 1;";
+              $result = mysqli_query($conn, $status);
+              $row    = mysqli_fetch_assoc($result);
+            
+             if($row['veri_status'] == 'not'){
+            
+             ?>
+             <!-- The Modal -->
+             
+                 <div id="myModal" class="modal">
+                 <!-- Modal content -->
+                 <div class="modal-content">
+               
+                   
+                   <p class="title"><i class="bi bi-question-diamond-fill"></i>  Requesting</p>
+                   <p class="ds">Do you want to accept a new borrower?</p>
+
+                  <br>
+                   <form method="post" action = "veri_path.php">
+                   
+                     <input type="hidden" class="form-control" value="<?php echo $last;?>" name="id" readonly><br>
+                     <label for="yourName" class="form-label">ID:</label>
+                     <input type="text"  class="form-control"  value="<?php echo $row['id_num'];?>" readonly ><br>
+                     <label for="yourName" class="form-label">SURNAME:</label>
+                     <input type="text"  class="form-control"  value="<?php echo $row['sname'];?>" readonly ><br>
+                     <label for="yourName" class="form-label">GIVEN NAME:</label>
+                     <input type="text"  class="form-control"  value="<?php echo $row['gname'];?>" readonly ><br>
+                     <label for="yourName" class="form-label">MIDDLE NAME:</label>
+                     <input type="text"  class="form-control"  value="<?php echo $row['mname'];?>" readonly ><br>
+                     <label for="yourName" class="form-label">STATUS:</label>
+                     <input type="text"  class="form-control"  value="<?php echo $row['status'];?>" readonly ><br>
+                     <label for="yourName" class="form-label">DEPARTMENT:</label>
+                     <input type="text"  class="form-control"  value="<?php echo $row['Deparment'];?>" readonly ><br>
+                     <input type="submit" value="Yes" name="submit" class="but1">
+                     <input type="submit" value="No" name="cancel" class="but2">
+                   </form>
+                 </div>
+                 </div>
+                   <script>
+                   var modalq = document.getElementById('myModal');
+                   console.log(modalq)
+                   modalq.style.display = 'block';
+                   </script> 
+          <?php
+             }
+            }
+           ?>
     <h5 class="card-title"><span></span></h5>
 
     <div class="d-flex align-items-center">
