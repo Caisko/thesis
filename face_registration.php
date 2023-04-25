@@ -67,9 +67,10 @@ text-align: center;
 .modal-content {
   background-color: #fefefe;
   margin: auto;
-  padding: 20px;
+  padding: 100px;
   border: 1px solid #888;
-  width: 80%;
+  width: 50%;
+  height:250px;
 }
 
     </style>
@@ -199,7 +200,7 @@ text-align: center;
 </div>
 <?php
 // Set the time interval for refreshing the database (in milliseconds)
-$refreshInterval = 40000; // 40 seconds
+$refreshInterval = 10000; // 10 seconds
 
 // Define an empty query string
 $query_string = "";
@@ -211,11 +212,11 @@ if(isset($_GET['id'])){
   // Query the database for the status of the borrower
   $status = "SELECT * FROM borrowers where id_num = '$id'";
   $result = mysqli_query($conn, $status);
-  $row    = mysqli_fetch_assoc($result);
+  $row = mysqli_fetch_assoc($result);
   $stats = $row['veri_status'];
 
   // Output the borrower ID
-   $id = $row['id_num'];
+  $id = $row['id_num'];
   $gname = $row['gname'];
   $sname = $row['sname'];
   $mname = $row['mname'];
@@ -228,8 +229,8 @@ if(isset($_GET['id'])){
   
   // Check if the borrower is verified
   if($stats == 'verified'){
-    // Reload the page
-    echo "<script>location.reload();</script>";
+    // Set a flag to force a page refresh
+    echo "<script>window.refreshPage = true;</script>";
   }
 }
 
@@ -258,8 +259,10 @@ if(isset($_GET['modal']) && $_GET['modal'] == 'true'){
 // Periodically refresh the page
 echo "<script>
   var refreshIntervalId = setInterval(function(){
-    if(stats !== 'verified') {
-      window.location.href = 'http://localhost:5000/registerface.html?' + '$query_string';
+    if(window.refreshPage) {
+      // Reload the page with the updated query string
+      window.location.href = 'http://localhost:5000/registerface.html?" . $query_string . "';
+    
     } else {
       clearInterval(refreshIntervalId);
     }
