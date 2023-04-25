@@ -189,57 +189,88 @@ text-align: center;
 
   <div class="card-body">
     <h5 class="card-title"><span></span></h5>
-    
-    <div id="myModal" class="modal">
 
+    <!-- The Modal -->
+ <div id="myModal" class="modal">
 <!-- Modal content -->
 <div class="modal-content">
-
   <p>SUCCESSFULLY REGISTER WAIT FOR ADMIN APPROVAL</p>
 </div>
-
 </div>
-   <?php 
+<?php
+// Set the time interval for refreshing the database (in milliseconds)
+$refreshInterval = 40000; // 40 seconds
 
-    if(isset($_POST['submit'])){
-      $id = $_POST['id_num'];
-      $sname = $_POST['sname'];
-      $mname = $_POST['mname'];
-      $gname = $_POST['gname'];
-      $status1 = $_POST['status1'];
-      $dep = $_POST['dep'];
-      $status = "SELECT id_num,veri_status as veri FROM borrowers where id_num = '$id'";
-      $result = mysqli_query($conn, $status);
-      $row    = mysqli_fetch_assoc($result);
-     // $data = array($row['sname'],$row['mname'],$row['gname']);
-    //  $check = array($sname,$mname,$gname);
-     // $check1 = implode($data);
-     // $check2 = implode($check);
+// Define an empty query string
+$query_string = "";
+
+// Check if the 'id' parameter is set in the URL
+if(isset($_GET['id'])){
+  $id = $_GET['id'];
+
+  // Query the database for the status of the borrower
+  $status = "SELECT * FROM borrowers where id_num = '$id'";
+  $result = mysqli_query($conn, $status);
+  $row    = mysqli_fetch_assoc($result);
+  $stats = $row['veri_status'];
+
+  // Output the borrower ID
+   $id = $row['id_num'];
+  $gname = $row['gname'];
+  $sname = $row['sname'];
+  $mname = $row['mname'];
+  $query_string = http_build_query(array(
+    'id' => $id,
+    'sname'  =>  $sname,
+    'gname'  =>  $gname,
+    'mname'  =>  $mname
+  ));
   
-      if($row !== null && $row['id_num'] == $id ){
-        echo "Existing Data";
-      }else{
-        $sql = "INSERT INTO `borrowers`(`id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`,`veri_status`) 
-        VALUES ('$id','$sname','$gname','$mname','$status1','$dep','not')";
-        if ($conn->query($sql) === TRUE) {
-          echo "<script>
-          var modalq = document.getElementById('myModal');
-           modalq.style.display = 'block';
-           </script>";
-        } else {
-          echo "Error: " . $sql . "<br>" . $conn->error;
-        }
-        $conn->close();
-      }
-      
+  // Check if the borrower is verified
+  if($stats == 'verified'){
+    // Reload the page
+    echo "<script>location.reload();</script>";
+  }
+}
+
+// Check if the 'modal' parameter is set in the URL
+if(isset($_GET['modal']) && $_GET['modal'] == 'true'){
+  echo "<script>
+    var modalq = document.getElementById('myModal');
+    modalq.style.display = 'block';
+    var stats = '$stats';
+  </script>";
+  
+} elseif(isset($stats) && $stats == 'verified'){
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Redirect the user to registerface.html with form data
+    $query_string = http_build_query(array(
+      'id' => $id,
+      'sname'  =>  $sname,
+      'gname'  =>  $gname,
+      'mname'  =>  $mname
+    ));
+    header("Location: http://Localhost:5000/registerface.html?" . $query_string);
+    exit;
+  }
+}
+
+// Periodically refresh the page
+echo "<script>
+  var refreshIntervalId = setInterval(function(){
+    if(stats !== 'verified') {
+      window.location.href = 'http://localhost:5000/registerface.html?' + '$query_string';
+    } else {
+      clearInterval(refreshIntervalId);
     }
- 
-  ?>
+  }, $refreshInterval);
+</script>";
+?>
+
     <div class="d-flex align-items-center">
 
- <!-- The Modal -->
-
-   <form autocomplete="off" class="form-control" role="form"  method="post">
+ 
+   <form autocomplete="off" class="form-control" role="form" action = "requesting.php" method="post">
 
      <div class="row">
    <div class="col-sm">
