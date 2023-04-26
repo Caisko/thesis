@@ -14,7 +14,7 @@ ob_start();
 <html lang="en">
 
 <head>
-   <meta http-equiv="refresh" content="30">
+  <!-- refresh <meta http-equiv="refresh" content="30">-->
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css'>
@@ -39,7 +39,28 @@ ob_start();
   <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+ $(document).ready(function() {
+  setInterval(function() {
+    var myVar = Boolean($("#myInput").val());
+    // code to execute every second
+  
+   if (myVar === true) { 
+    location.reload();
+   //console.log("pumasok");
+   //$("#php_refresh").load("face_registration.php");
+  }else{
+  console.log(myVar);
+  console.log("_GET['modal']:", <?php echo $_GET['modal']; ?>);
+  }
+ 
+    //
+  }, 1000); // 1000 milliseconds = 1 second
+ 
+  
+});
+  </script>
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 
@@ -89,7 +110,7 @@ text-align: center;
 </head>
 
 <body>
-
+<input type="hidden" id="myInput" value=" <?php echo $_GET['modal']; ?>" name="myInput" >
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -212,9 +233,11 @@ text-align: center;
   <p id="info"> SUCCESSFULLY REGISTER ! <br> WAIT FOR ADMIN APPROVAL</p>
 </div>
 </div>
+
+  <div id="php_refresh">
 <?php
 // Set the time interval for refreshing the database (in milliseconds)
-$refreshInterval = 10000; // 10 seconds
+$refreshInterval = 1000; // 10 seconds
 
 // Define an empty query string
 $query_string = "";
@@ -249,7 +272,7 @@ if(isset($_GET['id'])){
 }
 
 // Check if the 'modal' parameter is set in the URL
-if(isset($_GET['modal']) && $_GET['modal'] == 'true'){
+if(isset($_GET['modal']) && $_GET['modal'] == 'true' && $stats = 'not'){
   echo "<script>
     var modalq = document.getElementById('myModal');
     modalq.style.display = 'block';
@@ -275,8 +298,10 @@ echo "<script>
   
 </script>";
 ?>
+</div>
 
-    <div class="d-flex align-items-center">
+
+<div class="d-flex align-items-center">
 
  
    <form autocomplete="off" class="form-control" role="form" action = "requesting.php" method="post">
