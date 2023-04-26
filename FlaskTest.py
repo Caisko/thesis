@@ -8,6 +8,7 @@ import numpy as np
 from deepface import DeepFace
 import pandas as pd
 import pickle
+import urllib.parse
 
 thesis_path ="C:/xampp/htdocs/thesis"
 app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project', static_folder='C:/xampp/htdocs/thesis')
@@ -365,10 +366,11 @@ def gen(camera):
 @app.route('/ProceedQR')
 
 def ProceedQR():
-    url = 'http://localhost/thesis/Testingborrow.php'
+    url = 'http://localhost/thesis/borrow_qr.php'
     data = {'name': predicted_name, 'label': label}
-    response = requests.post(url, data=data)
-    return response.content
+    query_string = urllib.parse.urlencode(data)
+    url_with_query_string = url + '?' + query_string
+    return redirect(url_with_query_string)
             
         
 

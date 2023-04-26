@@ -1,15 +1,14 @@
 
+
 <?php
 include 'assets/connection/connect.php';
 session_start();
-$name = $_SESSION["uname"];
-$pass = $_SESSION["password"];
 
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+if (!isset($_SESSION['pincode']) && !isset($_SESSION['true'])) {
 session_destroy();
-header("location:index.php");
+header("location:borrowers.php");
 }
-ob_start();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,102 +48,65 @@ ob_start();
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+<style>
+  .responsive video#qrScanner {
+    transform: scaleX(-100%);
+}
+  </style>
 </head>
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+ <!-- ======= Header ======= -->
+ <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <div class="d-flex align-items-center justify-content-between">
-      <a href="dashboard.php" class=" d-flex align-items-center">
-        
-<img src="assets/img/logo.png" style="width:300px;height:60px;">
-      </a>
-      <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div><!-- End Logo -->
-
+<div class="d-flex align-items-center justify-content-between">
+  <a href="dashboard.php" class=" d-flex align-items-center">
     
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
-
-      <?php
-      $status = "SELECT * FROM admins where id_number = '" . $_SESSION["uname"] . "'";
-      $result = mysqli_query($conn, $status);
-      $row = mysqli_fetch_assoc($result);
-      $id_admin = $row["id"];
-      ?>
-        <li class="nav-item dropdown pe-3">
-
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-          <img src="assets/img/profile/<?php echo $row["profile_pic"]; ?>" alt="Profile" class="rounded-circle" style="width:40px;">
-            <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $row["id_number"]; ?></span>
-          </a><!-- End Profile Iamge Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6><?php echo $row["given_name"], " ", $row["middle_name"], " ", $row["surname"]; ?></h6>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="profile.php">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="logout.php">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
-            </li>
-
-          </ul><!-- End Profile Dropdown Items -->
-        </li><!-- End Profile Nav -->
-
-      </ul>
-    </nav><!-- End Icons Navigation -->
-
-  </header><!-- End Header -->
+<img src="assets/img/logo.png" style="width:300px;height:60px;">
+  </a>
+  <i class="bi bi-list toggle-sidebar-btn"></i>
+</div><!-- End Logo -->
 
 
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+<nav class="header-nav ms-auto">
+  <ul class="d-flex align-items-center">
+    <li class="nav-item dropdown pe-3">
+    <a class="dropdown-item d-flex align-items-center" href="pin_exit.php">
+      <span class="d-none d-md-block ps-2">
+       <i class="bi bi-box-arrow-right"></i>Sign Out</span>
+</a>
+
+      </ul><!-- End Profile Dropdown Items -->
+    </li><!-- End Profile Nav -->
+
+  </ul>
+</nav><!-- End Icons Navigation -->
+
+</header><!-- End Header -->
+
+
+
+ <!-- ======= Sidebar ======= -->
+ <aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="dashboard.php">
-      <i class="bi bi-grid"></i>
-      <span>Dashboard</span>
-    </a>
-  </li><!-- End Dashboard Nav -->
 
-<?php if ($row["position"] == "Priority 2") { ?>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="account.php">
-      <i class="bi bi-person-square"></i>
-      <span>Register Accounts</span>
-    </a>
-  </li><!-- End Register gate pass Nav -->
-  <li class="nav-item">
-  <a class="nav-link collapsed" href="cvsu_equipment.php">
-    <i class="bi bi-card-heading"></i>
-    <span>Add Equipment</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
+
 
 <li class="nav-item">
   <a class="nav-link collapsed" href="face_registration.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowers</span>
+    <span>Add Borrowers</span>
+  </a>
+</li><!-- End Register gate pass Nav -->
+
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="face_registration.php">
+  <i class="bi bi-person-bounding-box"></i>
+    <span>Borrowing Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
@@ -160,40 +122,9 @@ ob_start();
     <span>Return Scanning</span>
   </a>
 </li>End Register gate pass Nav -->
-<li class="nav-item">
-  <a class="nav-link collapsed" href="records.php">
-    <i class="bi bi-archive"></i>
-    <span>Records</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
-<li class="nav-item">
-  <a class="nav-link collapsed" href="inventory.php">
-  <i class="bi-list-check"></i>
-    <span>Inventory</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
 
-  <?php } else if ($row["position"] == "Unit Checker") {  ?>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="gadget.php">
-      <i class="bi bi-credit-card-2-front"></i>
-      <span>Register Gate Pass</span>
-    </a>
-  </li><!-- End Register gate pass Nav --> 
 
-  <?php } ?>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="movein.php">
-      <i class="bi bi-check-square"></i>
-      <span>Move In  Gate Pass</span>
-    </a>
-  </li><!-- End Register gate pass Nav --> 
-  
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="moveout.php">
-      <i class="bi bi-x-square"></i>
-      <span>Move Out Gate Pass</span>
-    </a>
+ 
   <!--</li> End Register gate pass Nav 
   <li class="nav-item">
     <a class="nav-link collapsed" href="check.php">
@@ -221,7 +152,7 @@ ob_start();
   <main id="main" class="main">
 
   <div class="pagetitle">
-      <h1>Borrowing Scanning    </h1>
+      <h1>Borrowing Scanning</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
@@ -236,6 +167,7 @@ ob_start();
 
 <div class="card info-card customers-card">
 
+
   <div class="card-body">
     <h5 class="card-title">Scan QR Here</h5>
     <form method="post" action="validate_borrow.php">
@@ -246,13 +178,23 @@ ob_start();
   <div class="input-group-append">
     <div class="input-group-text bg-primary" style="height: 40px; border-top-left-radius:0;border-bottom-left-radius:0;">    
                   <a onclick="searchTable()" class="btn btn-primary" style="color:white;" >Search</a></div>
-  </div>
+                  </form>
+                </div>
+                <script src="html5-qrcode.min.js" ></script>
+
 </div>
- 
- 
- <img src="1.jpg" style="border:solid 2px; height: 400px; width: 100%;"><br>
- <br>
- <button type="button" class="btn btn-primary" style="width: 80px;">Back</button>
+<form>
+</form>
+
+<div class="responsive" id="reader"></div><br>
+<form action="" >
+ <input type="text" id="get" name="qr" onkeyup="showHint(this.value)"  class="form-control" readonly/>
+  </form>
+
+  <div class="row text-control" id="display">
+         <!-- Display Ajax -->
+    </div>
+
         </div>
         <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0" style="margin-top:100px;">
         <table class="table">
@@ -271,19 +213,15 @@ ob_start();
       <td>epson l300</td>
       
     </tr>
-    <tr>
-      <th scope="row">10</th>
-      <td>chair</td>
-      <td>mono block chair</td>
-      
-  </tr>
+  
   </tbody>
 </table>
             <button type="submit" class="btn btn-primary " style="margin-top: 240px;width:200px;float:right;">Proceed</button>
          </div>
   </div>
  
-  </form>
+
+  
   </div>
 </div>
 
@@ -309,17 +247,43 @@ ob_start();
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
-  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/chart.js/chart.min.js"></script>
-  <script src="assets/vendor/echarts/echarts.min.js"></script>
-  <script src="assets/vendor/quill/quill.min.js"></script>
-  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
- 
+
+  <script src="assets/js/main.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <!-- Template Main JS File -->
- 
+  <script type="text/javascript">
+         function onScanSuccess(qrCodeMessage) {
+             document.getElementById("get").value = qrCodeMessage;
+             showHint(qrCodeMessage);
+        
+         
+         }
+         function onScanError(errorMessage) {
+           //handle scan error
+         }
+         var html5QrcodeScanner = new Html5QrcodeScanner(
+             "reader", { fps: 5, qrbox: 250 });
+         html5QrcodeScanner.render(onScanSuccess, onScanError);
+         
+      </script>
+   <script>
+  function showHint(str) {
+    if (str.length == 0) {
+      document.getElementById("display").innerHTML = "";
+      return;
+    } else {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("display").innerHTML = this.responseText;
+        }
+      };
+      xmlhttp.open("GET", "borrow_item_process.php?id="<?php echo $_GET['label']; ?>"&insert=" + str, true);
+      xmlhttp.send();
+    }
+  }
+</script>
+
 </body>
 
 </html>
