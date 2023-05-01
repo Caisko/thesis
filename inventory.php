@@ -237,18 +237,9 @@ ob_start();
 <div class="card info-card customers-card">
 
   <div class="card-body">
-    <h5 class="card-title">Inventory</h5>
+    <h5 class="card-title">Inventory Items</h5>
         
-    <div class="row" >
-    <div class="input-group " style="float: right;">
-<input type="text" class="form-control" id="searchInput" placeholder="Search" style="height: 40px;">
-  <div class="input-group-append">
-    <div class="input-group-text bg-primary" style="height: 40px; border-top-left-radius:0;border-bottom-left-radius:0;">    
-                  <a onclick="searchTable()" class="btn btn-primary" style="color:white" >Search</a></div>
-  </div>
-</div>
-  </div>
-  </div>
+  
  
   <div class="row">
 
@@ -256,127 +247,50 @@ ob_start();
         <div class="col-lg-12">
           <div class="row">
 
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-4">
+         
+
+<?php 
+ $sql = "SELECT ce.*, i.qr_id_cvsu, ce.quantity AS cequan, ce.id, SUM(i.quantity) AS iquan,
+  COUNT(i.status) AS status_count FROM cvsu_equipment AS ce 
+ LEFT JOIN item_borrow AS i ON i.qr_id_cvsu = ce.id AND i.status != 'return' GROUP BY ce.id;";
+ 
+    
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+?>
+   <!-- Sales Card -->
+
+   <div class="col-xxl-4 col-md-4">
               <div class="card info-card revenue-card">
 
-
-                <div class="card-body">
-                  <h5 class="card-title">PROJECTORS<span> </span></h5>
-
+                <div class="card-body" >
+                  <h5 class="card-title" ><?php echo strtoupper($row['item_name']);?><span> </span></h5>
+          <?php
+          
+          ?>
                   <div class="d-flex align-items-center">
-              
+                      <?php echo $row["status_count"],"/",$row['quantity'];?>
                     <div class="ps-3">
-                      <?php 
-                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'approved' AND `in/out` = 'in' ";
-                        $result = mysqli_query($conn, $count);
-                        $row  = mysqli_fetch_assoc($result); ?>
-                      <h6><?php echo $row["count"], "/5";  ?></h6>
-                   
+                     
                     </div>
                   </div>
                 </div>
 
               </div>
-            </div><!-- End Sales Card -->
-
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-4">
-              <div class="card info-card sales-card ">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">CHAIRS</h5>
-
-                  <div class="d-flex align-items-center">
-                
-                    <div class="ps-3">
-                    <?php 
-                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'approved' AND `in/out` = 'out' ";
-                        $result = mysqli_query($conn, $count);
-                        $row  = mysqli_fetch_assoc($result); ?>
-                       <h6><?php echo $row["count"], "/45";  ?></h6>
-               
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Revenue Card -->
-              <!-- Sales Card -->
-              <div class="col-xxl-4 col-md-4">
-              <div class="card info-card ">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">SPEAKERS</h5>
-
-                  <div class="d-flex align-items-center">
-                 
-                    <div class="ps-3">
-                      <?php 
-                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'declined' ";
-                        $result = mysqli_query($conn, $count);
-                        $row  = mysqli_fetch_assoc($result); ?>
-                     <h6><?php echo $row["count"], "/5";  ?></h6>
-                    
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Sales Card -->
-              <!-- Sales Card -->
-              <div class="col-xxl-4 col-md-4">
-              <div class="card info-card ">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">TABLES</h5>
-
-                  <div class="d-flex align-items-center">
-                 
-                    <div class="ps-3">
-                      <?php 
-                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'declined' ";
-                        $result = mysqli_query($conn, $count);
-                        $row  = mysqli_fetch_assoc($result); ?>
-                     <h6><?php echo $row["count"], "/5";  ?></h6>
-                    
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Sales Card -->
-              <!-- Sales Card -->
-              <div class="col-xxl-4 col-md-4">
-              <div class="card info-card ">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">PRINTERS</h5>
-
-                  <div class="d-flex align-items-center">
-                 
-                    <div class="ps-3">
-                      <?php 
-                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'declined' ";
-                        $result = mysqli_query($conn, $count);
-                        $row  = mysqli_fetch_assoc($result); ?>
-                     <h6><?php echo $row["count"], "/5";  ?></h6>
-                    
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Sales Card -->
            
-  
-</div>
+              </div><!-- End Sales Card -->
 
-</div><!-- End Customers Card -->
+<?php
+  }
+}
+?>
+
+            </div>
+  </div><!-- End Customers Card -->
+
     </section>
 
   </main><!-- End #main -->

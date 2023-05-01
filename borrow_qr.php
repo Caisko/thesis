@@ -4,6 +4,10 @@
 include 'assets/connection/connect.php';
 session_start();
 
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+session_destroy();
+header("location:index.php");
+}
 if (!isset($_SESSION['pincode']) && !isset($_SESSION['true'])) {
 session_destroy();
 header("location:borrowers.php");
@@ -104,7 +108,7 @@ header("location:borrowers.php");
 
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="http://localhost:5000/scanface.html">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowing Item</span>
   </a>
@@ -167,56 +171,107 @@ header("location:borrowers.php");
 
 <div class="card info-card customers-card">
 
-
+<?php
+if(isset($_GET['success'])){
+  echo $_GET['success'];
+}else if(isset($_GET['error'])){
+  echo $_GET['error'];
+}
+?>
   <div class="card-body">
     <h5 class="card-title">Scan QR Here</h5>
-    <form method="post" action="validate_borrow.php">
+    <form>
     <div class="row">
         <div class="col-sm-5 col-md-6">
         <div class="input-group mb-3">
-        <input type="text" class="form-control" id="searchInput" placeholder="Search QR Number" style="height: 40px;">
-  <div class="input-group-append">
-    <div class="input-group-text bg-primary" style="height: 40px; border-top-left-radius:0;border-bottom-left-radius:0;">    
-                  <a onclick="searchTable()" class="btn btn-primary" style="color:white;" >Search</a></div>
-                  </form>
-                </div>
-                <script src="html5-qrcode.min.js" ></script>
-
-</div>
-<form>
-</form>
-
-<div class="responsive" id="reader"></div><br>
-<form action="" >
- <input type="text" id="get" name="qr" onkeyup="showHint(this.value)"  class="form-control" readonly/>
+        <form action="" >
+ <input type="text" id="search" name="qr" onkeyup="showHint(this.value)"  class="form-control" placeholder="Search here..">
+ 
   </form>
 
-  <div class="row text-control" id="display">
-         <!-- Display Ajax -->
-    </div>
+        <input type="hidden" class="form-control" id="searchInput" placeholder="Search QR Number" style="height: 40px;">
+  <div class="input-group-append">
+    <div class="input-group-text bg-primary" style="height: 40px; border-top-left-radius:0;border-bottom-left-radius:0;display:none;">    
+                  <a onclick="searchTable()" class="btn btn-primary" style="color:white;display:none;" >Search</a></div>
+                  </form>
+                </div>
+            
+
+</div>
+
+<script src="html5-qrcode.min.js" ></script>
+<div class="responsive" id="reader"></div><br>
+
 
         </div>
-        <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0" style="margin-top:100px;">
-        <table class="table">
+        <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0">
+    
+        <table class="table" id="myTable">
   <thead>
     <tr>
       <th scope="col">QTY</th>
       <th scope="col">Equipment</th>
       <th scope="col">Description</th>
+      <th scope="col">Action</th>
      
     </tr>
   </thead>
+  <?php
+  $label = $_GET['label'];
+    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del, i.qr_id_cvsu ,count(i.quantity) as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE b.id_num ='$label' and transaction = '' group by ce.id ";
+    
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+  ?>
   <tbody>
     <tr>
-      <th scope="row">1</th>
-      <td>printer</td>
-      <td>epson l300</td>
       
+      <th scope="row"><?php echo $row['quan'];?></th>
+      <td><?php echo $name1 = $row['name1'];?></td>
+      <td><?php echo $row['desc1'];?></td>
+
+      <td>
+      <?php if(empty($row['se'])){?>
+      <a href="update_in_table.php?name=<?php echo $_GET['name'];?>&label=<?php echo $_GET['label'];?>&ced=<?php echo $row['ced']; ?>" class="btn btn-success" ><i class="bi bi-plus"></i></a>
+    <?php }?>
+    <a href="delete_in_table.php?name=<?php echo $_GET['name'];?>&label=<?php echo $_GET['label'];?>&id=<?php echo $row['id_del']; ?>" class="btn btn-danger" ><i class="bi bi-trash"></i></a>
     </tr>
   
   </tbody>
+  <?php
+   }
+  } else {
+    
+  }
+  ?>
 </table>
-            <button type="submit" class="btn btn-primary " style="margin-top: 240px;width:200px;float:right;">Proceed</button>
+<?php 
+$trans = "Trans";
+$random = substr(md5(mt_rand()), 0, 7);
+$all = [$trans, $random];
+?>
+<form method="post" action="adding.php">
+<p>Date Return<p>  
+        <input type="date" class="form-control"  style="height: 40px;" name="date"  min="<?php echo date('Y-m-d'); ?>" required>
+        <input type="hidden" name="label" value="<?php echo $_GET['label'];?>" >
+        <input type="hidden" name="name" value="<?php echo $_GET['name'];?>" >
+     
+        <input type="hidden" name="name1" value="<?php if(isset($name1)){echo $name1;}?>" >
+
+    
+        <?php
+       
+?>
+<input type="submit" name="submit" class="btn btn-primary " style="margin-top: 240px;width:200px;float:right;" value="Proceed">
+
+      </form>
+
+                                                   <div class="row text-control" id="display">
+                                                      <!-- Display Ajax -->
+                                                   </div>
+           
          </div>
   </div>
  
@@ -250,19 +305,18 @@ header("location:borrowers.php");
 
   <script src="assets/js/main.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-  <!-- Template Main JS File -->
   <script type="text/javascript">
          function onScanSuccess(qrCodeMessage) {
-             document.getElementById("get").value = qrCodeMessage;
+             document.getElementById("search").value = qrCodeMessage;
              showHint(qrCodeMessage);
-        
+            
          
          }
          function onScanError(errorMessage) {
            //handle scan error
          }
          var html5QrcodeScanner = new Html5QrcodeScanner(
-             "reader", { fps: 5, qrbox: 250 });
+             "reader", { fps: 10, qrbox: 250 });
          html5QrcodeScanner.render(onScanSuccess, onScanError);
          
       </script>
@@ -278,10 +332,24 @@ header("location:borrowers.php");
           document.getElementById("display").innerHTML = this.responseText;
         }
       };
-      xmlhttp.open("GET", "borrow_item_process.php?id="<?php echo $_GET['label']; ?>"&insert=" + str, true);
+      xmlhttp.open("GET", "borrow_item_process.php?id=<?php echo $_GET['label']; ?>&insert=" + str, true);
+
       xmlhttp.send();
     }
   }
+  
+ 
+ 
+ 
+
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    setInterval(function() {
+      $("#myTable").load(location.href + " #myTable");
+    }, 1000);
+  });
 </script>
 
 </body>

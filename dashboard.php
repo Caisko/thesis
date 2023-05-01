@@ -233,7 +233,7 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="borrowers.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowers</span>
   </a>
@@ -455,9 +455,9 @@ header("location:index.php");
                     ?>
                     <!-- The Modal -->
                     
-                        <div id="myModal" class="modal">
+                        <div id="myModal" class="modal" id="moodal" style="display:block;">
                         <!-- Modal content -->
-                        <div class="modal-content">
+                        <div class="modal-content" >
                       
                           
                           <p class="title"><i class="bi bi-question-diamond-fill"></i>  Requesting</p>
@@ -803,8 +803,13 @@ searchInput.addEventListener("keydown", function(event) {
   <script src="assets/vendor/php-email-form/validate.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
 
+<script src="assets/js/main.js">
+
+
+</script>
+
+  
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 16, 2023 at 11:04 AM
+-- Generation Time: Apr 28, 2023 at 07:29 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -99,21 +99,18 @@ CREATE TABLE `borrowers` (
   `gname` varchar(50) NOT NULL,
   `mname` varchar(50) NOT NULL,
   `status` varchar(50) NOT NULL,
-  `Deparment` varchar(100) NOT NULL
+  `Deparment` varchar(100) NOT NULL,
+  `veri_status` enum('verified','not') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `borrowers`
 --
 
-INSERT INTO `borrowers` (`id`, `id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`) VALUES
-(5, '1112', 'Felices', 'Paul Kenneth', 'C', 'Permanent', 'IT Department'),
-(6, '3344', 'Malabanan', 'John Carlo', 'C', 'Permanent', 'IT DEPARTMENT'),
-(7, '2131', 'Gonzales', 'Jazz Gibson', 'M', 'Temporary', 'CS Department'),
-(8, '3344', 'Khen', 'Khen', 'Khen', 'Contractual of Service', 'Sa gate'),
-(9, '3344', 'khen', '123', 'qw', 'Temporary', 'imus'),
-(10, '123421', 'khen', 'khen', 'khen', 'Temporary', 'imus'),
-(11, '9218390', 'imus', 'imus', 'imus', 'Permanent', 'it');
+INSERT INTO `borrowers` (`id`, `id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`, `veri_status`) VALUES
+(2, '201811568', 'FELICES', 'PAUL KENNETH', 'CABALU', 'Permanent', 'IT DEPARTMENT', 'verified'),
+(3, '37281973198', 'FELICES', 'PAUL KENNETH', 'CABALU', 'Permanent', 'IT DEPARTMENT', 'verified'),
+(4, '9089083920', 'Isla', 'Justine Erica', 'Aguilar', 'Contractual', 'HM Department', 'not');
 
 -- --------------------------------------------------------
 
@@ -138,11 +135,10 @@ CREATE TABLE `cvsu_equipment` (
 --
 
 INSERT INTO `cvsu_equipment` (`id`, `qr_id`, `equipment`, `category`, `item_name`, `serial`, `quantity`, `description`, `qr`) VALUES
-(1, 'CVSUQRpropb0a46f1', 'other', 'Computer', 'MSI PC', '231321312', 1, '', ''),
-(2, 'CVSUQRprop22ca352', 'other', 'Electric Fan', 'Standard Fan', '', 10, 'lahat pula', ''),
-(3, 'CVSUQRprop5d93622', 'other', 'Laptop', 'msic', '12333', 1, 'wew', ''),
-(4, 'CVSUQRprop29be165', 'other', 'Projector', '1', '1', 1, '', ''),
-(5, 'CVSUQRprop2e2b681', 'other', 'Pencil', 'Monggol', '', 10, 'sampu nito', 'temp/Qr02feb9b64ae85a0bd01b32fd20017b41.png');
+(1, 'CVSUQRprop2bbc19a', 'Laptop', '', 'dell', '2314141', 1, 'itim 14 inches ', 'temp/Qr104aa2859c464767d5ffd41d53a25be8.png'),
+(2, 'CVSUQRprop8302779', 'Projector', '', 'mitsu', '31231', 1, 'kulay puti', 'temp/Qr58d149589f8047abf9246c50d9745298.png'),
+(3, 'CVSUQRpropc896447', 'Pencil', '', 'MONGGOL 2', '', 5, 'PINK', 'temp/Qrd8776783c16f6a7eaf9750aaff93fe5e.png'),
+(4, 'CVSUQRprop3f95d9e', 'Chalk', '', 'MAKULAY', '', 10, 'MAKULAY', 'temp/Qrb668d5cd1045cdbdb90dc3978d95a521.png');
 
 -- --------------------------------------------------------
 
@@ -184,6 +180,26 @@ INSERT INTO `gatepass` (`id`, `gatepass_id`, `gatepass_cat`, `gate_cat_2`, `id_n
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `item_borrow`
+--
+
+CREATE TABLE `item_borrow` (
+  `id` int(11) NOT NULL,
+  `borrower_id_num` int(11) NOT NULL,
+  `qr_id` int(50) NOT NULL,
+  `quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `item_borrow`
+--
+
+INSERT INTO `item_borrow` (`id`, `borrower_id_num`, `qr_id`, `quantity`) VALUES
+(83, 3, 2, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `item_category`
 --
 
@@ -203,6 +219,23 @@ INSERT INTO `item_category` (`id`, `category_name`) VALUES
 (4, 'Electric Fan'),
 (5, 'Chalk'),
 (6, 'Pencil');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pin_default`
+--
+
+CREATE TABLE `pin_default` (
+  `pin` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `pin_default`
+--
+
+INSERT INTO `pin_default` (`pin`) VALUES
+('1234');
 
 -- --------------------------------------------------------
 
@@ -262,6 +295,14 @@ ALTER TABLE `gatepass`
   ADD KEY `fk_admin_gatepass` (`fk_admins`);
 
 --
+-- Indexes for table `item_borrow`
+--
+ALTER TABLE `item_borrow`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `knowing_borrower` (`borrower_id_num`),
+  ADD KEY `knowing_item` (`qr_id`);
+
+--
 -- Indexes for table `item_category`
 --
 ALTER TABLE `item_category`
@@ -294,19 +335,25 @@ ALTER TABLE `allrecords`
 -- AUTO_INCREMENT for table `borrowers`
 --
 ALTER TABLE `borrowers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `cvsu_equipment`
 --
 ALTER TABLE `cvsu_equipment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `gatepass`
 --
 ALTER TABLE `gatepass`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
+
+--
+-- AUTO_INCREMENT for table `item_borrow`
+--
+ALTER TABLE `item_borrow`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `item_category`
@@ -329,6 +376,13 @@ ALTER TABLE `unit_number`
 --
 ALTER TABLE `gatepass`
   ADD CONSTRAINT `fk_admin_gatepass` FOREIGN KEY (`fk_admins`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `item_borrow`
+--
+ALTER TABLE `item_borrow`
+  ADD CONSTRAINT `knowing_borrower` FOREIGN KEY (`borrower_id_num`) REFERENCES `borrowers` (`id`),
+  ADD CONSTRAINT `knowing_item` FOREIGN KEY (`qr_id`) REFERENCES `cvsu_equipment` (`id`);
 
 --
 -- Constraints for table `unit_number`
