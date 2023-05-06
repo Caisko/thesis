@@ -205,8 +205,8 @@ if(isset($_GET['success'])){
 
         </div>
         <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0">
-    
-        <table class="table" id="myTable">
+   
+        <table class="table table-striped" id="myTable" >
   <thead>
     <tr>
       <th scope="col">QTY</th>
@@ -252,30 +252,26 @@ $trans = "Trans";
 $random = substr(md5(mt_rand()), 0, 7);
 $all = [$trans, $random];
 ?>
-<form method="post" action="adding.php">
-<p>Date Return<p>  
-        <input type="date" class="form-control"  style="height: 40px;" name="date"  min="<?php echo date('Y-m-d'); ?>" required>
+<br>
+<form method="post" action="adding.php" >
+<p >Date Return<p>  
+<input type="date" class="form-control" name="date" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+1 month')); ?>" required>
+
         <input type="hidden" name="label" value="<?php echo $_GET['label'];?>" >
         <input type="hidden" name="name" value="<?php echo $_GET['name'];?>" >
      
         <input type="hidden" name="name1" value="<?php if(isset($name1)){echo $name1;}?>" >
-
-    
         <?php
        
 ?>
-<input type="submit" name="submit" class="btn btn-primary " style="margin-top: 240px;width:200px;float:right;" value="Proceed">
+<input type="submit" name="submit" class="btn btn-primary " style="width:200px;float:right;position:relative;top:10px;" value="Proceed">
 
       </form>
-
-                                                   <div class="row text-control" id="display">
-                                                      <!-- Display Ajax -->
-                                                   </div>
-           
+         </div>
          </div>
   </div>
  
-
+  </div>
   
   </div>
 </div>

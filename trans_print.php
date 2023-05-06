@@ -53,7 +53,7 @@ header("location:borrowers.php");
   ======================================================== -->
 </head>
 
-<body>
+<body >
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -173,7 +173,66 @@ header("location:borrowers.php");
      
 <div class="row">
     <?php  $qr = $_GET["print"];?>
-    <img src="<?php echo $qr; ?>" style="width:250px;margin:auto;">
+    <?php
+    $status = "SELECT * from item_borrow where `qr_print`= '$qr'";
+     $result = mysqli_query($conn, $status);
+     $row    = mysqli_fetch_assoc($result);
+     $date_borrow = $row['date_borrow'];
+     $date_return = $row['date_return'];
+     $id_num = $row['borrower_id_num'];
+    ?>
+   <div style="position:relative; float:right;">
+  <img src="<?php echo $qr; ?>" style="width:100px; position:absolute; right:0;"><br>
+  <p style="text-align:right;margin-top:80px;">Transaction ID:</p><br>
+  <p style="font-weight: bold; text-align:right;margin-top:-20px;">
+    <?php echo $trans = $row['transaction']; ?>
+  </p>
+  <?php
+   $status = "SELECT * from borrowers where `id`= '$id_num'";
+   $result = mysqli_query($conn, $status);
+   $row    = mysqli_fetch_assoc($result);
+  ?>
+  <p style="font-size:16px;">Borrowers Name: <?php echo $row['sname'],",",$row['gname']," ",$row['mname'];?></p>
+  <p style="font-size:15px;">Date Borrow: <?php echo $date_borrow;?></p>
+  <p style="font-size:15px;">Date Return: <?php echo $date_return;?></p>
+</div>
+
+    <table class="table" id="myTable" >
+  <thead>
+    <tr>
+      <th scope="col">QTY</th>
+      <th scope="col">Equipment</th>
+      <th scope="col">Description</th>
+    
+     
+    </tr>
+  </thead>
+  <?php
+
+    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del,i.status as stats,i.qr_id_cvsu ,count(i.quantity) as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE `transaction`= '$trans' group by ce.id ";
+    
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+  ?>
+  <tbody>
+    <tr>
+      
+      <th scope="row"><?php echo $row['quan'];?></th>
+      <td><?php echo $name1 = $row['name1'];?></td>
+      <td><?php echo $row['desc1'];?></td>
+
+    </tr>
+  
+  </tbody>
+  <?php
+   }
+  } else {
+    
+  }
+  ?>
+</table>
 </div>
 
 <input class="btn btn-primary w-100 hidden-print" type="button" onclick="printAndRedirect()" value="Print QR Code">
@@ -190,7 +249,7 @@ function printAndRedirect() {
   currentWindow.close();
 
   // I-redirect ang user sa desired URL
-  window.location.href = "http://localhost:5000/scanface.html";
+  window.location.href = "../thesis/face_registration.php";
 }
 </script>
    
