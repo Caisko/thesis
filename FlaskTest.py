@@ -22,6 +22,9 @@ parent_dir = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition projec
 resizedFolder = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project/resizedTrainingImages"
 
 global model
+global scanningboolean
+
+scanningboolean = False
 model = "Facenet512"
 
 
@@ -44,15 +47,15 @@ def registerface():
     global NameRegister
     global path
 
-    # id_number_Register = request.args.get('id')
-    # sname = request.args.get('sname')
-    # gname = request.args.get('gname')
-    # mname = request.args.get('mname')
-    # fullname = [sname, " ", gname, " ", mname]
-    # NameRegister = "".join(fullname)
-    # path = os.path.join(parent_dir,id_number_Register)
-    # print(f"Name: {NameRegister}")
-    # print(f"ID Number: {id_number_Register}")
+    id_number_Register = request.args.get('id')
+    sname = request.args.get('sname')
+    gname = request.args.get('gname')
+    mname = request.args.get('mname')
+    fullname = [sname, " ", gname, " ", mname]
+    NameRegister = "".join(fullname)
+    path = os.path.join(parent_dir,id_number_Register)
+    print(f"Name: {NameRegister}")
+    print(f"ID Number: {id_number_Register}")
     return render_template('registerface.html')
 
 
@@ -60,6 +63,7 @@ def registerface():
 def gen(camera):
     #os.makedirs(path)
     #os.chdir(path)
+
     while True:
         frame = camera.get_frame()
         if frame is not None:
@@ -107,96 +111,6 @@ def capture_images():
 
 
 
-#------------------------------------------------------------
-@app.route('/scancapture')
-def scancapture():
-    global CapturingMessageScan
-    global MessageIDnumber
-    global ScanAgain
-    global predicted_name
-    global label
-    ScanAgain = False
-    MessageIDnumber = ''
-    
-
-    # os.chdir(root_dir)
-
-    frame_bytes = camera.get_frame()
-    frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
-    SingleCapture = thesis_path + '/frame.jpg'
-    cv2.imwrite(SingleCapture, frame)
-    CapturingMessageScan = 'Image Captured. Recognizing...'
-    os.chdir(root_dir)
-
-    records={}
-    for path,subdirnames,filenames in os.walk("TemporaryImages"):
-        fullword = ""
-        if len(filenames) == 0:
-            continue
-        else:
-            containerlist = []
-            for filename in filenames:
-                if filename.endswith('.pkl'):
-                    continue
-                else:
-                    for f in filename:
-                        containerlist.append(f)
-                    for i in range(5):
-                        containerlist.pop()
-                    for elements in containerlist:
-                        fullword += elements
-                    break
-                
-            print("ETO ANG PATH " + path)
-            if path != 'TemporaryImages':
-                IDcontainer = int(os.path.basename(path))
-                records[IDcontainer] = fullword
-
-
-    # Huhulaan na kung sino
-    try:
-        results = DeepFace.find(img_path= SingleCapture, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=False)
-
-        pd.options.display.max_colwidth = None
-        result_df = pd.DataFrame(columns=['identity', 'confidence'])
-
-        if len(results) != 0:
-            for df in results:
-                df['confidence'] = (1 - df[model + '_cosine']) * 100  # Convert distance to percentage
-                result_df = pd.concat([result_df, df[['identity', 'confidence']]], ignore_index=True)
-            
-            # Get the first row of result_df using iloc
-            first_row = result_df.iloc[0]
-
-            # Access the identity and confidence values of the first row using the column names
-            identity = first_row['identity']
-            confidence = first_row['confidence']
-
-            label = int(os.path.basename(os.path.dirname(identity)))
-            predicted_name = records[label]
-            print(label)
-            print(predicted_name)
-
-            print(f"Identity: {predicted_name}\n Confidence: {confidence}")
-            CapturingMessageScan = ("Name: " + predicted_name )
-            MessageIDnumber = ("ID Number: " + str(label))
-
-        else:
-                
-            CapturingMessageScan = "No Face Detected Please Try again."
-
-    
-
-    except:
-        CapturingMessageScan = "No Face Detected Please Try again."
-        ScanAgain = True
-        
-   
-    ScanAgain = True
-    
-
-    return 'Done'
-
 
 
 #------------------------------------------------------------
@@ -204,9 +118,9 @@ def scancapture():
 def SearchIDnumber():
     global CapturingMessageScan
     global MessageIDnumber 
-    global ScanAgain
     global predicted_name
     global label
+    
 
     data = request.get_json()
 
@@ -249,11 +163,11 @@ def SearchIDnumber():
         label = str(Search_ID)
         CapturingMessageScan = ("Name: " + predicted_name)
         MessageIDnumber = ("ID Number: " + label)
-        ScanAgain = True
+
     except:
         CapturingMessageScan = "No ID Number Found..."
         MessageIDnumber = ''
-        ScanAgain = True
+
 
 
             
@@ -272,7 +186,6 @@ def CaptureMessageScan():
     response = {
         'CapturingMessageScan': CapturingMessageScan,
         'MessageIDnumber': MessageIDnumber,
-        'ScanAgain': ScanAgain
     }
 
     return jsonify(response)
@@ -316,21 +229,7 @@ def Training_AI():
     CapturingMessage = 'Done Training Data!'
     
     print("\n------done training data-------\n")
-    # faces,faceID=fr.labels_for_training_data('TemporaryImages',id_number_Register)
-    # try:
-    #     face_recognizer=fr.update_classifier(faces,faceID)
-    #     face_recognizer.write('trainingData.yml')
-    # except:
-    #     face_recognizer=fr.train_classifier(faces,faceID)
-    #     face_recognizer.write('trainingData.yml')
-    # print("\n------done training data-------\n")
 
-    # CapturingMessage = 'Done Training Data!'
-
-    # Pause for 2 seconds
-    # sleep(2)
-
-    # Redirect to the /registerform route
     return 'Done'
 
 
@@ -352,15 +251,123 @@ def ClosingCamera():
 def scanface():
     return render_template('scanface.html')
 
-def gen(camera):
-    #os.makedirs(path)
-    #os.chdir(path)
-    while True:
-        frame = camera.get_frame()
-        if frame is not None:
-            yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+#------------------------------------------------------------
+@app.route('/scancapture')
+def scancapture():
+    global CapturingMessageScan
+    global MessageIDnumber
+    global predicted_name
+    global label
+    global scanningboolean
+    scanningboolean = True
+    MessageIDnumber = ''
+    
+
+    # os.chdir(root_dir)
+
+    SingleCapture = thesis_path + '/frame.jpg'
+    CapturingMessageScan = 'Image Captured. Recognizing...'
+    os.chdir(root_dir)
+
+    records={}
+    for path,subdirnames,filenames in os.walk("TemporaryImages"):
+        fullword = ""
+        if len(filenames) == 0:
+            continue
+        else:
+            containerlist = []
+            for filename in filenames:
+                if filename.endswith('.pkl'):
+                    continue
+                else:
+                    for f in filename:
+                        containerlist.append(f)
+                    for i in range(5):
+                        containerlist.pop()
+                    for elements in containerlist:
+                        fullword += elements
+                    break
+                
             
+            if path != 'TemporaryImages':
+                IDcontainer = int(os.path.basename(path))
+                records[IDcontainer] = fullword
+
+
+    # Huhulaan na kung sino
+    while scanningboolean:
+        try:
+            detecting = DeepFace.extract_faces(img_path=SingleCapture, enforce_detection=False)
+            results = DeepFace.find(img_path= SingleCapture, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=False)
+            
+            pd.options.display.max_colwidth = None
+            result_df = pd.DataFrame(columns=['identity', 'confidence'])
+
+            if detecting[0]['facial_area']['x'] != 0:
+                for df in results:
+                    df['confidence'] = (1 - df[model + '_cosine']) * 100  # Convert distance to percentage
+                    result_df = pd.concat([result_df, df[['identity', 'confidence']]], ignore_index=True)
+                
+                # Get the first row of result_df using iloc
+                first_row = result_df.iloc[0]
+
+                # Access the identity and confidence values of the first row using the column names
+                identity = first_row['identity']
+                confidence = first_row['confidence']
+
+                label = int(os.path.basename(os.path.dirname(identity)))
+                predicted_name = records[label]
+                print(label)
+                print(predicted_name)
+
+                print(f"Identity: {predicted_name}\n Confidence: {confidence}")
+                CapturingMessageScan = ("Name: " + predicted_name )
+                MessageIDnumber = ("ID Number: " + str(label))
+
+            else:
+    
+                CapturingMessageScan = "No Face Detected Please Try again."
+                MessageIDnumber = ''
+
+
+        
+
+        except Exception as e:
+            CapturingMessageScan = "No Matched Face."
+            MessageIDnumber = ''
+            print(e)
+
+      
+   
+    
+
+    return 'Done'
+
+
+#------------------------------------------------------------
+def gen(camera):
+    global showingframe_bytes
+    global showingframe_np
+    SingleCapture = thesis_path + '/frame.jpg'
+    while True:
+        showingframe_bytes = camera.get_frame()  # Get frame as byte array
+        showingframe_np = cv2.imdecode(np.frombuffer(showingframe_bytes, np.uint8), -1)  # Decode byte array to numpy array
+        if scanningboolean:
+            cv2.imwrite(SingleCapture, showingframe_np)
+            square = DeepFace.extract_faces(img_path=SingleCapture, enforce_detection=False)
+            facial_area = square[0]['facial_area']
+            x, y, w, h = facial_area['x'], facial_area['y'], facial_area['w'], facial_area['h']
+            showingframe_np = cv2.rectangle(showingframe_np, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            if showingframe_np is not None:
+                _, showingframe_bytes = cv2.imencode('.jpg', showingframe_np)  # Encode numpy array to JPEG byte array
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes.tobytes() + b'\r\n\r\n')
+        else:
+            if showingframe_bytes is not None:
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes + b'\r\n\r\n')
+
             
 #------------------------------------------------------------
 @app.route('/ProceedQR')
@@ -373,7 +380,14 @@ def ProceedQR():
     return redirect(url_with_query_string)
             
         
+#------------------------------------------------------------
+@app.route('/booleanfalse')
 
+def booleanfalse():
+    global scanningboolean
+    scanningboolean = False
+
+    return 'Done'
 
 
 

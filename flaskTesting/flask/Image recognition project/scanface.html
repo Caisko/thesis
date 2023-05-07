@@ -11,7 +11,7 @@
     <h3 style="font-family: Arial; position: absolute; top: 13%; left: 54%;"><div id="ID Number"></div></h3>
     
 
-    <button id="captureButton"  style="width: 150x; height: 30px; position: absolute; top: 85%; left: 23%;">Capture</button>
+    
     <button onclick="showQRscanningPage()" id = "Proceed" style = "width: 150x; height: 30px; display: none; position: absolute; bottom: 10%; right: 10%; ">Proceed</button>
     
     
@@ -29,25 +29,42 @@
   
     
     <script>
+
+      window.onload = function(){
+        const xhr = new XMLHttpRequest();
+          xhr.open('GET', '/scancapture');
+          xhr.send();
+          RecieveMessage();
+
+      }
+
       window.onbeforeunload = function() {
             // Close the camera here
              // Send an AJAX request to the /capture_images route
           const closecamera = new XMLHttpRequest();
           closecamera.open('GET', '/ClosingCamera');
           closecamera.send();
+
+          const booleanfalse = new XMLHttpRequest();
+          booleanfalse.open('GET', '/booleanfalse');
+          booleanfalse.send();
           
             
         }
 
-        captureButton.addEventListener('click', () => {
-          captureButton.style.display = 'none';
-      
-          // Send an AJAX request to the /capture_images route
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', '/scancapture');
-          xhr.send();
+        window.addEventListener('beforeunload', function(event) {
+        const booleanfalse = new XMLHttpRequest();
+        booleanfalse.open('GET', '/booleanfalse');
+        booleanfalse.send();
+
+        const closecamera = new XMLHttpRequest();
+          closecamera.open('GET', '/ClosingCamera');
+          closecamera.send();
+      });
+
+        
           
-        });
+          
         
 
         // Add event listener for "keydown" event on search input field
@@ -61,14 +78,11 @@
     
       let intervalId;
 
-      captureButton.addEventListener('click', () => {
+      
 
-          RecieveMessage();
-
+          
 
       
-      });
-
 
       function showQRscanningPage() {
         window.location.href = 'http://localhost:5000/ProceedQR';
@@ -96,7 +110,7 @@
 
         
       });
-      RecieveMessage()
+      // RecieveMessage()
     }
 
 
@@ -115,18 +129,16 @@
               var response = JSON.parse(CaptureMessageScan.responseText);
               document.getElementById("Name").innerText = response.CapturingMessageScan;
               document.getElementById("ID Number").innerText = response.MessageIDnumber;
-              if(response.ScanAgain == true){
-                captureButton.style.display = 'inline';
-              }
-              if (response.CapturingMessageScan !== 'Image Captured. Recognizing...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' ) {
+              
+              if (response.CapturingMessageScan !== 'Image Captured. Recognizing...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' && response.CapturingMessageScan !== 'No Matched Face.') {
                 Proceed.style.display = 'inline';
               }
               else{
                 Proceed.style.display = 'none';
               }
-              if (response.CapturingMessageScan !== 'Image Captured. Recognizing...'){
-                clearInterval(intervalId)
-              }
+              // if (response.CapturingMessageScan !== 'Image Captured. Recognizing...'){
+              //   clearInterval(intervalId)
+              // }
               
             }
           }

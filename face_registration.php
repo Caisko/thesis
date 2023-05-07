@@ -41,25 +41,25 @@ ob_start();
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-//  $(document).ready(function() {
-//   setInterval(function() {
-//     var myVar = Boolean($("#myInput").val());
-//     // code to execute every second
+ $(document).ready(function() {
+  setInterval(function() {
+    var myVar = Boolean($("#myInput").val());
+    // code to execute every second
   
-//    if (myVar === true) { 
-//     location.reload();
-//    //console.log("pumasok");
-//    //$("#php_refresh").load("face_registration.php");
-//   }else{
-//   console.log(myVar);
-//   console.log("_GET['modal']:", <?php echo $_GET['modal']; ?>);
-//   }
+   if (myVar === true) { 
+    location.reload();
+   //console.log("pumasok");
+   //$("#php_refresh").load("face_registration.php");
+  }else{
+  console.log(myVar);
+  console.log("_GET['modal']:", <?php echo $_GET['modal']; ?>);
+  }
  
-//     //
-//   }, 1000); // 1000 milliseconds = 1 second
+    //
+  }, 1000); // 1000 milliseconds = 1 second
  
   
-// });
+});
   </script>
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
@@ -237,7 +237,7 @@ text-align: center;
   <div id="php_refresh">
 <?php
 // Set the time interval for refreshing the database (in milliseconds)
-$refreshInterval = 1000; // 10 seconds
+$refreshInterval = 100; // 10 seconds
 
 // Define an empty query string
 $query_string = "";
@@ -265,37 +265,38 @@ if(isset($_GET['id'])){
   ));
   
   // Check if the borrower is verified
-//   if($stats == 'verified'){
-//     // Set a flag to force a page refresh
-//     echo "<script>window.refreshPage = true;</script>";
-//   }
+  if($stats == 'verified'){
+    // Set a flag to force a page refresh
+    echo "<script>window.refreshPage = true;</script>";
+  }
 }
 
 // Check if the 'modal' parameter is set in the URL
-// if(isset($_GET['modal']) && $_GET['modal'] == 'true' && $stats = 'not'){
-//   echo "<script>
-//     var modalq = document.getElementById('myModal');
-//     modalq.style.display = 'block';
-//     var stats = '$stats';
+if(isset($_GET['modal']) && $_GET['modal'] == 'true' && $stats = 'not'){
+  echo "<script>
+    var modalq = document.getElementById('myModal');
+    modalq.style.display = 'block';
+    var stats = '$stats';
   
-//   </script>";
+  </script>";
   
-// } 
+} 
 
 // Periodically refresh the page
-// echo "<script>
-//   var refreshIntervalId = setInterval(function(){
-//     if(window.refreshPage) {
-//       // Reload the page with the updated query string
-     
-//     } else {
-//       clearInterval(refreshIntervalId);
-//     }
-//   }, $refreshInterval);
+echo "<script>
+  var refreshIntervalId = setInterval(function(){
+    if(window.refreshPage) {
+      // Reload the page with the updated query string
+      window.location.href = 'http://localhost:5000/registerface.html?" . $query_string . "';
+    
+    } else {
+      clearInterval(refreshIntervalId);
+    }
+  }, $refreshInterval);
 
 
   
-// </script>";
+</script>";
 ?>
 </div>
 
@@ -303,7 +304,7 @@ if(isset($_GET['id'])){
 <div class="d-flex align-items-center">
 
  
-   <form autocomplete="off" class="form-control" onsubmit="submitForm(event)" id='form_re' role="form" action = "requesting.php" method="post">
+   <form autocomplete="off" class="form-control" role="form" action = "requesting.php" method="post">
 
      <div class="row">
    <div class="col-sm">
@@ -327,16 +328,16 @@ if(isset($_GET['id'])){
      <div class="row">
      <div class="col-sm">
        <label for="yourName" class="form-label">Surname: </label>
-       <input type="text" class="form-control" id="last" name="sname"   required>
+       <input type="text" class="form-control" id="yourName" name="sname"  required>
      </div>
      
    <div class="col-sm">
        <label for="yourName" class="form-label">Given Name:</label>
-       <input type="text"  class="form-control" id="first" name="gname"  required >
+       <input type="text"  class="form-control" name="gname"  required >
      </div>
      <div class="col-sm">
        <label for="yourName" class="form-label">Middle Name:</label>
-       <input type="text"  class="form-control" id="mid" name="mname"   required>
+       <input type="text"  class="form-control" name="mname"   required>
      </div>
      </div>
    
@@ -361,39 +362,12 @@ if(isset($_GET['id'])){
    <label for="yourEmail" class="form-label">Department:</label>
    <input type="text"  class="form-control" name="dep" id="id" required >
      </div>
-    
+     
      </div><br>
-     <div class="row" >
-     <div class="col-sm d-flex justify-content-center align-items-center">
-    <iframe src="http://localhost:5000/registerface.html" id="flask-iframe" width="600px" height="400px"  scrolling="no"></iframe>
-  </div>
-
- </div><br>
       <div class="col-12">
-      
-        <button class="btn btn-primary w-100" type="submit"  name="submit2" >Capture</button>
+        <button class="btn btn-primary w-100" type="submit"  name="submit">Register</button>
       </div>
     </form>
-    <script>
-  function submitForm(event){
-    event.preventDefault();
-    var id =document.getElementById('id').value;
-    var last =document.getElementById('last').value;
-    var first =document.getElementById('first').value;
-    var mid =document.getElementById('mid').value;
-    sendNameToFlask(id, last,first,mid);
-    var form = document.getElementById('form_re');
-    form.submit();
-  }
-</script>
-
-<script>
-    function sendNameToFlask(id,last,first,mid){
-    var iframe =document.getElementById('flask-iframe');
-    iframe.contentWindow.postMessage({id:id,sname:last,gname:first,mname:mid},'http://localhost:5000/registerface.html');
-  }
-</script>
-
   </div>
 </div>
 
@@ -425,4 +399,3 @@ if(isset($_GET['id'])){
 </body>
 
 </html>
-
