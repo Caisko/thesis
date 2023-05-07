@@ -432,7 +432,82 @@ header("location:index.php");
               </div>
             </div><!-- End Sales Card -->
 
+<?php if ($position == "Priority 2"){?>
+            <div class="col-xxl-3 col-md-4">
+              <div class="card info-card ">
 
+
+                <div class="card-body">
+                  <h5 class="card-title">Item Borrow This Month</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning">
+                     <i class="bi bi-basket" style="color:white;"></i>
+                    </div>
+                    <div class="ps-3">
+                    <?php 
+                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'pending' and not `gate_cat_2` = 'IN/OUT' ";
+                        $result = mysqli_query($conn, $count);
+                        $row  = mysqli_fetch_assoc($result); ?>
+                      <h6><?php echo $row["count"];  ?></h6>
+                    
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+            <div class="col-xxl-3 col-md-4">
+              <div class="card info-card ">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">Item Return This Month</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success">
+                     <i class="bi bi-basket" style="color:white;"></i>
+                    </div>
+                    <div class="ps-3">
+                    <?php 
+                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'pending' and not `gate_cat_2` = 'IN/OUT' ";
+                        $result = mysqli_query($conn, $count);
+                        $row  = mysqli_fetch_assoc($result); ?>
+                      <h6><?php echo $row["count"];  ?></h6>
+
+                    
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+            <div class="col-xxl-3 col-md-4">
+              <div class="card info-card ">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">Unreturn Item This Month</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger">
+                     <i class="bi bi-basket" style="color:white;"></i>
+                    </div>
+                    <div class="ps-3">
+                    <?php 
+                        $count = "SELECT COUNT(`transaction`) as count FROM gatepass where `transaction` = 'pending' and not `gate_cat_2` = 'IN/OUT' ";
+                        $result = mysqli_query($conn, $count);
+                        $row  = mysqli_fetch_assoc($result); ?>
+                      <h6><?php echo $row["count"];  ?></h6>
+
+                    
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+<?php }?>
 
      
   <!-- Recent Sales -->

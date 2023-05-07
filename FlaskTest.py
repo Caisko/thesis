@@ -44,15 +44,15 @@ def registerface():
     global NameRegister
     global path
 
-    id_number_Register = request.args.get('id')
-    sname = request.args.get('sname')
-    gname = request.args.get('gname')
-    mname = request.args.get('mname')
-    fullname = [sname, " ", gname, " ", mname]
-    NameRegister = "".join(fullname)
-    path = os.path.join(parent_dir,id_number_Register)
-    print(f"Name: {NameRegister}")
-    print(f"ID Number: {id_number_Register}")
+    # id_number_Register = request.args.get('id')
+    # sname = request.args.get('sname')
+    # gname = request.args.get('gname')
+    # mname = request.args.get('mname')
+    # fullname = [sname, " ", gname, " ", mname]
+    # NameRegister = "".join(fullname)
+    # path = os.path.join(parent_dir,id_number_Register)
+    # print(f"Name: {NameRegister}")
+    # print(f"ID Number: {id_number_Register}")
     return render_template('registerface.html')
 
 

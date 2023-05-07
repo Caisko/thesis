@@ -202,7 +202,6 @@ ob_start();
  <aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
-
   <li class="nav-item">
     <a class="nav-link collapsed" href="dashboard.php">
       <i class="bi bi-grid"></i>
@@ -225,7 +224,7 @@ ob_start();
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="borrowers.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowers</span>
   </a>
@@ -468,7 +467,7 @@ $all = [$date, $dash, $random];
       }
       $conn->close();
       ?>
-      <option value="other">Add New Category</option>
+      <option value="">Add New Category</option>
     </select>
   </div>
 </div>
@@ -571,7 +570,7 @@ $all = [$date, $dash, $random];
   function newca() {
     var equipt_cat = document.getElementById("equipt_cat").value;
     console.log(equipt_cat);
-    if (equipt_cat == "other") {
+    if (equipt_cat == "") {
       document.getElementById("label_cat").style.display = "block";
       document.getElementById("new_cat").style.display = "block";
     } else {

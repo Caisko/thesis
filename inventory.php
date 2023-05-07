@@ -250,9 +250,9 @@ ob_start();
          
 
 <?php 
- $sql = "SELECT ce.*, i.qr_id_cvsu, ce.quantity AS cequan, ce.id, SUM(i.quantity) AS iquan,
-  COUNT(i.status) AS status_count FROM cvsu_equipment AS ce 
- LEFT JOIN item_borrow AS i ON i.qr_id_cvsu = ce.id AND i.status != 'return' GROUP BY ce.id;";
+ $sql = "SELECT ce.*, i.qr_id_cvsu, ce.quantity AS cequan, ce.id, SUM(i.quantity) AS iquan,ce.serial as serial,
+ COUNT(i.status) AS status_count,ce.equipment as equipment,count(ce.equipment) as sum_e FROM cvsu_equipment AS ce 
+LEFT JOIN item_borrow AS i ON i.qr_id_cvsu = ce.id AND i.status != 'return'  GROUP BY equipment; ";
  
     
 $result = $conn->query($sql);
@@ -267,14 +267,21 @@ if ($result->num_rows > 0) {
               <div class="card info-card revenue-card">
 
                 <div class="card-body" >
-                  <h5 class="card-title" ><?php echo strtoupper($row['item_name']);?><span> </span></h5>
+                  <h5 class="card-title" ><?php echo strtoupper($row['equipment']);?><span> </span></h5>
           <?php
           
           ?>
+          <?php if(!empty($row['serial'])){?>
                   <div class="d-flex align-items-center">
-                      <?php echo $row["status_count"],"/",$row['quantity'];?>
+                      <?php echo $row["status_count"],"/",$row['sum_e'];?>
                     <div class="ps-3">
-                     
+                     <?php } ?>
+                    <?php if(empty($row['serial'])){?>
+              <div class="d-flex align-items-center">
+                
+                      <?php echo $row["status_count"],"/",$row['cequan'];?>
+                    <div class="ps-3">
+                     <?php } ?>
                     </div>
                   </div>
                 </div>

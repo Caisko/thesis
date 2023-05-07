@@ -254,70 +254,83 @@ header("location:index.php");
                   <h5 class="card-title">Borrowers Records<h5>
                   <div class="row"> 
                   <div class="col-sm">
-
-     
+ <!--  
+   <select name="filter" class="form-select" id="yourName" style="width:150px;">
+     <option default hidden> Filter </option>
+     <option value="month"> Month </option>
+     <option value="borrow"> In Used </option>
+     <option value="return"> Return </option>
+     <option value="unreturned"> Unreturned </option>
+</select> -->
  </div>
-                  <div class="col-sm">             
-<div class="input-group mb-3">
-<input type="text" class="form-control" min="4" id="searchInput" placeholder="search specific" style="height: 40px;">
-  <div class="input-group-append">
-    <div class="input-group-text bg-primary" style="height: 40px; border-top-left-radius:0;border-bottom-left-radius:0;">    
-    <a onclick="searchTable()" class="btn btn-primary" >Search</a></div>
-  </div>
+          
 
   </div>
 </div>
 
 <div >
-<table class="table" id="mytable">
+       
+<div class="row">
+    <?php  $qr = $_GET["trans"];?>
+    <?php
+    $status = "SELECT * from item_borrow where `transaction`= '$qr'";
+     $result = mysqli_query($conn, $status);
+     $row    = mysqli_fetch_assoc($result);
+     $date_borrow = $row['date_borrow'];
+     $date_return = $row['date_return'];
+     $id_num = $row['borrower_id_num'];
+    ?>
+   <div style="position:relative; float:right;">
+  <img src="<?php echo $row['qr_print']; ?>" style="width:100px; position:absolute; right:0;"><br>
+  <p style="text-align:right;margin-top:80px;">Transaction ID:</p><br>
+  <p style="font-weight: bold; text-align:right;margin-top:-20px;">
+    <?php echo $trans = $row['transaction']; ?>
+  </p>
+  <?php
+   $status = "SELECT * from borrowers where `id`= '$id_num'";
+   $result = mysqli_query($conn, $status);
+   $row    = mysqli_fetch_assoc($result);
+  ?>
+  <p style="font-size:16px;">Borrowers Name: <?php echo $row['sname'],",",$row['gname']," ",$row['mname'];?></p>
+  <p style="font-size:15px;">Date Borrow: <?php echo $date_borrow;?></p>
+  <p style="font-size:15px;">Date Return: <?php echo $date_return;?></p>
+</div>
+
+    <table class="table" id="myTable" >
   <thead>
     <tr>
-    <th scope="col">Transaction ID</th>
-      <th scope="col">Borrowers Name</th>
-      <th scope="col">Department</th>
-      
       <th scope="col">QTY</th>
-      <th scope="col">Date Borrowed</th>
-      <th scope="col">Date Return</th>
-      <th scope="col">Status</th>
+      <th scope="col">Equipment</th>
+      <th scope="col">Description</th>
+    
+     
     </tr>
   </thead>
   <?php
-$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se , ce.item_name as name1, 
- ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
-  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by i.transaction";
+
+    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del,i.status as stats,i.qr_id_cvsu ,count(i.quantity) as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE `transaction`= '$trans' group by ce.id ";
     
-$result = $conn->query($sql); 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    $all = implode(array($row['sname'],",",$row['gname']," ",$row['mname']));
-    $trans = $row['transaction'];
-?>
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+  ?>
   <tbody>
     <tr>
-    <td><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $trans;?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $all; ?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $row['de'];?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $row['quan'];?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo date('F j, Y', strtotime($row['date_borrow']));
-;  ?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo date('F j, Y', strtotime($row['date_return']));
-  ?></a></td>
-      <?php if($row['status'] == 'borrow'){?>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">IN USE</p></td>
-      <?php }else if($row['status'] == 'return'){ ?>
-        <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">RETURNED</p></td>
-        <?php } ?>
+      
+      <th scope="row"><?php echo $row['quan'];?></th>
+      <td><?php echo $name1 = $row['name1'];?></td>
+      <td><?php echo $row['desc1'];?></td>
+
     </tr>
+  
   </tbody>
-<?php 
+  <?php
+   }
+  } else {
+    
   }
-}
-?>
+  ?>
 </table>
 </div>
                 </div>
@@ -446,15 +459,9 @@ if ($result->num_rows > 0) {
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 <script>
-  function searchTable() {
+   function searchTable() {
   // Get the search query
   var searchQuery = document.getElementById("searchInput").value;
-
-  // Check if the search query is at least 3 characters long
-  if (searchQuery.length < 3) {
-    alert("Please enter at least 3 characters to search.");
-    return;
-  }
 
   // Select all the rows of the tbody element
   var rows = document.querySelectorAll("table tbody tr");
@@ -481,6 +488,17 @@ if ($result->num_rows > 0) {
     }
   }
 }
+// Get the search input field
+var searchInput = document.getElementById("searchInput");
+
+// Add an event listener for the keydown event
+searchInput.addEventListener("keydown", function(event) {
+  // If the key that was pressed was the Enter key (keycode 13), call the searchTable function
+  if (event.keyCode === 13) {
+    searchTable();
+  }
+});
+
 
 function filterTable() {
   var filter = document.getElementById("yourName").value.toLowerCase();

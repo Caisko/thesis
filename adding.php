@@ -3,7 +3,7 @@ include "assets/connection/connect.php";
 $trans = "Trans";
 $random = substr(md5(mt_rand()), 0, 7);
 $all = [$trans, $random];
- $sama = implode($all);
+echo $sama = implode($all);
 
 $label =  $_POST['label'];
 $name =  $_POST['name'];
@@ -42,13 +42,13 @@ if ($conn->query($sql) === TRUE) {
          mkdir($PNG_TEMP_DIR);
      }
      $filename = $PNG_TEMP_DIR . 'QR.png';
-     $codeString =  $sama;
+      $codeString =  $sama;
      $filename = $PNG_TEMP_DIR . 'Qr' . md5($codeString) . '.png';
-
+     
      QRcode::png($codeString, $filename);
      
      echo '<img src="' . $PNG_TEMP_DIR . basename($filename) . '" style="width:250px;margin:auto;" hidden>';
-     $sql = "UPDATE item_borrow SET qr_print = '$filename' WHERE transaction = '$sama";
+     $sql = "UPDATE item_borrow SET `qr_print` = '$filename' WHERE transaction = '$sama'";
 
      if ($conn->query($sql) === TRUE) {      
         header("location:trans_print.php?print=$filename");

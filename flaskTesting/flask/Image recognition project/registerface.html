@@ -1,4 +1,4 @@
-<html>
+<!-- <html>
 <body style="background-color: rgb(153, 218, 156);">
     <center><center><h3 style="font-family: Arial; margin-bottom: 0;">Register</h3><br>
     <img id = "bg" src = "{{ url_for('video_feed')}}"><br><br>
@@ -6,6 +6,17 @@
     <h3 style="font-family: Arial; margin-top: 0;"><div id="my-div"></div></h3>
     </center>  
     <script>
+      window.addEventListener('message'),function(event){
+        if(event.origin !== '../thesis/face_registration.php'){
+          return;
+        }
+        var id = event.data.id;
+        var sname = event.data.sname;
+        var gname = event.data.gname;
+        var mname = event.data.mname;
+        console.log(id);
+      }
+
       window.onbeforeunload = function() {
             // Close the camera here
              // Send an AJAX request to the /capture_images route
@@ -70,4 +81,24 @@
       </script>
       
 </body>
+</html> -->
+<html>
+  <body>
+    <p id="myParagraph"></p>
+    <script>
+    
+      window.addEventListener('message', function(event){
+        if(event.origin !== 'http://localhost/thesis/requesting.php'){
+          return;
+        }
+        var id = event.data.id;
+        document.getElementById("myParagraph").innerHTML = id;
+        var sname = event.data.sname;
+        var gname = event.data.gname;
+        var mname = event.data.mname;
+        console.log(id);
+      });
+    </script>
+      
+  </body>
 </html>
