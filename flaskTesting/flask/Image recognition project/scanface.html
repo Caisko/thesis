@@ -31,12 +31,19 @@
     <script>
 
       window.onload = function(){
-        const xhr = new XMLHttpRequest();
+          const xhr = new XMLHttpRequest();
           xhr.open('GET', '/scancapture');
           xhr.send();
+        
+          const black = new XMLHttpRequest();
+          black.open('GET', '/blackimage');
+          black.send();
           RecieveMessage();
 
       }
+
+      
+   
 
       window.onbeforeunload = function() {
             // Close the camera here
@@ -44,10 +51,16 @@
           const closecamera = new XMLHttpRequest();
           closecamera.open('GET', '/ClosingCamera');
           closecamera.send();
+          
+          const black = new XMLHttpRequest();
+          black.open('GET', '/blackimage');
+          black.send();
 
           const booleanfalse = new XMLHttpRequest();
           booleanfalse.open('GET', '/booleanfalse');
           booleanfalse.send();
+
+          
           
             
         }
@@ -57,9 +70,13 @@
         booleanfalse.open('GET', '/booleanfalse');
         booleanfalse.send();
 
+        const black = new XMLHttpRequest();
+        black.open('GET', '/blackimage');
+        black.send();
+
         const closecamera = new XMLHttpRequest();
-          closecamera.open('GET', '/ClosingCamera');
-          closecamera.send();
+        closecamera.open('GET', '/ClosingCamera');
+        closecamera.send();
       });
 
         
@@ -130,7 +147,7 @@
               document.getElementById("Name").innerText = response.CapturingMessageScan;
               document.getElementById("ID Number").innerText = response.MessageIDnumber;
               
-              if (response.CapturingMessageScan !== 'Image Captured. Recognizing...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' && response.CapturingMessageScan !== 'No Matched Face.') {
+              if (response.CapturingMessageScan !== 'Recognizing Image...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' && response.CapturingMessageScan !== 'No Matched Face.') {
                 Proceed.style.display = 'inline';
               }
               else{

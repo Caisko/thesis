@@ -1,6 +1,5 @@
 from flask import Flask, render_template, Response, request, redirect, flash, jsonify, Markup, url_for
 from FaceCamera import VideoCamera
-import requests 
 import os
 import time
 import cv2
@@ -9,6 +8,8 @@ from deepface import DeepFace
 import pandas as pd
 import pickle
 import urllib.parse
+import shutil
+from PIL import Image
 
 thesis_path ="C:/xampp/htdocs/thesis"
 app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project', static_folder='C:/xampp/htdocs/thesis')
@@ -59,16 +60,6 @@ def registerface():
     return render_template('registerface.html')
 
 
-
-def gen(camera):
-    #os.makedirs(path)
-    #os.chdir(path)
-
-    while True:
-        frame = camera.get_frame()
-        if frame is not None:
-            yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
             
         
 
@@ -263,11 +254,13 @@ def scancapture():
     scanningboolean = True
     MessageIDnumber = ''
     
+    
 
     # os.chdir(root_dir)
-
+    
     SingleCapture = thesis_path + '/frame.jpg'
-    CapturingMessageScan = 'Image Captured. Recognizing...'
+    blackimage = thesis_path + '/black.jpg'
+    CapturingMessageScan = 'Recognizing Image...'
     os.chdir(root_dir)
 
     records={}
@@ -336,7 +329,7 @@ def scancapture():
         except Exception as e:
             CapturingMessageScan = "No Matched Face."
             MessageIDnumber = ''
-            print(e)
+
 
       
    
@@ -349,10 +342,17 @@ def scancapture():
 def gen(camera):
     global showingframe_bytes
     global showingframe_np
+    black = thesis_path + '/black.jpg'
     SingleCapture = thesis_path + '/frame.jpg'
     while True:
         showingframe_bytes = camera.get_frame()  # Get frame as byte array
-        showingframe_np = cv2.imdecode(np.frombuffer(showingframe_bytes, np.uint8), -1)  # Decode byte array to numpy array
+        try:
+            showingframe_np = cv2.imdecode(np.frombuffer(showingframe_bytes, np.uint8), -1)
+        except:
+            showingframe_bytes = Image.open(black).tobytes()
+            showingframe_np = cv2.imdecode(np.frombuffer(showingframe_bytes, np.uint8), -1)
+
+              # Decode byte array to numpy array
         if scanningboolean:
             cv2.imwrite(SingleCapture, showingframe_np)
             square = DeepFace.extract_faces(img_path=SingleCapture, enforce_detection=False)
@@ -365,8 +365,17 @@ def gen(camera):
                        b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes.tobytes() + b'\r\n\r\n')
         else:
             if showingframe_bytes is not None:
+                widht = 650
+                height = 475
+                x = 175
+                y = 50
+                w = widht - (x * 2)
+                h = height - (y * 2)
+                showingframe_np = cv2.rectangle(showingframe_np, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                _, showingframe_bytes = cv2.imencode('.jpg', showingframe_np)
                 yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes + b'\r\n\r\n')
+                       b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes.tobytes() + b'\r\n\r\n')
+           
 
             
 #------------------------------------------------------------
@@ -390,7 +399,15 @@ def booleanfalse():
     return 'Done'
 
 
+#------------------------------------------------------------
+@app.route('/blackimage')
 
+def blackimage():
+    src_file = thesis_path + '/black.jpg'
+    dst_file = thesis_path + '/frame.jpg'
+    shutil.copyfile(src_file, dst_file)
+
+    return 'Done'
 
 
 
