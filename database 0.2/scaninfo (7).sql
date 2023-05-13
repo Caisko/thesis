@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 28, 2023 at 07:29 AM
+-- Generation Time: May 14, 2023 at 12:03 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -108,9 +108,7 @@ CREATE TABLE `borrowers` (
 --
 
 INSERT INTO `borrowers` (`id`, `id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`, `veri_status`) VALUES
-(2, '201811568', 'FELICES', 'PAUL KENNETH', 'CABALU', 'Permanent', 'IT DEPARTMENT', 'verified'),
-(3, '37281973198', 'FELICES', 'PAUL KENNETH', 'CABALU', 'Permanent', 'IT DEPARTMENT', 'verified'),
-(4, '9089083920', 'Isla', 'Justine Erica', 'Aguilar', 'Contractual', 'HM Department', 'not');
+(31, '201811563', 'Felices', 'Paul Kenneth', 'Cabalu', 'Permanent', 'DCS', 'verified');
 
 -- --------------------------------------------------------
 
@@ -138,7 +136,8 @@ INSERT INTO `cvsu_equipment` (`id`, `qr_id`, `equipment`, `category`, `item_name
 (1, 'CVSUQRprop2bbc19a', 'Laptop', '', 'dell', '2314141', 1, 'itim 14 inches ', 'temp/Qr104aa2859c464767d5ffd41d53a25be8.png'),
 (2, 'CVSUQRprop8302779', 'Projector', '', 'mitsu', '31231', 1, 'kulay puti', 'temp/Qr58d149589f8047abf9246c50d9745298.png'),
 (3, 'CVSUQRpropc896447', 'Pencil', '', 'MONGGOL 2', '', 5, 'PINK', 'temp/Qrd8776783c16f6a7eaf9750aaff93fe5e.png'),
-(4, 'CVSUQRprop3f95d9e', 'Chalk', '', 'MAKULAY', '', 10, 'MAKULAY', 'temp/Qrb668d5cd1045cdbdb90dc3978d95a521.png');
+(4, 'CVSUQRprop3f95d9e', 'Chalk', '', 'CHALK', '', 10, 'MAKULAY', 'temp/Qrb668d5cd1045cdbdb90dc3978d95a521.png'),
+(5, 'CVSUQRpropeb0b197', 'Laptop', '', 'Asus', '123456', 1, 'blue laptop', 'temp/Qr8bca9359bee2ef5a4eb79d12000b00cb.png');
 
 -- --------------------------------------------------------
 
@@ -170,13 +169,6 @@ CREATE TABLE `gatepass` (
   `fk_admins` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `gatepass`
---
-
-INSERT INTO `gatepass` (`id`, `gatepass_id`, `gatepass_cat`, `gate_cat_2`, `id_number`, `name`, `name_store`, `course`, `yr`, `section`, `address`, `date_register`, `valid_until`, `phone_number`, `qr`, `technical_name`, `gatepass_status`, `transaction`, `in/out`, `comment`, `fk_admins`) VALUES
-(137, 'CVSUQRd4b02ef', 'Teacher', 'LONG TERM', '2211', 'ANABU', NULL, NULL, NULL, NULL, 'IMUS', '2023-04-15', '0000-00-00', '09213123112', 'temp/Qrd0f561b016531b745d305ea9b78cd0f1.png', '', 'transaction 1', 'pending', NULL, '', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -186,16 +178,37 @@ INSERT INTO `gatepass` (`id`, `gatepass_id`, `gatepass_cat`, `gate_cat_2`, `id_n
 CREATE TABLE `item_borrow` (
   `id` int(11) NOT NULL,
   `borrower_id_num` int(11) NOT NULL,
-  `qr_id` int(50) NOT NULL,
-  `quantity` int(11) NOT NULL
+  `qr_id_cvsu` int(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `transaction` varchar(50) NOT NULL,
+  `date_borrow` date NOT NULL,
+  `status` enum('borrow','return') NOT NULL,
+  `date_return` date NOT NULL,
+  `date_return_item` date DEFAULT NULL,
+  `qr_print` text NOT NULL,
+  `remarks` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `item_borrow`
 --
 
-INSERT INTO `item_borrow` (`id`, `borrower_id_num`, `qr_id`, `quantity`) VALUES
-(83, 3, 2, 1);
+INSERT INTO `item_borrow` (`id`, `borrower_id_num`, `qr_id_cvsu`, `quantity`, `transaction`, `date_borrow`, `status`, `date_return`, `date_return_item`, `qr_print`, `remarks`) VALUES
+(3, 31, 3, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(4, 31, 3, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(5, 31, 3, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(7, 31, 4, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(8, 31, 4, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(9, 31, 2, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(10, 31, 1, 1, 'Trans960c4ce', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr2d02802f1b317a2992032843abb73a18.png', NULL),
+(11, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(12, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(13, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(14, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(15, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(16, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(17, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL),
+(18, 31, 4, 1, 'Trans86189fe', '2023-05-13', 'borrow', '2023-05-15', NULL, 'trans/Qr1936d5e0be4508445363f5ac8a7ca2f4.png', NULL);
 
 -- --------------------------------------------------------
 
@@ -252,13 +265,6 @@ CREATE TABLE `unit_number` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `unit_number`
---
-
-INSERT INTO `unit_number` (`id`, `unit_num_serial`, `user_id`, `quantity`, `description`) VALUES
-(132, '832178', 137, 1, 'KHEN');
-
---
 -- Indexes for dumped tables
 --
 
@@ -300,7 +306,7 @@ ALTER TABLE `gatepass`
 ALTER TABLE `item_borrow`
   ADD PRIMARY KEY (`id`),
   ADD KEY `knowing_borrower` (`borrower_id_num`),
-  ADD KEY `knowing_item` (`qr_id`);
+  ADD KEY `knowing_item` (`qr_id_cvsu`);
 
 --
 -- Indexes for table `item_category`
@@ -335,13 +341,13 @@ ALTER TABLE `allrecords`
 -- AUTO_INCREMENT for table `borrowers`
 --
 ALTER TABLE `borrowers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `cvsu_equipment`
 --
 ALTER TABLE `cvsu_equipment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `gatepass`
@@ -353,7 +359,7 @@ ALTER TABLE `gatepass`
 -- AUTO_INCREMENT for table `item_borrow`
 --
 ALTER TABLE `item_borrow`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `item_category`
@@ -382,7 +388,7 @@ ALTER TABLE `gatepass`
 --
 ALTER TABLE `item_borrow`
   ADD CONSTRAINT `knowing_borrower` FOREIGN KEY (`borrower_id_num`) REFERENCES `borrowers` (`id`),
-  ADD CONSTRAINT `knowing_item` FOREIGN KEY (`qr_id`) REFERENCES `cvsu_equipment` (`id`);
+  ADD CONSTRAINT `knowing_item` FOREIGN KEY (`qr_id_cvsu`) REFERENCES `cvsu_equipment` (`id`);
 
 --
 -- Constraints for table `unit_number`

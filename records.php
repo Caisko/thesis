@@ -52,6 +52,59 @@ header("location:index.php");
         text-align: center;
         font-size:15px;
     }
+    @page{
+      size:landscape;
+    }
+
+		@media print {
+      .th{
+        display: block !important;
+      }
+			.hidden{
+				display: none !important;
+			}
+      .show{
+        display: block !important;
+      }
+      .trans{
+        background: transparent !important;
+      }
+		}
+    #modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
     </style>
 </head>
 
@@ -60,7 +113,7 @@ header("location:index.php");
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center justify-content-between hidden">
       <a href="dashboard.php" class=" d-flex align-items-center">
         <img src="assets/img/logo.png"   style="width:300px;height:60px;">
       
@@ -83,15 +136,15 @@ header("location:index.php");
          ?>
          
 
-        <li class="nav-item dropdown pe-3">
+        <li class="nav-item dropdown pe-3 hidden">
        
-        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+        <a class="nav-link nav-profile d-flex align-items-center pe-0 hidden" href="#" data-bs-toggle="dropdown">
             <img src="assets/img/profile/<?php echo $row["profile_pic"]; ?>" alt="Profile" class="rounded-circle" style="width:40px;">
             <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $row["id_number"];?></span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
+            <li class="dropdown-header hidden">
             <h6><?php echo $row["given_name"]," ",$row["middle_name"]," ",$row["surname"];?></h6>
             </li>
             <li>
@@ -125,7 +178,7 @@ header("location:index.php");
 
   </header><!-- End Header -->
  <!-- ======= Sidebar ======= -->
- <aside id="sidebar" class="sidebar">
+ <aside id="sidebar" class="sidebar hidden">
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -151,7 +204,7 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="borrowers.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowers</span>
   </a>
@@ -228,9 +281,9 @@ header("location:index.php");
 
 </aside><!-- End Sidebar-->
 
-  <main id="main" class="main">
+  <main id="main" class="main trans">
 
-    <div class="pagetitle">
+    <div class="pagetitle hidden">
       <h1>Borrowers Records</h1>
       <nav>
         <ol class="breadcrumb">
@@ -240,91 +293,312 @@ header("location:index.php");
       </nav>
     </div><!-- End Page Title -->
 
-    <section class="section dashboard">
-      <div class="row">
+    <section class="section dashboard trans">
+      <div class="row trans">
 
         <!-- Left side columns -->
-        <div class="col-lg-12">
-          <div class="row"> 
+        <div class="col-lg-12 trans">
+          <div class="row trans"> 
   <!-- Recent Sales -->
   
-              <div class="card recent-sales overflow-auto">
+              <div class="card recent-sales overflow-auto trans">
 
-                <div class="card-body">
-                  <h5 class="card-title">Borrowers Records<h5>
+                <div class="card-body ">
+                  <h5 class="card-title hidden">Borrowers Records<h5>
                   <div class="row"> 
                   <div class="col-sm">
 
      
  </div>
-                  <div class="col-sm">             
-<div class="input-group mb-3">
-<input type="text" class="form-control" min="4" id="searchInput" placeholder="search specific" style="height: 40px;">
-  <div class="input-group-append">
-    <div class="input-group-text bg-primary" style="height: 40px; border-top-left-radius:0;border-bottom-left-radius:0;">    
-    <a onclick="searchTable()" class="btn btn-primary" >Search</a></div>
-  </div>
+ <div class="col-sm hidden trans">             
+  <div class="input-group mb-3"> 
+    <select class="form-select" id="searchCategory">
+      <option value="0" default>Categories</option>
+      <option value="1">Name</option>
+      <option value="2">Department</option>
+      <option value="3">Transaction ID</option>
+      <option value="4">Month</option>
+    </select>
+    <input type="text" class="form-control"  id="searchInput" placeholder="Search...">
+ 
 
+    <div class="input-group-append">
+      <div class="input-group-text bg-primary">
+        <button type="submit" class="btn btn-primary" onclick="searchTable()">Search</button>
+      </div>
+    </div>
   </div>
 </div>
+<div class="row justify-content-end trans">
+  <div class="col-sm-2">
+    <button onclick="window.print()" class="btn btn-success hidden" style="width: 100%;margin-bottom:5px;"><i class="bi bi-printer"></i></button>
+  </div>
+</div>
+</div>
+<img src="assets/img/logo.png"   style="margin:auto;width:500px;display:none;" class="show">
+<div class="row">
+<div id="myModal" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title">My Modal</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+         </div>
+         <div class="modal-body">
+            <p>Value: <span id="modal-value"></span></p>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+      </div>
+   </div>
+</div>
+<table class="table border table-hover" id="mytable">
 
-<div >
-<table class="table" id="mytable">
-  <thead>
+  <thead class="center">
     <tr>
     <th scope="col">Transaction ID</th>
       <th scope="col">Borrowers Name</th>
       <th scope="col">Department</th>
-      
+      <th scope="col">Item name</th>
       <th scope="col">QTY</th>
       <th scope="col">Date Borrowed</th>
-      <th scope="col">Date Return</th>
+      <th scope="col">End Date</th>
+      <th scope="col"> Date Return</th>
       <th scope="col">Status</th>
+      <th scope="col">Action</th>
+      
     </tr>
   </thead>
+  
+
   <?php
+  //transaction show table
+  $sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
+  b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
+  i.date_borrow as date_borrow,i.date_return as date_return,count(i.quantity) as quan,i.status as status 
+  FROM item_borrow as i JOIN borrowers
+    as b ON i.borrower_id_num = b.id 
+    WHERE not transaction = '' group by transaction";
+      
+  $result = $conn->query($sql); 
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      $trans = $row['transaction'];
+  ?><tr>  <tbody class="center">
+  <td><?php echo $trans;?></td>
+
+<?php
+
+   echo  $all = implode(array($row['sname'],",",$row['gname']," ",$row['mname']));
+    //$trans = $row['transaction'];
+?>
+   <td ><?php echo $all; ?></td>
+   <td ><?php echo $row['de'];?></td>
+
+<td>
+    <table>
+    <?php
 $sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se , ce.item_name as name1, 
+b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
+i.date_borrow as date_borrow
+ ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
+ , ce.item_name as name1, 
  ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
   as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by i.transaction";
+  WHERE not transaction = '' group by item_name";
+    
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    
+    //$trans = $row['transaction'];
+?>
+      
+      <td ><?php echo $row['name1'];?></td>
+  
+  <?php 
+  }
+}
+?>
+  </table>
+  </td>
+    
+
+  <td>
+    <table>
+    <?php
+$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
+b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
+i.date_borrow as date_borrow
+ ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
+ , ce.item_name as name1, 
+ ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
+  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+  WHERE not transaction = '' group by item_name";
     
 $result = $conn->query($sql); 
 if ($result->num_rows > 0) {
   // output data of each row
   while($row = $result->fetch_assoc()) {
-    $all = implode(array($row['sname'],",",$row['gname']," ",$row['mname']));
-    $trans = $row['transaction'];
+    
+    //$trans = $row['transaction'];
 ?>
-  <tbody>
-    <tr>
-    <td><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $trans;?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $all; ?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $row['de'];?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo $row['quan'];?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo date('F j, Y', strtotime($row['date_borrow']));
-;  ?></a></td>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><?php echo date('F j, Y', strtotime($row['date_return']));
-  ?></a></td>
+      <tr>
+      <td ><?php echo $row['quan'];?></td>
+  </tr>
+  <?php 
+  }
+}
+?>
+  </table>
+  </td>
+
+  <td>
+    <table >
+    <?php
+$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
+b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
+i.date_borrow as date_borrow
+ ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
+ , ce.item_name as name1, 
+ ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
+  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+  WHERE not transaction = '' group by date_borrow";
+    
+$result = $conn->query($sql); 
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    
+    //$trans = $row['transaction'];
+?>
+      <tr>
+      <td><?php echo date('F j, Y', strtotime($row['date_borrow'])); ?></td>
+
+   
+  </tr>
+  <?php 
+  }
+}
+?>
+  </table>
+  </td>
+  
+  <td>
+    <table>
+    <?php
+$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
+b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
+i.date_borrow as date_borrow
+ ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
+ , ce.item_name as name1, 
+ ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
+  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+  WHERE not transaction = '' group by date_return";
+    
+$result = $conn->query($sql); 
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    
+    //$trans = $row['transaction'];
+?>
+      <tr><td><?php echo date('F j, Y', strtotime($row['date_return'])); ?></td>
+
+   
+  </tr>
+  <?php 
+  }
+}
+?>
+  </table>
+  </td>
+<!-- for date return -->
+  <td>
+
+   </td>
+   <!-- end date return -->
+  <td>
+    <table >
+    <?php
+$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
+b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
+i.date_borrow as date_borrow
+ ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
+ , ce.item_name as name1, 
+ ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
+  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+  WHERE not transaction = '' group by date_return";
+    
+$result = $conn->query($sql); 
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    
+    //$trans = $row['transaction'];
+?>
+      <tr>
       <?php if($row['status'] == 'borrow'){?>
       <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">IN USE</p></td>
       <?php }else if($row['status'] == 'return'){ ?>
         <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">RETURNED</p></td>
         <?php } ?>
-    </tr>
-  </tbody>
-<?php 
+   
+  </tr>
+  <?php 
   }
 }
 ?>
+  </table>
+  </td>
+  <td>
+   <button id="open-modal" class="btn btn-warning" data-value="<?php echo $trans; ?>">
+  <i class="bi bi-box-arrow-in-left"></i>
+</button>
+
+   </td>
+</tr>
+   </tbody>
+   <?php 
+    }
+  }
+  ?>
+ 
 </table>
 </div>
                 </div>
+        <div id="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+   <form method="post" action="action.php">
+    <input type="text" value="<?php echo $trans;?>" name="trans">
+</form>
+  </div>
+</div>        
+
+<script>
+  // get references to the button and modal elements
+  var button = document.getElementById('open-modal');
+  var modal = document.getElementById('modal');
+
+  // add an event listener to the button that opens the modal
+  button.addEventListener('click', function() {
+    modal.style.display = 'block';
+  });
+
+  // add an event listener to the modal's close button that closes the modal
+  modal.querySelector('.close').addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+</script>
 
               </div>
             </div><!-- End Recent Sales -->
-      
+            
+ 
 
 
           </div>
@@ -418,7 +692,7 @@ if ($result->num_rows > 0) {
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
+  <footer id="footer" class="footer hidden">
     <div class="copyright">
       &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
     </div>
@@ -445,69 +719,47 @@ if ($result->num_rows > 0) {
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-<script>
-  function searchTable() {
-  // Get the search query
-  var searchQuery = document.getElementById("searchInput").value;
 
-  // Check if the search query is at least 3 characters long
-  if (searchQuery.length < 3) {
-    alert("Please enter at least 3 characters to search.");
+ <script>
+ function searchTable() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("mytable");
+  tr = table.getElementsByTagName("tr");
+  var selectBox = document.getElementById("searchCategory");
+  var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+  console.log(selectedValue);
+  if (selectedValue == "0") {
+    alert("Please select a category before searching.");
     return;
   }
 
-  // Select all the rows of the tbody element
-  var rows = document.querySelectorAll("table tbody tr");
-
-  // Iterate through the rows
-  for (var i = 0; i < rows.length; i++) {
-    // Select all the cells of the row
-    var cells = rows[i].querySelectorAll("td");
-
-    // Check if any of the cells contain the search query
-    var containsQuery = false;
-    for (var j = 0; j < cells.length; j++) {
-      if (cells[j].innerHTML.toLowerCase().includes(searchQuery.toLowerCase())) {
-        containsQuery = true;
-        break;
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[selectedValue];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1 || td.hasAttribute("colspan")) { 
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
       }
     }
-
-    // If the row contains the search query or has the thead class, display it, otherwise hide it
-    if (containsQuery || rows[i].classList.contains("thead")) {
-      rows[i].style.display = "";
-    } else {
-      rows[i].style.display = "none";
-    }
-  }
+  
 }
 
-function filterTable() {
-  var filter = document.getElementById("yourName").value.toLowerCase();
-  var table = document.getElementById("myTable");
-  var rows = table.getElementsByTagName("tr");
+</script>
+<script>
+   $(document).ready(function(){
+      $('#myBtn').click(function(){
+         var value = $(this).data('value');
+         $('#modal-value').text(value);
+         $('#myModal').modal('show');
+      });
+   });
+</script>
 
-  for (var i = 1; i < rows.length; i++) {
-    var row = rows[i];
-    var cells = row.getElementsByTagName("td");
-    var showRow = false;
-
-    for (var j = 0; j < cells.length; j++) {
-      var cell = cells[j];
-      if (cell.innerHTML.toLowerCase().indexOf(filter) > -1) {
-        showRow = true;
-        break;
-      }
-    }
-
-    if (showRow) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  }
-}
-  </script>
 </body>
 
 </html>

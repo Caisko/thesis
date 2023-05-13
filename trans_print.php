@@ -92,7 +92,7 @@ header("location:borrowers.php");
 
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="borrowers.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Add Borrowers</span>
   </a>
