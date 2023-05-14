@@ -70,29 +70,32 @@ header("location:index.php");
         background: transparent !important;
       }
 		}
-    #modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
+    .modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+
+  padding-top: 100px; /* Location of the box */
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+/* Modal Content */
 .modal-content {
-  background-color: white;
-  margin: 15% auto;
+  background-color: #fefefe;
+  margin: auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
-  max-width: 600px;
 }
 
+/* The Close Button */
 .close {
-  color: #aaa;
+  color: #aaaaaa;
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -100,11 +103,10 @@ header("location:index.php");
 
 .close:hover,
 .close:focus {
-  color: black;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
 }
-
     </style>
 </head>
 
@@ -300,7 +302,7 @@ header("location:index.php");
         <div class="col-lg-12 trans">
           <div class="row trans"> 
   <!-- Recent Sales -->
-  
+
               <div class="card recent-sales overflow-auto trans">
 
                 <div class="card-body ">
@@ -337,22 +339,7 @@ header("location:index.php");
 </div>
 <img src="assets/img/logo.png"   style="margin:auto;width:500px;display:none;" class="show">
 <div class="row">
-<div id="myModal" class="modal fade">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h4 class="modal-title">My Modal</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-         </div>
-         <div class="modal-body">
-            <p>Value: <span id="modal-value"></span></p>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-      </div>
-   </div>
-</div>
+
 <table class="table border table-hover" id="mytable">
 
   <thead class="center">
@@ -370,237 +357,63 @@ header("location:index.php");
       
     </tr>
   </thead>
-  
+  <?php 
+  $sql = "SELECT b.id, b.id_num, b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+        i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+        i.date_return as date_return, count(i.quantity) as quan, i.status as status, ce.id as ced, ce.serial as se,
+        GROUP_CONCAT(DISTINCT ce.item_name SEPARATOR ', ') as name1, ce.description as desc1, ce.quantity as quantity
+        FROM item_borrow as i
+        JOIN borrowers as b ON i.borrower_id_num = b.id
+        JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+        WHERE NOT transaction = ''
+        GROUP BY transaction";
+$result = $conn->query($sql);
 
-  <?php
-  //transaction show table
-  $sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-  b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
-  i.date_borrow as date_borrow,i.date_return as date_return,count(i.quantity) as quan,i.status as status 
-  FROM item_borrow as i JOIN borrowers
-    as b ON i.borrower_id_num = b.id 
-    WHERE not transaction = '' group by transaction";
-      
-  $result = $conn->query($sql); 
-  if ($result->num_rows > 0) {
+if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-      $trans = $row['transaction'];
-  ?><tr>  <tbody class="center">
-  <td><?php echo $trans;?></td>
+        $trans = $row['transaction'];
+        $all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
+?>
+
+<tbody>
+    <tr>
+        <td><?php echo $trans;?></td>
+        <td><?php echo $all; ?></td>
+        <td><?php echo $row['de'];?></td>
+        <td><?php echo $row['name1'];?></td>
+        <td><?php echo $row['quan'];?></td>
+        <td><?php echo date('F j, Y', strtotime($row['date_borrow'])); ?></td>
+        <td><?php echo date('F j, Y', strtotime($row['date_return'])); ?></td>
+        <td></td>
+        <?php if($row['status'] == 'borrow'){?>
+    <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">IN USE</p></td>
+    <?php }else if($row['status'] == 'return'){ ?>
+      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">RETURNED</p></td>
+      <?php } ?>
+      <td>
+      <a href="action.php?trans=<?php echo $trans; ?>" class="myBtn btn btn-warning" ><i class="bi bi-box-arrow-in-left"></i></a>
+
+ </td>
+    </tr>
+</tbody>
 
 <?php
-
-   echo  $all = implode(array($row['sname'],",",$row['gname']," ",$row['mname']));
-    //$trans = $row['transaction'];
-?>
-   <td ><?php echo $all; ?></td>
-   <td ><?php echo $row['de'];?></td>
-
-<td>
-    <table>
-    <?php
-$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
-i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
- , ce.item_name as name1, 
- ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
-  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by item_name";
-    
-$result = $conn->query($sql);
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    
-    //$trans = $row['transaction'];
-?>
-      
-      <td ><?php echo $row['name1'];?></td>
-  
-  <?php 
-  }
-}
-?>
-  </table>
-  </td>
-    
-
-  <td>
-    <table>
-    <?php
-$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
-i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
- , ce.item_name as name1, 
- ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
-  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by item_name";
-    
-$result = $conn->query($sql); 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    
-    //$trans = $row['transaction'];
-?>
-      <tr>
-      <td ><?php echo $row['quan'];?></td>
-  </tr>
-  <?php 
-  }
-}
-?>
-  </table>
-  </td>
-
-  <td>
-    <table >
-    <?php
-$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
-i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
- , ce.item_name as name1, 
- ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
-  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by date_borrow";
-    
-$result = $conn->query($sql); 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    
-    //$trans = $row['transaction'];
-?>
-      <tr>
-      <td><?php echo date('F j, Y', strtotime($row['date_borrow'])); ?></td>
-
-   
-  </tr>
-  <?php 
-  }
-}
-?>
-  </table>
-  </td>
-  
-  <td>
-    <table>
-    <?php
-$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
-i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
- , ce.item_name as name1, 
- ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
-  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by date_return";
-    
-$result = $conn->query($sql); 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    
-    //$trans = $row['transaction'];
-?>
-      <tr><td><?php echo date('F j, Y', strtotime($row['date_return'])); ?></td>
-
-   
-  </tr>
-  <?php 
-  }
-}
-?>
-  </table>
-  </td>
-<!-- for date return -->
-  <td>
-
-   </td>
-   <!-- end date return -->
-  <td>
-    <table >
-    <?php
-$sql = "SELECT b.id, b.id_num,b.Deparment as de,b.sname as sname,b.gname as gname,
-b.mname as mname ,i.borrower_id_num as bnum,i.transaction as transaction,i.id as id_del, i.qr_id_cvsu,
-i.date_borrow as date_borrow
- ,i.date_return as date_return,count(i.quantity) as quan,i.status as status, ce.id as ced,ce.serial as se 
- , ce.item_name as name1, 
- ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers
-  as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-  WHERE not transaction = '' group by date_return";
-    
-$result = $conn->query($sql); 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    
-    //$trans = $row['transaction'];
-?>
-      <tr>
-      <?php if($row['status'] == 'borrow'){?>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">IN USE</p></td>
-      <?php }else if($row['status'] == 'return'){ ?>
-        <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">RETURNED</p></td>
-        <?php } ?>
-   
-  </tr>
-  <?php 
-  }
-}
-?>
-  </table>
-  </td>
-  <td>
-   <button id="open-modal" class="btn btn-warning" data-value="<?php echo $trans; ?>">
-  <i class="bi bi-box-arrow-in-left"></i>
-</button>
-
-   </td>
-</tr>
-   </tbody>
-   <?php 
     }
-  }
-  ?>
- 
+}
+?>
 </table>
+
+
 </div>
                 </div>
-        <div id="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-   <form method="post" action="action.php">
-    <input type="text" value="<?php echo $trans;?>" name="trans">
-</form>
-  </div>
-</div>        
 
-<script>
-  // get references to the button and modal elements
-  var button = document.getElementById('open-modal');
-  var modal = document.getElementById('modal');
-
-  // add an event listener to the button that opens the modal
-  button.addEventListener('click', function() {
-    modal.style.display = 'block';
-  });
-
-  // add an event listener to the modal's close button that closes the modal
-  modal.querySelector('.close').addEventListener('click', function() {
-    modal.style.display = 'none';
-  });
-</script>
 
               </div>
             </div><!-- End Recent Sales -->
             
  
-
-
+          
           </div>
         </div><!-- End Left side columns -->
 
@@ -685,6 +498,7 @@ if ($result->num_rows > 0) {
        
 
         </div><!-- End Right side columns -->
+        
 
       </div>
     </section>
@@ -750,15 +564,9 @@ if ($result->num_rows > 0) {
 }
 
 </script>
-<script>
-   $(document).ready(function(){
-      $('#myBtn').click(function(){
-         var value = $(this).data('value');
-         $('#modal-value').text(value);
-         $('#myModal').modal('show');
-      });
-   });
-</script>
+
+
+
 
 </body>
 
