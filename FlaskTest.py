@@ -11,6 +11,21 @@ import urllib.parse
 import shutil
 from PIL import Image
 
+import sys
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    # Check if the exception is ConnectionAbortedError
+    if exc_type is ConnectionAbortedError:
+        # Ignore the error and return
+        return
+
+    # Handle other exceptions normally
+    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
+# Set the global exception handler
+sys.excepthook = handle_exception
+
+
 thesis_path ="C:/xampp/htdocs/thesis"
 app = Flask(__name__, template_folder='C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition project', static_folder='C:/xampp/htdocs/thesis')
 #app.run(host='localhost', port=80) 
@@ -27,6 +42,14 @@ global scanningboolean
 
 scanningboolean = False
 model = "Facenet512"
+
+blackimage = thesis_path + '/black.jpg'
+
+#------------------------------------------
+try:
+    results = DeepFace.find(img_path= blackimage, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=True)
+except:
+    print("Now Ready")
 
 
 
@@ -320,8 +343,14 @@ def scancapture():
                 print(predicted_name)
 
                 print(f"Identity: {predicted_name}\n Confidence: {confidence}")
-                CapturingMessageScan = ("Name: " + predicted_name )
-                MessageIDnumber = ("ID Number: " + str(label))
+
+                if confidence < 75:
+                    CapturingMessageScan = "No Matched Face."
+                    MessageIDnumber = ''
+                else:
+                    CapturingMessageScan = ("Name: " + predicted_name )
+                    MessageIDnumber = ("ID Number: " + str(label))
+                    scanningboolean = False
 
             else:
     
@@ -350,7 +379,8 @@ def gen(camera):
     black = thesis_path + '/black.jpg'
     SingleCapture = thesis_path + '/frame.jpg'
     while True:
-        showingframe_bytes = camera.get_frame()  # Get frame as byte array
+        showingframe_bytes = camera.get_frame() 
+                
         try:
             showingframe_np = cv2.imdecode(np.frombuffer(showingframe_bytes, np.uint8), -1)
         except:
@@ -360,14 +390,22 @@ def gen(camera):
               # Decode byte array to numpy array
         if scanningboolean:
             cv2.imwrite(SingleCapture, showingframe_np)
-            square = DeepFace.extract_faces(img_path=SingleCapture, enforce_detection=False)
-            facial_area = square[0]['facial_area']
-            x, y, w, h = facial_area['x'], facial_area['y'], facial_area['w'], facial_area['h']
-            showingframe_np = cv2.rectangle(showingframe_np, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            if showingframe_np is not None:
-                _, showingframe_bytes = cv2.imencode('.jpg', showingframe_np)  # Encode numpy array to JPEG byte array
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes.tobytes() + b'\r\n\r\n')
+            try:
+                square = DeepFace.extract_faces(img_path=SingleCapture, enforce_detection=False)
+                facial_area = square[0]['facial_area']
+                x, y, w, h = facial_area['x'], facial_area['y'], facial_area['w'], facial_area['h']
+                showingframe_np = cv2.rectangle(showingframe_np, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+                if showingframe_np is not None:
+                    _, showingframe_bytes = cv2.imencode('.jpg', showingframe_np)  # Encode numpy array to JPEG byte array
+                    yield (b'--frame\r\n'
+                        b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes.tobytes() + b'\r\n\r\n')
+            except:
+
+                if showingframe_np is not None:
+                    _, showingframe_bytes = cv2.imencode('.jpg', showingframe_np)  # Encode numpy array to JPEG byte array
+                    yield (b'--frame\r\n'
+                        b'Content-Type: image/jpeg\r\n\r\n' + showingframe_bytes.tobytes() + b'\r\n\r\n')
         else:
             if showingframe_bytes is not None:
                 widht = 650
@@ -410,7 +448,7 @@ def ProceedReturn():
 def booleanfalse():
     global scanningboolean
     scanningboolean = False
-
+    print("Naclose")
     return 'Done'
 
 
@@ -423,6 +461,8 @@ def blackimage():
     shutil.copyfile(src_file, dst_file)
 
     return 'Done'
+
+
 
 
 

@@ -254,7 +254,8 @@ button:hover {
               document.getElementById("ID Number").innerText = response.MessageIDnumber;
               
               if (response.CapturingMessageScan !== 'Recognizing Image...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' && response.CapturingMessageScan !== 'No Matched Face.') {
-                Proceed.style.display = 'inline';
+                Proceed.click();
+                
               }
               else{
                 Proceed.style.display = 'none';
