@@ -1,164 +1,74 @@
 <html>
    <head>
-    <title>My Website</title>
-<style>
-  body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-.sidebar {
-  position: fixed;
-  top: 12%;
-  left: 0;
-  width: 200px;
-  height: 100%;
-  background-color: #eeeeee;
+    <title>Register Face</title>
+    <style>
+      .content {
+  width: 50%;
+  margin: 0 auto;
   padding: 20px;
-  box-sizing: border-box;
-}
-ul{
-  list-style-type: none; /* Remove bullets */
-  padding: 20;
-  margin: 0; 
-  color:white;
+  background-color: white;
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.navbar {
-  position: fixed;
-  top: 0;
-  width: calc(100%);
-  height: 80px;
-  background-color: #43c964;;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  box-sizing: border-box;
+
+@media screen and (max-width: 600px) {
+  .content {
+    width: 100%;
+  }
 }
 
-.logo {
-  height: 50px;
+#captureButton {
+    width: 100%;
+    height: 50px;
+    font-family: Arial;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 5px;
+    
+    background-color: rgb(74, 153, 226);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    padding: 10px; /* Add desired padding value */
 }
 
-.navbar ul {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-}
-li a{
-  color:rgb(0, 4, 255);
-  text-decoration: none;
-}
-.navbar li {
-  margin: 0 10px;
-}
+  #captureButton:hover {
+    background-color: rgb(63, 136, 204);
+  }
 
-.navbar a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 20px;
-}
+  #buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  /* Adjust the height of the container as needed */
+  }
+</style>
 
-.content {
-  margin-top: 80px;
-  padding: 20px;
-  box-sizing: border-box;
-}
-#Search_ID {
-  width: 200px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  margin-right: 10px;
-}
 
-button {
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5;
-      }
-      
-      h3 {
-        margin: 0;
-        text-align: center;
-      }
-      
-      #my-div {
-        font-size: 1.5em;
-        font-weight: bold;
-        color: #0099cc;
-        text-align: center;
-        margin-top: 20px;
-      }
-      
-      #bg {
-        display: block;
-        margin: 0 auto;
-        border: 2px solid #333;
-      }
-      
-      #captureButton {
-        display: block;
-        margin: 20px auto;
-        width: 150px;
-        height: 30px;
-        background-color: #0099cc;
-        color: white;
-        font-size: 1.2em;
-        font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
- 
-  </style>
-<body style="background-color: rgb(253, 255, 253);">
-
-  <div class="sidebar">
-    <ul>
-      <li><a href="http://localhost/thesis/face_registration.php">Add Borrowers</a></li>
-    </ul>
-    <ul>
-      <li><a href="http://localhost:5000/scanface.html">Borrowing Item</a></li>
-    </ul>
-    <ul>
-      <li><a href="http://localhost:5000/return.html">Returning Item</a></li>
-    </ul>
-  </div>
-  <div class="navbar">
-    <img src="logo.jpg" alt="Logo" class="logo">
-    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="My Image">
-
-    <ul>
-      <li><a href="http://localhost/thesis/pin_exit.php">Sign Out</a></li>
-    </ul>
-  </div>
+      </style>
+      </head>
+<body style="background-color: #90d3a092;">
   <div class="content">
-    <h3 style="font-family: Arial; margin-bottom: 0;">Place Your face inside the Square and click Capture</h3><br>
-    <img id = "bg" src = "{{ url_for('video_feed')}}" width="40%"><br><br>
-    <button id="captureButton"  style="width: 150x; height: 30px;">Capture</button><br>
-    <h3 style="font-family: Arial; margin-top: 0;"><div id="my-div"></div></h3>
+    <div style="text-align: center;">
+      <h3 style="
+                 font-weight: 400;
+                 cursor: default;
+                
+                 color: #212529;">Place Your Face Inside the Square and Click Capture</h3>
+  
+    
+    <img id="bg" src="{{ url_for('video_feed')}}" style="width: 100%;"><br><br>
+    <div id="buttonContainer">
+      <h3 style="font-weight: 400;cursor: default;color: #212529;;">
+        <div id="my-div"></div>
+      </h3>
+    <button id="captureButton">Capture</button><br>
   </div>
+  </div>
+  </div>
+  
 
  
 <script>
