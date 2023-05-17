@@ -3,11 +3,6 @@
 include 'assets/connection/connect.php';
 session_start();
 
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
-session_destroy();
-header("location:index.php");
-}
-
 
 ?>
 <!DOCTYPE html>
@@ -28,7 +23,7 @@ header("location:index.php");
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  <link rel='stylesheet' href='bootstrap-3.3.7-dist/css/bootstrap.min.css'>
+
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -37,7 +32,6 @@ header("location:index.php");
   <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
@@ -48,19 +42,59 @@ header("location:index.php");
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+  
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+    </style>
 </head>
 
-<body >
+<body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+<header id="header" class="header fixed-top d-flex align-items-center">
 
-<div class="d-flex align-items-center justify-content-between" class="hidden-print"">
+<div class="d-flex align-items-center justify-content-between">
   <a href="dashboard.php" class=" d-flex align-items-center">
     
-<img src="assets/img/logo.png" style="width:300px;height:60px;" class="hidden-print">
+<img src="assets/img/logo.png" style="width:300px;height:60px;">
   </a>
-
+  <i class="bi bi-list toggle-sidebar-btn"></i>
 </div><!-- End Logo -->
 
 
@@ -79,8 +113,7 @@ header("location:index.php");
 </nav><!-- End Icons Navigation -->
 
 </header><!-- End Header -->
-
-  <!-- ======= Sidebar ======= -->
+ <!-- ======= Sidebar ======= -->
  <aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
@@ -89,7 +122,7 @@ header("location:index.php");
 
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="borrowers.php">
+  <a class="nav-link collapsed" href="face_registration.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Add Borrowers</span>
   </a>
@@ -100,6 +133,13 @@ header("location:index.php");
   <a class="nav-link collapsed" href="http://localhost:5000/scanface.html">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowing Item</span>
+  </a>
+</li><!-- End Register gate pass Nav -->
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="http://localhost:5000/return.html">
+  <i class="bi bi-person-bounding-box"></i>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
@@ -142,123 +182,177 @@ header("location:index.php");
 </ul>
 
 </aside><!-- End Sidebar-->
+  <main id="main" class="main trans">
 
-  <main id="main" class="main">
-
-    <div class="pagetitle">
-      <h1 class="hidden-print">QR Code</h1>
+    <div class="pagetitle hidden">
+      <h1>Borrowers Records</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item hidden-print"><a href="borrow_qr.php" class="hidden-print">Home</a></li>
-          <li class="breadcrumb-item active hidden-print">QR Code</li>
+          <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
+          <li class="breadcrumb-item active">Return Items</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
 
-    <section class="section dashboard">
-      <div class="row">
+    <section class="section dashboard trans">
+      <div class="row trans">
 
         <!-- Left side columns -->
-        <div class="col-lg-12">
-          <div class="row">
+        <div class="col-lg-12 trans">
+          <div class="row trans"> 
   <!-- Recent Sales -->
+
+              <div class="card recent-sales overflow-auto trans">
+
+                <div class="card-body ">
+                  <h5 class="card-title hidden">Return Items<h5>
+                  <div class="row"> 
+                  <div class="col-sm">
+
+     
+ </div>
+
+<div class="row justify-content-end trans">
  
-              <div class="card recent-sales overflow-auto">
-
-                <div class="card-body">
-                  <h5 class="card-title hidden-print">Borrower <span>| QR Code</span></h5>
-     
+</div>
+</div>
+<img src="assets/img/logo.png"   style="margin:auto;width:500px;display:none;" class="show">
 <div class="row">
-    <?php  $qr = $_GET["print"];?>
-    <?php
-    $status = "SELECT * from item_borrow where `qr_print`= '$qr'";
-     $result = mysqli_query($conn, $status);
-     $row    = mysqli_fetch_assoc($result);
-     $date_borrow = $row['date_borrow'];
-     $date_return = $row['date_return'];
-     $id_num = $row['borrower_id_num'];
-    ?>
-   <div style="position:relative; float:right;">
-  <img src="<?php echo $qr; ?>" style="width:100px; position:absolute; right:0;"><br>
-  <p style="text-align:right;margin-top:80px;">Transaction ID:</p><br>
-  <p style="font-weight: bold; text-align:right;margin-top:-20px;">
-    <?php echo $trans = $row['transaction']; ?>
-  </p>
-  <?php
-   $status = "SELECT * from borrowers where `id`= '$id_num'";
-   $result = mysqli_query($conn, $status);
-   $row    = mysqli_fetch_assoc($result);
-  ?>
-  <p style="font-size:16px;">Borrowers Name: <?php echo $row['sname'],",",$row['gname']," ",$row['mname'];?></p>
-  <p style="font-size:15px;">Date Borrow: <?php echo $date_borrow;?></p>
-  <p style="font-size:15px;">Date Return: <?php echo $date_return;?></p>
-</div>
 
-    <table class="table" id="myTable" >
-  <thead>
-    <tr>
-      <th scope="col">QTY</th>
-      <th scope="col">Equipment</th>
-      <th scope="col">Description</th>
-    
+
+
+<label for="yourName" class="form-label">Name: <?php if(isset($_GET['name'])){echo $name12 =$_GET['name'];}?></br>
+   <label for="yourName" class="form-label">ID Number: <?php if(isset($_GET['label'])){echo $_GET['label'];}?></label>
+   <?php if(isset($_GET['label'])){ $id =  $_GET['label'];}?>
+
+<?php 
+$sql = "SELECT b.id, b.id_num, b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
+, ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
+FROM item_borrow as i
+JOIN borrowers as b ON i.borrower_id_num = b.id
+JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+WHERE b.id_num = '$id' AND transaction != '' and i.status != 'return' and i.status != 'pending'
+GROUP BY transaction, ce.id;
+";
+$result = $conn->query($sql);
+
+$transactions = array();
+
+if ($result->num_rows > 0) {
+  // group rows by transaction ID
+  while($row = $result->fetch_assoc()) {
+      $trans = $row['transaction'];
      
-    </tr>
-  </thead>
-  <?php
 
-    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del,i.status as stats,i.qr_id_cvsu ,i.quantity as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE `transaction`= '$trans' group by ce.id ";
-    
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-      // output data of each row
-      while($row = $result->fetch_assoc()) {
-  ?>
-  <tbody>
-    <tr>
-      
-      <th scope="row"><?php echo $row['quan'];?></th>
-      <td><?php echo $name1 = $row['name1'];?></td>
-      <td><?php echo $row['desc1'];?></td>
+      if (!isset($transactions[$trans])) {
+        $transactions[$trans] = array(
+          'header' => array(
+            'transaction' => $trans,
+          ),
+          'items' => array()
+        );
+      }
 
-    </tr>
-  
-  </tbody>
-  <?php
-   }
-  } else {
-    
+      $transactions[$trans]['items'][] = array(
+        'name' => $row['name1'],
+        'quantity' => $row['quan'],
+        'transac' => $row['transaction'],
+        'cvsu_id' => $row['qr_id_cvsu']
+       
+      );
   }
-  ?>
-</table>
-</div>
 
-<input class="btn btn-primary w-100 hidden-print" type="button" onclick="printAndRedirect()" value="Print QR Code">
-
-<script>
-function printAndRedirect() {
-  // Kunin ang reference sa current window
-  var currentWindow = window;
-
-  // I-print ang QR code
-  window.print();
-  
-  // I-close ang popup window
-  currentWindow.close();
-
-  // I-redirect ang user sa desired URL
-  window.location.href = "../thesis/face_registration.php";
-}
-</script>
-   
+  // display tables for each transaction ID
+  foreach ($transactions as $trans_data) {
       
+?>
+
+<table class="table border table-hover" id="mytable">
+<thead style="text-align:center;background-color:#43c964;color:white;">
+  <tr>
+  <th colspan="3">Transaction ID: <?php echo $transac_id1 = $trans_data['header']['transaction'];?></th>
+  </tr>
+</thead>
+
+<thead>
+  <tr>
+    <th style="width:  33.3%;">Item</th>
+    <th style="width: 33.3%;">Quantity</th>
+    <th style="width:  33.3%;">Return</th>
+  </tr>
+</thead>
+
+<tbody>
+    <?php  foreach ($trans_data['items'] as $item_data) { ?>
+  <tr>
+
+  <td ><?php echo $item = $item_data['name'];?></td>
+    <td ><?php echo $quan = $item_data['quantity'];?></td>
+    <td><button class="btn btn-secondary open-modal" 
+            data-transact-id="<?php echo $trans_data['header']['transaction']; ?>"
+            data-item="<?php echo $item_data['name']; ?>"
+            data-quantity="<?php echo $item_data['quantity']; ?>"
+            label="<?php echo $_GET['label']; ?>"
+            name="<?php echo $_GET['name']; ?>">
+            <i class="bi bi-arrow-right"></i>
+    </button>
+</td>
+
+  </tr>
+  <?php }?>
+</tbody>
+
+</table>
+<br>
+<?php
+  }
+}
+?>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><strong>Transaction ID:</strong> <?php echo $transac_id1; ?></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="return_process.php">
+      <input type="hidden" name="id" value="<?php echo $id; ?>" readonly>
+      <input type="hidden" name="transact_id" value="<?php echo $transac_id1; ?>">
+      <input type="text" name="item" value="<?php echo $item; ?>" readonly>
+    <input type="int" name="quantity" value="<?php echo $quan; ?>" max="<?php echo $quan; ?>" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" name="submit" class="btn btn-primary">Return</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+                </div>
+
+
+              </div>
+            </div><!-- End Recent Sales -->
+            
+ 
+          
+          </div>
         </div><!-- End Left side columns -->
 
         <!-- Right side columns -->
         <div class="col-lg-4">
 
-          <!-- Recent Activity -->
+          <!-- Recent Activity 
           <div class="card">
-            <!-- <div class="filter">
+            <div class="filter">
               <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
               <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                 <li class="dropdown-header text-start">
@@ -269,9 +363,9 @@ function printAndRedirect() {
                 <li><a class="dropdown-item" href="#">This Month</a></li>
                 <li><a class="dropdown-item" href="#">This Year</a></li>
               </ul>
-            </div>--> 
+            </div>
 
-            <!--<div class="card-body">
+            <div class="card-body">
               <h5 class="card-title">Recent Activity <span>| Today</span></h5>
 
               <div class="activity">
@@ -334,6 +428,7 @@ function printAndRedirect() {
        
 
         </div><!-- End Right side columns -->
+        
 
       </div>
     </section>
@@ -341,7 +436,7 @@ function printAndRedirect() {
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer hidden-print">
+  <footer id="footer" class="footer hidden">
     <div class="copyright">
       &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
     </div>
@@ -354,7 +449,7 @@ function printAndRedirect() {
     </div>
   </footer><!-- End Footer -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center bg-success"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
@@ -367,10 +462,52 @@ function printAndRedirect() {
   <script src="assets/vendor/php-email-form/validate.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="assets/js/main.js">
-    // Kunin ang reference sa current window
+  <script src="assets/js/main.js"></script>
 
-  </script>
+ <!-- script to handle modal interactions -->
+<script>
+// get the modal element
+var modal = document.querySelector('.modal');
+
+// get the close button
+var closeBtn = modal.querySelector('.close');
+
+// get the form elements
+var transactIdInput = modal.querySelector('input[name="transact_id"]');
+var itemInput = modal.querySelector('input[name="item"]');
+var quantityInput = modal.querySelector('input[name="quantity"]');
+var labelInput = modal.querySelector('input[name="label"]');
+var nameInput = modal.querySelector('input[name="name"]');
+// add click event listener to all open-modal buttons
+var openModalButtons = document.querySelectorAll('.open-modal');
+openModalButtons.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    // set the values of the input elements in the modal based on the data attributes of the button
+    transactIdInput.value = btn.dataset.transactId;
+    itemInput.value = btn.dataset.item;
+    quantityInput.value = btn.dataset.quantity;
+    quantityInput.max = btn.dataset.quantity;
+    
+    
+    // show the modal
+    modal.style.display = 'block';
+  });
+});
+
+// add click event listener to close button
+closeBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
+});
+
+// add click event listener to window to close modal if clicked outside modal
+window.addEventListener('click', function(event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+});
+</script>
+
+
 
 </body>
 

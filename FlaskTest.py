@@ -242,6 +242,11 @@ def ClosingCamera():
 def scanface():
     return render_template('scanface.html')
 
+#------------------------------------------------------------
+@app.route('/return.html')
+def returnface():
+    return render_template('return.html')
+
 
 #------------------------------------------------------------
 @app.route('/scancapture')
@@ -383,6 +388,16 @@ def gen(camera):
 
 def ProceedQR():
     url = 'http://localhost/thesis/borrow_qr.php'
+    data = {'name': predicted_name, 'label': label}
+    query_string = urllib.parse.urlencode(data)
+    url_with_query_string = url + '?' + query_string
+    return redirect(url_with_query_string)
+
+##------------------------------------------------------------
+@app.route('/ProceedReturn')
+
+def ProceedReturn():
+    url = 'http://localhost/thesis/return_item.php'
     data = {'name': predicted_name, 'label': label}
     query_string = urllib.parse.urlencode(data)
     url_with_query_string = url + '?' + query_string

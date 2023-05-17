@@ -278,8 +278,8 @@ if ($result->num_rows > 0) {
                      <?php } ?>
                     <?php if(empty($row['serial'])){?>
               <div class="d-flex align-items-center">
-                
-                      <?php echo $row["status_count"],"/",$row['cequan'];?>
+                     
+                      <?php if(empty($row['iquan'])){echo 0,"/",$row['cequan']; }else {echo $row["iquan"],"/",$row['cequan'];}?>
                     <div class="ps-3">
                      <?php } ?>
                     </div>

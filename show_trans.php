@@ -300,7 +300,7 @@ header("location:index.php");
   <thead>
     <tr>
       <th scope="col">QTY</th>
-      <th scope="col">Equipment</th>
+      <th scope="col">Equipment Name</th>
       <th scope="col">Description</th>
     
      
@@ -308,7 +308,7 @@ header("location:index.php");
   </thead>
   <?php
 
-    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del,i.status as stats,i.qr_id_cvsu ,count(i.quantity) as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE `transaction`= '$trans' group by ce.id ";
+    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del,i.status as stats,i.qr_id_cvsu ,i.quantity as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE `transaction`= '$trans' group by ce.id ";
     
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {

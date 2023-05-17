@@ -20,20 +20,19 @@ if ($result->num_rows > 0) {
   }
 }
 
-$sql = "SELECT i.qr_id_cvsu ,count(i.quantity) as quan, ce.id as ce_id,ce.serial as serial , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i  JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu where ce.id = '$ced'";
+$sql = "SELECT i.qr_id_cvsu ,i.quantity as quan,ce.serial as serial , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i  JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu where ce.id = '$ced'";
 $result = mysqli_query($conn, $sql);
 $row    = mysqli_fetch_assoc($result);  
 $ced = $row['ce_id'];
 $success = "Item Successfully Added";
 $error = "This item not added";
-if($row['quan'] < $row['quantity'] && empty($row['serial'])){
-    $sql = "INSERT INTO `item_borrow`( `borrower_id_num`, `qr_id_cvsu`,`quantity`) 
-    VALUES ('$id','$ced','1')";
-      if ($conn->query($sql) === TRUE) { 
-        header("Location: borrow_qr.php?name=$name&label=$label&success=$success");
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
+if($row['quan'] < $row['quantity']){
+  $sql = "UPDATE `item_borrow` SET `quantity` = `quantity` + 1 WHERE  transaction = ''";
+  if ($conn->query($sql) === TRUE) {
+     header("Location: borrow_qr.php?name=$name&label=$label&success=$success");
+  } else {
+    echo "Error updating record: " . $conn->error;
+  }
 }else{
     header("Location: borrow_qr.php?name=$name&label=$label&error=$error");
   

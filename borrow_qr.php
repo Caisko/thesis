@@ -8,10 +8,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
 session_destroy();
 header("location:index.php");
 }
-if (!isset($_SESSION['pincode']) && !isset($_SESSION['true'])) {
-session_destroy();
-header("location:borrowers.php");
-}
+
 
 ?>
 <!DOCTYPE html>
@@ -218,7 +215,7 @@ if(isset($_GET['success'])){
   </thead>
   <?php
   $label = $_GET['label'];
-    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del, i.qr_id_cvsu ,count(i.quantity) as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE b.id_num ='$label' and transaction = '' group by ce.id ";
+    $sql = "SELECT b.id, b.id_num, i.borrower_id_num as bnum,i.id as id_del, i.qr_id_cvsu ,i.quantity as quan, ce.id as ced,ce.serial as se , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i JOIN borrowers as b ON i.borrower_id_num = b.id JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu WHERE b.id_num ='$label' and transaction = '' group by ce.id ";
     
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
@@ -262,15 +259,17 @@ $all = [$trans, $random];
      
         <input type="hidden" name="name1" value="<?php if(isset($name1)){echo $name1;}?>" >
         <?php
-       
 ?>
 <input type="submit" name="submit" class="btn btn-primary " style="width:200px;float:right;position:relative;top:10px;" value="Proceed">
 
       </form>
+      <div class="row text-control" id="display">
+                                                      <!-- Display Ajax -->
+                                                   </div>
          </div>
          </div>
   </div>
- 
+
   </div>
   
   </div>

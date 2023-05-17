@@ -42,7 +42,7 @@ $row = mysqli_fetch_assoc($result);
 if ($result->num_rows > 0) {
  
   if ($row["id_num"] == $id) {
-  echo $id_num = $row['id'];
+   $id_num = $row['id'];
   } else {
    
   }
@@ -74,31 +74,63 @@ $row = mysqli_fetch_assoc($result);
         
       }else{
      
-        $checking = "SELECT * FROM `item_borrow` WHERE `qr_id_cvsu` = '$item_id'";
-        $result = mysqli_query($conn, $checking);
-        $row = mysqli_fetch_assoc($result);
-        
-        $sql_to_know ="SELECT i.qr_id_cvsu ,ce.quantity as cequan,ce.id,sum(i.quantity) as iquan,count(i.status) as status FROM `item_borrow` AS i join cvsu_equipment as ce on i.qr_id_cvsu = ce.id WHERE ce.id = '$item_id' and not status = 'return';";
-        $result = mysqli_query($conn, $sql_to_know);
-        $row = mysqli_fetch_assoc($result);
-        //echo $row['cequan'],"<br>";
-        //echo $row['iquan'],"<br>";
-        if($row['status'] < $row['cequan']){
-      
-       
-          $sql = "INSERT INTO `item_borrow`( `borrower_id_num`, `qr_id_cvsu`,`quantity`) 
-            VALUES ('$id_num','$item_id','1')";
+        $checking = "SELECT * FROM `item_borrow` WHERE `qr_id_cvsu` = ? AND `transaction` = ''";
+        $stmt = $conn->prepare($checking);
+        $stmt->bind_param("s", $item_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
 
-          if ($conn->query($sql) === TRUE) { 
-            echo "Successfully added";
-            
+        if(empty($row['qr_id_cvsu'])){
+          $insert = "INSERT INTO `item_borrow` (`borrower_id_num`, `qr_id_cvsu`, `quantity`) VALUES (?, ?, 1)";
+          $stmt = $conn->prepare($insert);
+          $stmt->bind_param("ss", $id_num, $item_id);
+          if ($stmt->execute()) {
+              echo "Successfully added";
           } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+              echo "Error inserting record: " . $conn->error;
           }
         }else{
-          echo "ALL ITEM HAS BEEN BORROW";
-        }
+        if ($result->num_rows > 0) {
+          // Update the existing record
+$sql_to_know = "SELECT i.transaction as transaction, i.qr_id_cvsu as qr_id, ce.quantity as cequan, ce.id as id, SUM(i.quantity) as iquan, i.status as status FROM `item_borrow` AS i JOIN cvsu_equipment as ce ON i.qr_id_cvsu = ce.id WHERE ce.id = '$item_id' and i.status != 'return'  GROUP BY i.qr_id_cvsu;";
+$result = mysqli_query($conn, $sql_to_know);
+$row = mysqli_fetch_assoc($result);
+
+if ($row['iquan'] < $row['cequan']) {
+    $update = "UPDATE `item_borrow` SET `quantity` = `quantity` + 1 WHERE `qr_id_cvsu` = ? AND `transaction` = ''";
+    $stmt = $conn->prepare($update);
+    $stmt->bind_param("s", $item_id);
+    if ($stmt->execute()) {
+        echo "Successfully updated";
+    } else {
+        echo "Error updating record: " . $conn->error;
+    }
+} else {
+    echo "All items have been borrowed";
+}
+
+      } else {
+          // Insert a new record
+          $sql_to_know ="SELECT i.qr_id_cvsu as qr_id, ce.id as id , ce.quantity as cequan, SUM(i.quantity) as iquan, i.status as status FROM `item_borrow` AS i JOIN cvsu_equipment as ce ON i.qr_id_cvsu = ce.id WHERE ce.id = '$item_id' and  i.status != 'return'  GROUP BY i.qr_id_cvsu;";
+          $result = mysqli_query($conn, $sql_to_know);
+          $row = mysqli_fetch_assoc($result);
+          if($row['iquan'] < $row['cequan']){
+              $insert = "INSERT INTO `item_borrow` (`borrower_id_num`, `qr_id_cvsu`, `quantity`) VALUES (?, ?, 1)";
+              $stmt = $conn->prepare($insert);
+              $stmt->bind_param("ss", $id_num, $item_id);
+              if ($stmt->execute()) {
+                  echo "Successfully added";
+              } else {
+                  echo "Error inserting record: " . $conn->error;
+              }
+          } else {
+              echo "All items have been borrowed";
+          }
+      }
       
+        
+    }     
     
   }
   }else{

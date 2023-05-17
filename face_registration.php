@@ -3,11 +3,6 @@
 include 'assets/connection/connect.php';
 session_start();
 
-if (!isset($_SESSION['pincode']) && !isset($_SESSION['true'])) {
-session_destroy();
-header("location:borrowers.php");
-}
-
 ob_start();
 ?>
 <!DOCTYPE html>
@@ -161,6 +156,13 @@ text-align: center;
   <a class="nav-link collapsed" href="http://localhost:5000/scanface.html">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowing Item</span>
+  </a>
+</li><!-- End Register gate pass Nav -->
+
+<li class="nav-item">
+  <a class="nav-link collapsed" href="http://localhost:5000/return.html">
+  <i class="bi bi-person-bounding-box"></i>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 

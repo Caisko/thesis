@@ -206,7 +206,7 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="borrowers.php">
+  <a class="nav-link collapsed" href="face_registration.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowers</span>
   </a>
@@ -347,26 +347,27 @@ header("location:index.php");
     <th scope="col">Transaction ID</th>
       <th scope="col">Borrowers Name</th>
       <th scope="col">Department</th>
-      <th scope="col">Item name</th>
-      <th scope="col">QTY</th>
+      <th scope="col">Item/QTY</th>
       <th scope="col">Date Borrowed</th>
       <th scope="col">End Date</th>
       <th scope="col"> Date Return</th>
+      <th scope="col"> Remarks</th>
       <th scope="col">Status</th>
-      <th scope="col">Action</th>
+    
       
     </tr>
   </thead>
   <?php 
-  $sql = "SELECT b.id, b.id_num, b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
-        i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
-        i.date_return as date_return, count(i.quantity) as quan, i.status as status, ce.id as ced, ce.serial as se,
-        GROUP_CONCAT(DISTINCT ce.item_name SEPARATOR ', ') as name1, ce.description as desc1, ce.quantity as quantity
-        FROM item_borrow as i
-        JOIN borrowers as b ON i.borrower_id_num = b.id
-        JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-        WHERE NOT transaction = ''
-        GROUP BY transaction";
+  $sql = "SELECT b.id, b.id_num, i.date_return_item,i.remarks as remarks,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+  i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+  i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
+  ,GROUP_CONCAT(DISTINCT ce.item_name,'-',i.quantity SEPARATOR '<BR>') as name1, ce.description as desc1, ce.quantity as quantity
+FROM item_borrow as i
+JOIN borrowers as b ON i.borrower_id_num = b.id
+JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+WHERE ce.id = i.qr_id_cvsu AND transaction != '' 
+GROUP BY transaction ORDER BY i.status ASC;
+";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -374,27 +375,28 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $trans = $row['transaction'];
         $all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
+        
 ?>
 
 <tbody>
     <tr>
-        <td><?php echo $trans;?></td>
+        <td><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:black;font-weight:bold;"><?php echo $trans;?></p></a></td>
         <td><?php echo $all; ?></td>
         <td><?php echo $row['de'];?></td>
-        <td><?php echo $row['name1'];?></td>
-        <td><?php echo $row['quan'];?></td>
+        <td><?php echo $row['name1']?></td>
         <td><?php echo date('F j, Y', strtotime($row['date_borrow'])); ?></td>
         <td><?php echo date('F j, Y', strtotime($row['date_return'])); ?></td>
-        <td></td>
+        <td><?php
+        if(!empty($row['date_return_item'])){
+        echo date('F j, Y', strtotime($row['date_return_item'])); }else{}?></td>
+        <td><?php echo strtoupper($row['remarks'])?></td>
         <?php if($row['status'] == 'borrow'){?>
-    <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">IN USE</p></td>
+    <td ><p style="color:gold;">IN USE</p></td>
     <?php }else if($row['status'] == 'return'){ ?>
-      <td ><a href="show_trans.php?trans=<?php echo $trans;?>"><p style="color:gold;">RETURNED</p></td>
+      <td ><p style="color:green;">RETURNED</p></td>
       <?php } ?>
-      <td>
-      <a href="action.php?trans=<?php echo $trans; ?>" class="myBtn btn btn-warning" ><i class="bi bi-box-arrow-in-left"></i></a>
-
- </td>
+      
+     
     </tr>
 </tbody>
 
@@ -534,8 +536,7 @@ if ($result->num_rows > 0) {
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 
- <script>
- function searchTable() {
+ <script>function searchTable() {
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById("searchInput");
   filter = input.value.toUpperCase();
@@ -549,8 +550,21 @@ if ($result->num_rows > 0) {
     return;
   }
 
+  if (selectedValue == "3") {
     for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[selectedValue];
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) { 
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  } else {
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[selectedValue - 1];
       if (td) {
         txtValue = td.textContent || td.innerText;
         if (txtValue.toUpperCase().indexOf(filter) > -1 || td.hasAttribute("colspan")) { 
@@ -560,8 +574,10 @@ if ($result->num_rows > 0) {
         }
       }
     }
-  
+  }
 }
+
+
 
 </script>
 

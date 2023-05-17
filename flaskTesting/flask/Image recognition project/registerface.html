@@ -1,11 +1,167 @@
 <html>
-<body style="background-color: rgb(153, 218, 156);">
-    <center><center><h3 style="font-family: Arial; margin-bottom: 0;">Place Your face inside the Square and click Capture</h3><br>
-    <img id = "bg" src = "{{ url_for('video_feed')}}"><br><br>
+   <head>
+    <title>My Website</title>
+<style>
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  top: 12%;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background-color: #eeeeee;
+  padding: 20px;
+  box-sizing: border-box;
+}
+ul{
+  list-style-type: none; /* Remove bullets */
+  padding: 20;
+  margin: 0; 
+  color:white;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: calc(100%);
+  height: 80px;
+  background-color: #43c964;;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.logo {
+  height: 50px;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+li a{
+  color:rgb(0, 4, 255);
+  text-decoration: none;
+}
+.navbar li {
+  margin: 0 10px;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.content {
+  margin-top: 80px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+#Search_ID {
+  width: 200px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      
+      h3 {
+        margin: 0;
+        text-align: center;
+      }
+      
+      #my-div {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #0099cc;
+        text-align: center;
+        margin-top: 20px;
+      }
+      
+      #bg {
+        display: block;
+        margin: 0 auto;
+        border: 2px solid #333;
+      }
+      
+      #captureButton {
+        display: block;
+        margin: 20px auto;
+        width: 150px;
+        height: 30px;
+        background-color: #0099cc;
+        color: white;
+        font-size: 1.2em;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+ 
+  </style>
+<body style="background-color: rgb(253, 255, 253);">
+
+  <div class="sidebar">
+    <ul>
+      <li><a href="http://localhost/thesis/face_registration.php">Add Borrowers</a></li>
+    </ul>
+    <ul>
+      <li><a href="http://localhost:5000/scanface.html">Borrowing Item</a></li>
+    </ul>
+    <ul>
+      <li><a href="http://localhost:5000/return.html">Returning Item</a></li>
+    </ul>
+  </div>
+  <div class="navbar">
+    <img src="logo.jpg" alt="Logo" class="logo">
+    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="My Image">
+
+    <ul>
+      <li><a href="http://localhost/thesis/pin_exit.php">Sign Out</a></li>
+    </ul>
+  </div>
+  <div class="content">
+    <h3 style="font-family: Arial; margin-bottom: 0;">Place Your face inside the Square and click Capture</h3><br>
+    <img id = "bg" src = "{{ url_for('video_feed')}}" width="40%"><br><br>
     <button id="captureButton"  style="width: 150x; height: 30px;">Capture</button><br>
     <h3 style="font-family: Arial; margin-top: 0;"><div id="my-div"></div></h3>
-    </center>  
-    <script>
+  </div>
+
+ 
+<script>
 
       window.onbeforeunload = function() {
             // Close the camera here

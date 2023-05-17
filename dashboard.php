@@ -233,7 +233,7 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="borrowers.php">
+  <a class="nav-link collapsed" href="face_registration.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowers</span>
   </a>
@@ -568,6 +568,131 @@ header("location:index.php");
                     }
                    }
                   ?>
+
+<?php
+            
+            if ($position == "Priority 2"){
+             $status = "SELECT b.id, b.id_num, i.date_return_item,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+             i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+             i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
+             ,GROUP_CONCAT(DISTINCT ce.item_name,'/',i.quantity SEPARATOR '<BR>') as name1, ce.description as desc1, ce.quantity as quantity
+           FROM item_borrow as i
+           JOIN borrowers as b ON i.borrower_id_num = b.id
+           JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+           WHERE i.status = 'pending'
+           ORDER BY `id` DESC
+                    LIMIT 1 
+             ;";
+             $result = mysqli_query($conn, $status);
+             $row    = mysqli_fetch_assoc($result);
+           
+             if($row['status']){
+            
+             ?>
+             <!-- The Modal -->
+             
+                 <div id="myModal" class="modal" id="moodal" style="display:block;">
+                 <!-- Modal content -->
+                 <div class="modal-content" >
+               
+                   
+                   <p class="title"><i class="bi bi-question-diamond-fill"></i> </p>
+                   <p class="ds">Items returned by borrowers</p>
+
+                  <br>
+                   <form method="post" >
+
+                   <label for="yourName" class="form-label">Transaction ID:</label>
+                     <input type="text" name="transact_id"  class="form-control"  value="<?php echo $row['transaction'];?>" readonly ><br>
+                     <input type="hidden" name="ced"  class="form-control"  value="<?php echo $row['ced'];?>" readonly ><br>
+                     
+                   <label for="yourName" class="form-label">Item Name/QTY:</label>
+                     <input type="text"  class="form-control" value="<?php echo $row['name1'];?>" readonly ><br>
+                     <label for="yourName" class="form-label">Remarks:</label>
+                     <input type="text"  class="form-control" name = "remark" placeholder="Optional"  ><br>
+                     <input type="submit" value="Confirm" name="accept_item" class="but1">
+                     <input type="submit" value="Declined" name="not_accept" class="but2">
+                   </form>
+                 </div>
+                 </div>
+                   <script>
+                   var modalq = document.getElementById('myModal');
+                   console.log(modalq)
+                   modalq.style.display = 'block';
+                   </script> 
+
+
+              <!--update borrowers accept-->
+
+              <?php
+              
+                  
+if(isset($_POST['accept_item'])){
+  $id =  $_POST['ced'];
+  $re =  $_POST['remark'];
+  $trans =  $_POST['transact_id'];
+  $current_date = date('Y-m-d');
+   $current_date;
+ $sql = "SELECT b.id, b.id_num , b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+i.borrower_id_num as bnum, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
+, ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
+FROM item_borrow as i
+JOIN borrowers as b ON i.borrower_id_num = b.id
+JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+WHERE i.transaction = '$trans' AND ce.id = $id;
+"; 
+
+
+$result = mysqli_query($conn, $sql);
+$row    = mysqli_fetch_assoc($result);
+$all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
+$ced = $row['ced'];
+$sql = "UPDATE item_borrow SET  remarks = '$re',status = 'return',date_return_item = '$current_date' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
+
+if ($conn->query($sql) === TRUE) {
+   
+} else {
+ echo "Error updating record: " . $conn->error;
+}
+
+}else if(isset($_POST['not_accept'])){
+  $id =  $_POST['ced'];
+  $re =  $_POST['remark'];
+  $trans =  $_POST['transact_id'];
+  $current_date = date('Y-m-d');
+   $current_date;
+ $sql = "SELECT b.id, b.id_num , b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+i.borrower_id_num as bnum, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
+, ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
+FROM item_borrow as i
+JOIN borrowers as b ON i.borrower_id_num = b.id
+JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+WHERE i.transaction = '$trans' AND ce.id = $id;
+"; 
+
+
+$result = mysqli_query($conn, $sql);
+$row    = mysqli_fetch_assoc($result);
+$all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
+$ced = $row['ced'];
+$sql = "UPDATE item_borrow SET status = 'borrow',date_return_item = NULL,quantity_return = NULL WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
+
+if ($conn->query($sql) === TRUE) {
+   
+} else {
+ echo "Error updating record: " . $conn->error;
+}
+
+}
+              
+              
+              ?>
+          <?php
+             }
+            }
+           ?>
                   
                 <div class="card-body">
                   <h5 class="card-title">Gate Pass <span>| Move In/Out </span></h5>
