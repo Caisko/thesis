@@ -1,13 +1,5 @@
 <?php
 include 'assets/connection/connect.php';
-session_start();
-$name = $_SESSION["uname"];
-$pass = $_SESSION["password"];
-
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
-session_destroy();
-header("location:index.php");
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,17 +78,19 @@ header("location:index.php");
 
               if(isset($_POST['submit'])){
                 $pin = $_POST['pin'];
-                $status = "SELECT * FROM pin_default";
+                $status = "SELECT * FROM borrowers where `id_num` = '$pin'";
                 $result = mysqli_query($conn, $status);
                 $row = mysqli_fetch_assoc($result);
-                if($row['pin'] == $pin){
-                    header("location: face_registration.php");
+                if($row && $row['id_num'] == $pin){
+                  $row['id_num'];
+                 echo "Successfully Log In";
+                   // header("location: face_registration.php");
                     $_SESSION['true'] = true;
                     
                 }else{
                   ?>
                   <p class="alert alert-danger text-center" style="font-align:center;">
-                    <?php echo "Incorrect Pin"; ?></p><?php
+                    <?php echo "Not Registered ID Number"; ?></p><?php
                 }
                 
               }
@@ -110,15 +104,21 @@ header("location:index.php");
                   <form class="row g-3 needs-validation" method="post">
 
                     <div class="col-12">
-                      <label for="yourUsername" class="form-label">Pin</label>
+                      <label for="yourUsername" class="form-label">Enter ID Number:</label>
                       <div class="input-group has-validation">
               
-                        <input type="password" name="pin" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Enter PIN Code.</div>
+                        <input type="text" name="pin" class="form-control" id="yourUsername" required>
+                    
+                        <div class="invalid-feedback">Enter ID Number.</div>
+                       
                       </div>
                     </div>
-
-                    
+                    <div class="col-6" style="position:absolute;left:-20px;">
+                      
+                    </div>
+                    <div class="col-6" style="position:absolute;left:-20px;">
+                      <p ><a href="face_registration.php">Register Account?</a></p>
+                    </div>
                     <!--<div class="col-12">
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
