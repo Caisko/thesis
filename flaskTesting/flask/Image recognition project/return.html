@@ -1,150 +1,122 @@
 <html>
   <head>
     <title>My Website</title>
-<style>
-  body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-.sidebar {
-  position: fixed;
-  top: 12%;
-  left: 0;
-  width: 200px;
-  height: 100%;
-  background-color: #eeeeee;
-  padding: 20px;
-  box-sizing: border-box;
-}
-ul{
-  list-style-type: none; /* Remove bullets */
-  padding: 20;
-  margin: 0; 
-  color:white;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  width: calc(100%);
-  height: 80px;
-  background-color: #43c964;;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  box-sizing: border-box;
-}
-
-.logo {
-  height: 50px;
-}
-
-.navbar ul {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-}
-li a{
-  color:rgb(0, 4, 255);
-  text-decoration: none;
-}
-.navbar li {
-  margin: 0 10px;
-}
-
-.navbar a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 20px;
-}
-
-.content {
-  margin-top: 80px;
-  padding: 20px;
-  box-sizing: border-box;
-}
-#Search_ID {
-  width: 200px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  margin-right: 10px;
-}
-
-button {
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-  </style>
-  </head>
-<body style="background-color: rgb(255, 255, 255);">
-
-
-    <div class="sidebar">
-      <ul>
-        <li><a href="http://localhost/thesis/face_registration.php">Add Borrowers</a></li>
-      </ul>
-      <ul>
-        <li><a href="http://localhost:5000/scanface.html">Borrowing Item</a></li>
-      </ul>
-      <ul>
-        <li><a href="http://localhost:5000/return.html">Returning Item</a></li>
-      </ul>
-    </div>
-    <div class="navbar">
-      <img src="logo.jpg" alt="Logo" class="logo">
-      <ul>
-        <li><a href="http://localhost/thesis/pin_exit.php">Sign Out</a></li>
-      </ul>
-    </div>
-    <div class="content">
-      <div id="ScanningFacePage">
-        <div style="position: relative;left:250px;">
-        <h3 style="font-family: Arial; position: fixed; left: 28.5%; top: 135px;">Scan Face Here</h3><br>
-      <img id = "bg" src = "{{ url_for('video_feed')}}" style = "position: fixed; top:28%; left: 210px;width:40%; ">
-       </div>
-       <button onclick="showQRscanningPage()" id = "Proceed" style = "width: 150x; height: 30px; display: none; position: fixed; top:550px;right:80px; ">Proceed</button>
+<head>
+  <style>
+    body {
+      background-color:#90d3a092;
+      margin-top: 20px; /* Adjust the margin value as needed */
+    }
     
-    <h3 style="font-family: Arial; position: relative; top: 9%; left: 800px;"><div id="Name"></div></h3>
-    <h3 style="font-family: Arial; position: relative; top: 13%; left: 800px;"><div id="ID Number"></div></h3>
+    .container {
+      margin: auto;
+      width: 60%;
+      border: 2px solid grey;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0px 0px 5px grey; /* Add a shadow effect to the container */
+    }
+    
+    .row {
+      width: 100%;
+      margin-bottom: 2px;
+    }
+    .search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .search-container label {
+    margin-right: 10px;
+    font-family: Arial;
+  }
+
+  .search-input {
+    width: 300px;
+    height:40px;
+    padding: 5px;
+    font-family: Arial;
+  }
+
+  .search-button {
+    background-color: #4CAF50;
+    color: white;
+    height:40px;
+    border: none;
+    padding: 8px 16px;
+    font-family: Arial;
+    cursor: pointer;
+  }
+
+  .search-button:hover {
+    background-color: #45a049;
+  }
+  </style>
+  
+  </head>
+<body >
+
+
+      <div id="ScanningFacePage" class="container">
+        <div class="row">
+        <h3 style="font-family: Arial;text-align: center;">Scan Face Here</h3><br>
+        </div>
+        <div class="row">
+        <form style="font-family: Arial;">
+          <div class="search-container">
+            <label for="Search_ID">Search ID Number:</label>
+            <input type="text" id="Search_ID" class="search-input">
+            <button type="button" onclick="SearchIDnumber()" class="search-button">Search</button>
+          </div>
+          
+        </form>
+        </div>
+        <div class="row">
+          <h3 style="font-family: Arial; "><div id="Name"></div></h3>
+    <h3 style="font-family: Arial; "><div id="ID Number"></div></h3>
+          </div>
+        <div class="row" >
+          <img id = "bg" src = "{{ url_for('video_feed')}}" style="width: 100%;height:70%; border-radius: 20px;">
+        </div>
+        <div class="row">
+          <button onclick="showQRscanningPage()" id = "Proceed" style = "width: 150x; height: 30px; display: none;  ">Proceed</button>
+    
+        </div>
+        
+       </div>
+      
+    
    </div>    
-   <form style="font-family: Arial; position: absolute; top:105px;; left: 220px;">
-    Search ID Number: <input type = "text" style = "width: 150px;" id = "Search_ID"></input>
-    <button type = "button" onclick = "SearchIDnumber()">Search</button>
-  </form>
+   
     </div>
-    <div id = "QRscanningPage" style = "display: none;">
+  
+    <!-- <div id = "QRscanningPage" style = "display: none;">
       <h3 style="font-family: Arial; position: absolute; left: 23%; top: 2%;">Scan QR Codes Here</h3><br>
           <button onclick="ShowFaceScanningPage()">Show Page 1</button>
     </div>
-    
+     -->
     <script>
 
       window.onload = function(){
+        const returning = new XMLHttpRequest();
+          returning.open('GET', '/returnscanning');
+          returning.send();
+          RecieveMessage();
+
+          const black = new XMLHttpRequest();
+          black.open('GET', '/blackimage');
+          black.send();
+          
+
           const xhr = new XMLHttpRequest();
           xhr.open('GET', '/scancapture');
           xhr.send();
         
-          const black = new XMLHttpRequest();
-          black.open('GET', '/blackimage');
-          black.send();
-          RecieveMessage();
+          
+
+          
 
       }
 
@@ -254,7 +226,7 @@ button:hover {
               document.getElementById("ID Number").innerText = response.MessageIDnumber;
               
               if (response.CapturingMessageScan !== 'Recognizing Image...' && response.CapturingMessageScan !== 'No Face Detected Please Try again.' && response.CapturingMessageScan !== 'No ID Number Found...' && response.CapturingMessageScan !== 'No Matched Face.') {
-                Proceed.style.display = 'inline';
+                Proceed.click();
               }
               else{
                 Proceed.style.display = 'none';

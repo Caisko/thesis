@@ -1,5 +1,6 @@
 <?php
 include 'assets/connection/connect.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,33 +76,39 @@ include 'assets/connection/connect.php';
               
 
               <?php
+session_start();
 
-              if(isset($_POST['submit'])){
-                $pin = $_POST['pin'];
-                $status = "SELECT * FROM borrowers where `id_num` = '$pin'";
-                $result = mysqli_query($conn, $status);
-                $row = mysqli_fetch_assoc($result);
-                if($row && $row['id_num'] == $pin){
-                  $row['id_num'];
-                 echo "Successfully Log In";
-                   // header("location: face_registration.php");
-                    $_SESSION['true'] = true;
-                    
-                }else{
-                  ?>
-                  <p class="alert alert-danger text-center" style="font-align:center;">
-                    <?php echo "Not Registered ID Number"; ?></p><?php
-                }
-                
-              }
-              
-              ?>
+include 'assets/connection/connect.php'; // Include the connection file or establish a database connection
+
+if(isset($_GET['submit'])){
+    $pin = $_GET['pin'];
+    $status = "SELECT * FROM borrowers WHERE `id_num` = '$pin'";
+    $result = mysqli_query($conn, $status);
+    $row = mysqli_fetch_assoc($result);
+    
+    if($row && $row['id_num'] == $pin){
+        $id_num =  $row['id_num'];
+        $name = implode(" ", array($row["sname"], $row["gname"], $row["mname"]));
+        
+        $ses = $_SESSION['true'] = true;
+        $_SESSION['id_num'] = $id_num;
+        $_SESSION['name'] = $name;
+        
+        header("Location: borrow_qr.php?label=$id_num&name=$name");
+        exit();
+    } else {
+      
+      header("Location: face_registration.php");
+    }
+}
+?>
+
                     
                   </div>
 
                   
 
-                  <form class="row g-3 needs-validation" method="post">
+                  <form class="row g-3 needs-validation" method="get">
 
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Enter ID Number:</label>
@@ -112,22 +119,25 @@ include 'assets/connection/connect.php';
                         <div class="invalid-feedback">Enter ID Number.</div>
                        
                       </div>
-                    </div>
-                    <div class="col-6" style="position:absolute;left:-20px;">
                       
                     </div>
-                    <div class="col-6" style="position:absolute;left:-20px;">
-                      <p ><a href="face_registration.php">Register Account?</a></p>
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit" name="submit">Proceed</button>
                     </div>
+                    <div class="col-6" style="position:absolute;left:-20px;">
+                    <p ><a href="http://localhost:5000/return.html">Return Item</a></p>
+                    </div>
+                    <div class="col-6" style="position:absolute;left:-20px;">
+                   
+                    </div>
+                    
                     <!--<div class="col-12">
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
                         <label class="form-check-label" for="rememberMe">Remember me</label> 
                       </div>
                     </div>-->
-                    <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit" name="submit">Proceed</button>
-                    </div>
+                    
                     <div class="col-12">
 <!-- <p class="small mb-0">Don't have account? <a href="pages-register.html">Create an account</a></p>--> 
                     </div>

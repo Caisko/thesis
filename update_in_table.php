@@ -20,7 +20,7 @@ if ($result->num_rows > 0) {
   }
 }
 
-$sql = "SELECT i.qr_id_cvsu ,i.quantity as quan,ce.serial as serial , ce.item_name as name1, ce.description as desc1,ce.quantity as quantity FROM item_borrow as i  JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu where ce.id = '$ced'";
+$sql = "SELECT i.transaction as transaction, i.qr_id_cvsu as qr_id, ce.quantity as cequan, ce.id as id, SUM(i.quantity) as iquan, i.status as status FROM `item_borrow` AS i JOIN cvsu_equipment as ce ON i.qr_id_cvsu = ce.id WHERE ce.id = '$ced' and i.status != 'return'  GROUP BY i.qr_id_cvsu;";
 $result = mysqli_query($conn, $sql);
 $row    = mysqli_fetch_assoc($result);  
 $ced = $row['ce_id'];

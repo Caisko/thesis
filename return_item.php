@@ -2,8 +2,13 @@
 <?php
 include 'assets/connection/connect.php';
 session_start();
+$name = $_SESSION["uname"];
+$pass = $_SESSION["password"];
 
-
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+session_destroy();
+header("location:index.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,13 +91,13 @@ session_start();
 </head>
 
 <body>
-
+<!-- ======= Header ======= -->
 <header id="header" class="header fixed-top d-flex align-items-center">
 
 <div class="d-flex align-items-center justify-content-between">
   <a href="dashboard.php" class=" d-flex align-items-center">
-    
-<img src="assets/img/logo.png" style="width:300px;height:60px;">
+    <img src="assets/img/logo.png"   style="width:300px;height:60px;">
+  
   </a>
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div><!-- End Logo -->
@@ -100,11 +105,53 @@ session_start();
 
 <nav class="header-nav ms-auto">
   <ul class="d-flex align-items-center">
+
+ 
+    <li class="nav-item dropdown">
+
+
+    <?php
+      $status = "SELECT * FROM admins where id_number = '" . $_SESSION["uname"] . "'";
+      $result = mysqli_query($conn, $status);
+      $row    = mysqli_fetch_assoc($result);
+    $position = $row["position"];
+    $id_admin = $row["id"];
+     ?>
+     
+
     <li class="nav-item dropdown pe-3">
-    <a class="dropdown-item d-flex align-items-center" href="pin_exit.php">
-      <span class="d-none d-md-block ps-2">
-       <i class="bi bi-box-arrow-right"></i>Sign Out</span>
-</a>
+   
+    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+        <img src="assets/img/profile/<?php echo $row["profile_pic"]; ?>" alt="Profile" class="rounded-circle" style="width:40px;">
+        <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $row["id_number"];?></span>
+      </a><!-- End Profile Iamge Icon -->
+
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+        <li class="dropdown-header">
+        <h6><?php echo $row["given_name"]," ",$row["middle_name"]," ",$row["surname"];?></h6>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+
+        <li>
+          <a class="dropdown-item d-flex align-items-center" href="profile.php">
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
+          </a>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+
+       
+
+        <li>
+          <a class="dropdown-item d-flex align-items-center" href="logout.php">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Sign Out</span>
+          </a>
+        </li>
 
       </ul><!-- End Profile Dropdown Items -->
     </li><!-- End Profile Nav -->
@@ -113,72 +160,108 @@ session_start();
 </nav><!-- End Icons Navigation -->
 
 </header><!-- End Header -->
- <!-- ======= Sidebar ======= -->
- <aside id="sidebar" class="sidebar">
+
+
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
-
-
-
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
-  <i class="bi bi-person-bounding-box"></i>
-    <span>Add Borrowers</span>
-  </a>
+<a class="nav-link collapsed" href="dashboard.php">
+  <i class="bi bi-grid"></i>
+  <span>Dashboard</span>
+</a>
+</li><!-- End Dashboard Nav -->
+
+<?php if ($row["position"] == "Priority 2") { ?>
+<li class="nav-item">
+<a class="nav-link collapsed" href="account.php">
+  <i class="bi bi-person-square"></i>
+  <span>Register Accounts</span>
+</a>
+</li><!-- End Register gate pass Nav -->
+<li class="nav-item">
+<a class="nav-link collapsed" href="cvsu_equipment.php">
+<i class="bi bi-card-heading"></i>
+<span>Add Equipment</span>
+</a>
 </li><!-- End Register gate pass Nav -->
 
-
 <li class="nav-item">
-  <a class="nav-link collapsed" href="http://localhost:5000/scanface.html">
-  <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowing Item</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
-
-<li class="nav-item">
-  <a class="nav-link collapsed" href="http://localhost:5000/return.html">
-  <i class="bi bi-person-bounding-box"></i>
-    <span>Returning Item</span>
-  </a>
+<a class="nav-link collapsed" href="return_item.php">
+<i class="bi bi-person-bounding-box"></i>
+<span>Returning Item</span>
+</a>
 </li><!-- End Register gate pass Nav -->
 
 <!-- <li class="nav-item">
-  <a class="nav-link collapsed" href="borrow_scan.php">
-  <i class="bi bi-arrow-bar-right"></i>
-    <span>Borrowing Scanning</span>
-  </a>
+<a class="nav-link collapsed" href="borrow_scan.php">
+<i class="bi bi-arrow-bar-right"></i>
+<span>Borrowing Scanning</span>
+</a>
 </li> End Register gate pass Nav 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="return_scanning.php">
-  <i class="bi bi-arrow-bar-left"></i>
-    <span>Return Scanning</span>
-  </a>
+<a class="nav-link collapsed" href="return_scanning.php">
+<i class="bi bi-arrow-bar-left"></i>
+<span>Return Scanning</span>
+</a>
 </li>End Register gate pass Nav -->
+<li class="nav-item">
+<a class="nav-link collapsed" href="records.php">
+<i class="bi bi-archive"></i>
+<span>Records</span>
+</a>
+</li><!-- End Register gate pass Nav -->
+<li class="nav-item">
+<a class="nav-link collapsed" href="inventory.php">
+<i class="bi-list-check"></i>
+<span>Inventory</span>
+</a>
+</li><!-- End Register gate pass Nav -->
+
+<?php } else if ($row["position"] == "Unit Checker") {  ?>
+<li class="nav-item">
+<a class="nav-link collapsed" href="gadget.php">
+  <i class="bi bi-credit-card-2-front"></i>
+  <span>Register Gate Pass</span>
+</a>
+</li><!-- End Register gate pass Nav --> 
+
+<?php } ?>
+<li class="nav-item">
+<a class="nav-link collapsed" href="movein.php">
+  <i class="bi bi-check-square"></i>
+  <span>Move In  Gate Pass</span>
+</a>
+</li><!-- End Register gate pass Nav --> 
+
+<li class="nav-item">
+<a class="nav-link collapsed" href="moveout.php">
+  <i class="bi bi-x-square"></i>
+  <span>Move Out Gate Pass</span>
+</a>
+<!--</li> End Register gate pass Nav 
+<li class="nav-item">
+<a class="nav-link collapsed" href="check.php">
+  <i class="bi bi-folder2"></i>
+  <span>View Approve Gatepass</span>
+</a>
+</li> End Register gate pass Nav -->
 
 
- 
-  <!--</li> End Register gate pass Nav 
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="check.php">
-      <i class="bi bi-folder2"></i>
-      <span>View Approve Gatepass</span>
-    </a>
-  </li> End Register gate pass Nav -->
+
+<!-- <li class="nav-heading">Pages</li>-->
 
 
+<!--  <li class="nav-item">
+<a class="nav-link collapsed" href="pages-faq.html">
+  <i class="bi bi-question-circle"></i>
+  <span>F.A.Q</span>
+</a>
+</li> --><!-- End F.A.Q Page Nav -->
 
- <!-- <li class="nav-heading">Pages</li>-->
 
- 
- <!--  <li class="nav-item">
-    <a class="nav-link collapsed" href="pages-faq.html">
-      <i class="bi bi-question-circle"></i>
-      <span>F.A.Q</span>
-    </a>
-  </li> --><!-- End F.A.Q Page Nav -->
-
- 
 </ul>
 
 </aside><!-- End Sidebar-->
@@ -221,21 +304,20 @@ session_start();
 
 
 
-<label for="yourName" class="form-label">Name: <?php if(isset($_GET['name'])){echo $name12 =$_GET['name'];}?></br>
-   <label for="yourName" class="form-label">ID Number: <?php if(isset($_GET['label'])){echo $_GET['label'];}?></label>
-   <?php if(isset($_GET['label'])){ $id =  $_GET['label'];}?>
+
 
 <?php 
-$sql = "SELECT b.id, b.id_num, b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+$sql = "SELECT b.id as bid, b.id_num as id_num, b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
 i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
 i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
 , ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
 FROM item_borrow as i
 JOIN borrowers as b ON i.borrower_id_num = b.id
 JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-WHERE b.id_num = '$id' AND transaction != '' and i.status != 'return' and i.status != 'pending'
+WHERE  i.status = 'return_pending'
 GROUP BY transaction, ce.id;
 ";
+
 $result = $conn->query($sql);
 
 $transactions = array();
@@ -244,12 +326,19 @@ if ($result->num_rows > 0) {
   // group rows by transaction ID
   while($row = $result->fetch_assoc()) {
       $trans = $row['transaction'];
-     
-
+      $id =$row['bid'];
+      $sname = $row['sname'];
+      $gname = $row['gname'];
+      $mname = $row['mname'];
+$label = $row['id_num'];
       if (!isset($transactions[$trans])) {
         $transactions[$trans] = array(
           'header' => array(
             'transaction' => $trans,
+            'sname' =>  $sname,
+            'gname' =>  $gname,
+            'mname' =>  $mname,
+            'bid' => $id
           ),
           'items' => array()
         );
@@ -260,6 +349,7 @@ if ($result->num_rows > 0) {
         'quantity' => $row['quan'],
         'transac' => $row['transaction'],
         'cvsu_id' => $row['qr_id_cvsu']
+        
        
       );
   }
@@ -270,6 +360,15 @@ if ($result->num_rows > 0) {
 ?>
 
 <table class="table border table-hover" id="mytable">
+<thead style="">
+  <tr>
+  <th colspan="3">Name: <?php echo $trans_data['header']['sname']," ", $trans_data['header']['gname']," ",$trans_data['header']['mname'];?></th>
+<?php $name = implode(" ", [$trans_data['header']['sname'], $trans_data['header']['gname'],$trans_data['header']['mname']]);
+$label = $trans_data['header']['bid'];
+ ?>
+</tr>
+</thead>
+
 <thead style="text-align:center;background-color:#43c964;color:white;">
   <tr>
   <th colspan="3">Transaction ID: <?php echo $transac_id1 = $trans_data['header']['transaction'];?></th>
@@ -294,8 +393,8 @@ if ($result->num_rows > 0) {
             data-transact-id="<?php echo $trans_data['header']['transaction']; ?>"
             data-item="<?php echo $item_data['name']; ?>"
             data-quantity="<?php echo $item_data['quantity']; ?>"
-            label="<?php echo $_GET['label']; ?>"
-            name="<?php echo $_GET['name']; ?>">
+            label="<?php echo $trans_data['header']['bid']; ?>"
+            name="<?php echo $name; ?>">
             <i class="bi bi-arrow-right"></i>
     </button>
 </td>
@@ -323,10 +422,21 @@ if ($result->num_rows > 0) {
       </div>
       <div class="modal-body">
         <form method="post" action="return_process.php">
-      <input type="hidden" name="id" value="<?php echo $id; ?>" readonly>
+     
       <input type="hidden" name="transact_id" value="<?php echo $transac_id1; ?>">
-      <input type="text" name="item" value="<?php echo $item; ?>" readonly>
-    <input type="int" name="quantity" value="<?php echo $quan; ?>" max="<?php echo $quan; ?>" required>
+      <input type="text" class="form-control" name="item" value="<?php echo $item; ?>" readonly><br>
+    <input type="number" name="quantity"  class="form-control"  value="<?php echo $quan; ?>" min = "1" max="<?php echo $quan; ?>" required><br>
+   
+
+   <label for="color">Remarks:</label>
+<select name="remarks" id="color" class="form-select">
+	<option value="good_condition">Good Condition</option>
+	<option value="slightly_damaged">Slightly Damaged</option>
+	<option value="destroyed">Destroyed</option>
+
+</select>
+
+
       </div>
       <div class="modal-footer">
         <button type="submit" name="submit" class="btn btn-primary">Return</button>
@@ -478,12 +588,14 @@ var itemInput = modal.querySelector('input[name="item"]');
 var quantityInput = modal.querySelector('input[name="quantity"]');
 var labelInput = modal.querySelector('input[name="label"]');
 var nameInput = modal.querySelector('input[name="name"]');
+var itemInput1 = modal.querySelector('input[name="remarks"]');
 // add click event listener to all open-modal buttons
 var openModalButtons = document.querySelectorAll('.open-modal');
 openModalButtons.forEach(function(btn) {
   btn.addEventListener('click', function() {
     // set the values of the input elements in the modal based on the data attributes of the button
     transactIdInput.value = btn.dataset.transactId;
+    itemInput.value = btn.dataset.item;
     itemInput.value = btn.dataset.item;
     quantityInput.value = btn.dataset.quantity;
     quantityInput.max = btn.dataset.quantity;

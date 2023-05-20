@@ -233,9 +233,9 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="return_item.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowers</span>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
@@ -515,59 +515,7 @@ header("location:index.php");
               <div class="card recent-sales overflow-auto">
 
               
-              <?php
             
-                   if ($position == "Priority 2"){
-                    $status = "SELECT `id`,`veri_status`, `id_num`, `sname`, `gname`, `mname`, `status`, `Deparment`
-                    FROM borrowers
-                    ORDER BY `id` DESC
-                    LIMIT 1;";
-                    $result = mysqli_query($conn, $status);
-                    $row    = mysqli_fetch_assoc($result);
-                  
-                    if($row['veri_status'] == 'not'){
-                   
-                    ?>
-                    <!-- The Modal -->
-                    
-                        <div id="myModal" class="modal" id="moodal" style="display:block;">
-                        <!-- Modal content -->
-                        <div class="modal-content" >
-                      
-                          
-                          <p class="title"><i class="bi bi-question-diamond-fill"></i>  Requesting</p>
-                          <p class="ds">Do you want to accept a new borrower?</p>
-
-                         <br>
-                          <form method="post" action = "veri_path.php">
-                          
-                            <input type="hidden" class="form-control" value="<?php echo $last;?>" name="id" readonly><br>
-                            <label for="yourName" class="form-label">ID:</label>
-                            <input type="text"  class="form-control"  value="<?php echo $row['id_num'];?>" readonly ><br>
-                            <label for="yourName" class="form-label">SURNAME:</label>
-                            <input type="text"  class="form-control"  value="<?php echo $row['sname'];?>" readonly ><br>
-                            <label for="yourName" class="form-label">GIVEN NAME:</label>
-                            <input type="text"  class="form-control"  value="<?php echo $row['gname'];?>" readonly ><br>
-                            <label for="yourName" class="form-label">MIDDLE NAME:</label>
-                            <input type="text"  class="form-control"  value="<?php echo $row['mname'];?>" readonly ><br>
-                            <label for="yourName" class="form-label">STATUS:</label>
-                            <input type="text"  class="form-control"  value="<?php echo $row['status'];?>" readonly ><br>
-                            <label for="yourName" class="form-label">DEPARTMENT:</label>
-                            <input type="text"  class="form-control"  value="<?php echo $row['Deparment'];?>" readonly ><br>
-                            <input type="submit" value="Yes" name="submit" class="but1">
-                            <input type="submit" value="No" name="cancel" class="but2">
-                          </form>
-                        </div>
-                        </div>
-                          <script>
-                          var modalq = document.getElementById('myModal');
-                          console.log(modalq)
-                          modalq.style.display = 'block';
-                          </script> 
-                 <?php
-                    }
-                   }
-                  ?>
 
 <?php
             
@@ -575,7 +523,7 @@ header("location:index.php");
              $status = "SELECT b.id, b.id_num, i.date_return_item,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
              i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
              i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
-             ,GROUP_CONCAT(DISTINCT ce.item_name,'/',i.quantity SEPARATOR '<BR>') as name1, ce.description as desc1, ce.quantity as quantity
+             ,GROUP_CONCAT(DISTINCT ce.item_name,'/',i.quantity SEPARATOR '<BR>') as name1,b.borrower_img as img,i.scanned as scan, ce.description as desc1, ce.quantity as quantity
            FROM item_borrow as i
            JOIN borrowers as b ON i.borrower_id_num = b.id
            JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
@@ -586,114 +534,140 @@ header("location:index.php");
              $result = mysqli_query($conn, $status);
              $row    = mysqli_fetch_assoc($result);
            
-             if($row['status']){
+             if($row['status'] == 'pending'){
             
              ?>
              <!-- The Modal -->
              
                  <div id="myModal" class="modal" id="moodal" style="display:block;">
                  <!-- Modal content -->
-                 <div class="modal-content" >
+                 <div class="modal-content" style="width: 100%; max-width: 600px; margin: 0 auto;">
                
                    
                    <p class="title"><i class="bi bi-question-diamond-fill"></i> </p>
-                   <p class="ds">Items returned by borrowers</p>
+                   <p class="ds">Approval</p>
 
                   <br>
-                   <form method="post" >
+                <img src="<?php echo $row['img'];?>" style="border-radius:10px;width:130px;height:130px;position:absolute;left:445px;">
+                   <label for="yourName" class="form-label">NAME: <?php echo $row['sname'],",",$row['gname']," ",$row['mname'];?></label>
+                   <label for="yourName" class="form-label">Transaction ID: <?php echo $trans = $row['transaction'];?></label><br>
+                    
+                     <table class="table" id="modal_table">
+  <thead>
+    <tr>
+      <th scope="col">QTY</th>
+      
+      <th scope="col">ITEM NAME</th>
+      <th scope="col">Scan</th>
+    
+    </tr>
+  </thead>
+                   <?php 
+                      $sql = "SELECT i.quantity,ce.item_name as name,i.scanned as scan FROM item_borrow as i JOIN cvsu_equipment as ce ON i.qr_id_cvsu = ce.id 
+                         where transaction = '$trans'";
+                      $result = $conn->query($sql);
 
-                   <label for="yourName" class="form-label">Transaction ID:</label>
-                     <input type="text" name="transact_id"  class="form-control"  value="<?php echo $row['transaction'];?>" readonly ><br>
-                     <input type="hidden" name="ced"  class="form-control"  value="<?php echo $row['ced'];?>" readonly ><br>
-                     
-                   <label for="yourName" class="form-label">Item Name/QTY:</label>
-                     <input type="text"  class="form-control" value="<?php echo $row['name1'];?>" readonly ><br>
-                     <label for="yourName" class="form-label">Remarks:</label>
-                     <input type="text"  class="form-control" name = "remark" placeholder="Optional"  ><br>
-                     <input type="submit" value="Confirm" name="accept_item" class="but1">
-                     <input type="submit" value="Declined" name="not_accept" class="but2">
-                   </form>
-                 </div>
-                 </div>
+                            if ($result->num_rows > 0) {
+                              // output data of each row
+                      while ($row = $result->fetch_assoc()) {
+                   ?>
+
+
+  <tbody>
+    <tr>
+      <th scope="row"><?php echo $row['quantity'];?></th>
+      <td><?php echo $row['name'];?></td>
+      <?php if($row['scan']== 'ok'){?>
+      <td><p style="color:green;"><i class="bi bi-check-square-fill"></i></p></td>
+      <?php }else{?>
+        <td></td>
+        <?php } ?>
+    </tr>
+ 
+ 
+  </tbody>
+
+                   <?php 
+                   
+                      }}
+                      ?>
+                      </table>
+                      <script src="html5-qrcode.min.js" ></script>
+                      <div class="row" style="padding: 30px 30px 30px;">
+                                          <div class="col">
+                                             <div class="responsive" id="reader">
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                             <div class="col" style="padding: 30px; position: relative;">
+                                                   <form action="" >
+                                                      <input type="hidden" id="search" name="qr" onkeyup="showHint(this.value)"  class="form-control" readonly />
+                                                   </form>
+                                                </div>
+                                            </div>
+                                               
+                                                  <!-- <h4>RESULT:</h4>
+                                                   <div class="row text-control" id="display">
+                                                        Display Ajax  
+                                                   </div> -->
+      <div class="modal-footer">
+      <table id="modal_table_but">
+    <td>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button>
+        <?php 
+           $status = "SELECT COUNT(*) AS total_items, COUNT(CASE WHEN scanned = 'ok' THEN 1 END) AS ok_items
+                      FROM `item_borrow`
+                      WHERE transaction = '$trans'";
+           $result = mysqli_query($conn, $status);
+           $row    = mysqli_fetch_assoc($result);
+        
+           if ($row['total_items'] > 0 && $row['total_items'] == $row['ok_items']) {
+        ?>
+        <form style="display:inline-block;" method="post">
+        <input type="hidden" name="trans" value="<?php echo $trans;?>">
+        <button type="submit" name="submit" class="btn btn-success">Accept</button>
+           </form>
+        <?php } 
+      
+        ?>
+        
+    </td>
+</table>
+</div>
+               
+</div>     </div>     </div>
+     
+                
                    <script>
                    var modalq = document.getElementById('myModal');
                    console.log(modalq)
                    modalq.style.display = 'block';
                    </script> 
-
-
               <!--update borrowers accept-->
-
-              <?php
-              
-                  
-if(isset($_POST['accept_item'])){
-  $id =  $_POST['ced'];
-  $re =  $_POST['remark'];
-  $trans =  $_POST['transact_id'];
-  $current_date = date('Y-m-d');
-   $current_date;
- $sql = "SELECT b.id, b.id_num , b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
-i.borrower_id_num as bnum, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
-i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
-, ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
-FROM item_borrow as i
-JOIN borrowers as b ON i.borrower_id_num = b.id
-JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-WHERE i.transaction = '$trans' AND ce.id = $id;
-"; 
-
-
-$result = mysqli_query($conn, $sql);
-$row    = mysqli_fetch_assoc($result);
-$all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
-$ced = $row['ced'];
-$sql = "UPDATE item_borrow SET  remarks = '$re',status = 'return',date_return_item = '$current_date' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
-
-if ($conn->query($sql) === TRUE) {
-   
-} else {
- echo "Error updating record: " . $conn->error;
-}
-
-}else if(isset($_POST['not_accept'])){
-  $id =  $_POST['ced'];
-  $re =  $_POST['remark'];
-  $trans =  $_POST['transact_id'];
-  $current_date = date('Y-m-d');
-   $current_date;
- $sql = "SELECT b.id, b.id_num , b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
-i.borrower_id_num as bnum, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
-i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
-, ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
-FROM item_borrow as i
-JOIN borrowers as b ON i.borrower_id_num = b.id
-JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-WHERE i.transaction = '$trans' AND ce.id = $id;
-"; 
-
-
-$result = mysqli_query($conn, $sql);
-$row    = mysqli_fetch_assoc($result);
-$all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
-$ced = $row['ced'];
-$sql = "UPDATE item_borrow SET status = 'borrow',date_return_item = NULL,quantity_return = NULL WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
-
-if ($conn->query($sql) === TRUE) {
-   
-} else {
- echo "Error updating record: " . $conn->error;
-}
-
-}
-              
-              
-              ?>
           <?php
              }
             }
+            if(isset($_POST['submit'])){
+              $transaction = $_POST['trans'];
+              $sql = "UPDATE item_borrow SET status='borrowed' WHERE transaction = '$transaction'";
+    
+              if ($conn->query($sql) === TRUE) {
+                echo "<script>
+                var modalq = document.getElementById('myModal');
+                console.log(modalq)
+                modalq.style.display = 'none';
+                </script>";
+              } else {
+                echo "Error updating record: " . $conn->error;
+              }
+            }
            ?>
-                  
+           
+            
+          
+                
+              
+             
                 <div class="card-body">
                   <h5 class="card-title">Gate Pass <span>| Move In/Out </span></h5>
             
@@ -1006,7 +980,59 @@ searchInput.addEventListener("keydown", function(event) {
 
 <script src="assets/js/main.js">
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js"></script>
 
+</script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script type="text/javascript">
+         function onScanSuccess(qrCodeMessage) {
+             document.getElementById("search").value = qrCodeMessage;
+             showHint(qrCodeMessage);
+             
+         }
+         function onScanError(errorMessage) {
+           //handle scan error
+         }
+         var html5QrcodeScanner = new Html5QrcodeScanner(
+             "reader", { fps: 10, qrbox: 250 });
+         html5QrcodeScanner.render(onScanSuccess, onScanError);
+         
+      </script>
+      <script>
+       
+         function showHint(str) {
+                 if (str.length == 0) {
+         document.getElementById("display").innerHTML = "";
+         return;
+         } else {
+         var xmlhttp = new XMLHttpRequest();
+         xmlhttp.onreadystatechange = function() {
+           if (this.readyState == 4 && this.status == 200) {
+             document.getElementById("display").innerHTML = this.responseText;
+           }
+         };
+
+         xmlhttp.open("GET", "scan_approved.php?trans=<?php echo $trans; ?>&insert=" + str, true);
+         xmlhttp.send();
+         }
+         }
+    
+         
+         
+                 
+      </script>
+      <script>
+  $(document).ready(function() {
+    setInterval(function() {
+      $("#modal_table").load(location.href + " #modal_table");
+    }, 1000);
+  });
+  $(document).ready(function() {
+    setInterval(function() {
+      $("#modal_table_but").load(location.href + " #modal_table_but");
+    }, 1000);
+  });
 </script>
 
   

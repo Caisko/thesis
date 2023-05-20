@@ -1,14 +1,27 @@
 
 <?php
-include 'assets/connection/connect.php';
+
+include 'assets/connection/connect.php'; // Include the connection file or establish a database connection
 session_start();
-
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+if (!isset($_GET['label']) || $_GET['label'] == ''|| !isset($_GET['name'])|| $_GET['label'] == '' && empty($_GET['session']) != true) {
+  $label = $_GET['label'];
+$name = $_GET['name'];
 session_destroy();
-header("location:index.php");
+header("Location: borrowers.php");
+exit();
+}else{
+  $label = $_GET['label'];
+  $name = $_GET['name'];
+
+  $sql_to_know ="SELECT * from borrowers where `id_num` = '$label';";
+  $result = mysqli_query($conn, $sql_to_know);
+  $row = mysqli_fetch_assoc($result);
+  if($row['id_num'] != $label){
+    session_destroy();
+  header("Location: borrowers.php");
+  exit();
+  }
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,8 +68,8 @@ header("location:index.php");
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
-<div class="d-flex align-items-center justify-content-between" class="hidden-print"">
-  <a href="dashboard.php" class=" d-flex align-items-center">
+<div class="d-flex align-items-center justify-content-between" class="hidden-print">
+<a href="borrow_qr.php?name=<?php echo $name; ?>&label=<?php echo $label; ?>" class=" d-flex align-items-center">
     
 <img src="assets/img/logo.png" style="width:300px;height:60px;" class="hidden-print">
   </a>
@@ -88,16 +101,9 @@ header("location:index.php");
 
 
 
-<li class="nav-item">
-  <a class="nav-link collapsed" href="borrowers.php">
-  <i class="bi bi-person-bounding-box"></i>
-    <span>Add Borrowers</span>
-  </a>
-</li><!-- End Register gate pass Nav -->
-
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="http://localhost:5000/scanface.html">
+  <a class="nav-link collapsed" href="borrow_qr.php">
   <i class="bi bi-person-bounding-box"></i>
     <span>Borrowing Item</span>
   </a>
@@ -167,8 +173,11 @@ header("location:index.php");
 
                 <div class="card-body">
                   <h5 class="card-title hidden-print">Borrower <span>| QR Code</span></h5>
-     
+                  <div class="row" style="width:400px;position:absolute;left:50px;">
+<img src="assets/img/logo.png"  >
+</div>
 <div class="row">
+ 
     <?php  $qr = $_GET["print"];?>
     <?php
     $status = "SELECT * from item_borrow where `qr_print`= '$qr'";
@@ -246,7 +255,7 @@ function printAndRedirect() {
   currentWindow.close();
 
   // I-redirect ang user sa desired URL
-  window.location.href = "../thesis/face_registration.php";
+  window.location.href = "../thesis/borrow_qr.php";
 }
 </script>
    

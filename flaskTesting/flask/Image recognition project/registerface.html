@@ -73,6 +73,16 @@
  
 <script>
 
+    window.onload = function() {
+                // Close the camera here
+                // Send an AJAX request to the /capture_images route
+          const booleanfalse = new XMLHttpRequest();
+          booleanfalse.open('GET', '/booleanfalse');
+          booleanfalse.send();
+
+                
+            }
+
       window.onbeforeunload = function() {
             // Close the camera here
              // Send an AJAX request to the /capture_images route
@@ -115,7 +125,7 @@
               if (CaptureMessage.responseText === 'Done Training Data!') {
                 clearInterval(intervalId);
                 setTimeout(function() {
-                  window.location.replace('/scanface.html');
+                  window.location.replace('/RegisterPassing');
                 }, 2000);
               }
             }

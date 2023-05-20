@@ -8,14 +8,33 @@ echo $sama = implode($all);
 $label =  $_POST['label'];
 $name =  $_POST['name'];
 
-echo $name1 =  $_POST['name1'];
 $date = date('Y-m-d');
-$date_return = $_POST['date'];
+$date_return = $start_date = date('Y-m-d', strtotime('+7 days'));;
+
 if(isset($_POST['submit'])){
-   
-if(empty($name1)){
-    //echo "walla ";
-    header("location:borrow_qr.php?name=$name&label=$label");
+  $sql_to_know ="SELECT
+  count(i.qr_id_cvsu) AS count,
+  ce.quantity AS cequan,
+  b.id_num,
+  ce.id,
+  SUM(i.quantity) AS iquan,i.status AS
+STATUS, i.transaction
+FROM
+  `item_borrow` AS i
+JOIN cvsu_equipment AS ce
+ON
+  i.qr_id_cvsu = ce.id
+JOIN borrowers AS b
+ON
+  b.id = i.borrower_id_num
+WHERE
+  i.status = 'borrow' AND i.transaction = '' and NOT i.status = 'return';";
+  $result = mysqli_query($conn, $sql_to_know);
+  $row = mysqli_fetch_assoc($result);
+
+if($row['count'] == 0){
+  header("location:borrow_qr.php?label=$label&name=$name");
+  echo "balik";
 }else{
     $sql_to_know ="SELECT i.qr_id_cvsu ,ce.quantity as cequan,ce.id,sum(i.quantity) as iquan,count(i.status) as status FROM `item_borrow` AS i join cvsu_equipment as ce on i.qr_id_cvsu = ce.id WHERE  not status = 'return' and not transaction = '$sama';";
     $result = mysqli_query($conn, $sql_to_know);
@@ -51,7 +70,7 @@ if ($conn->query($sql) === TRUE) {
      $sql = "UPDATE item_borrow SET `qr_print` = '$filename' WHERE transaction = '$sama'";
 
      if ($conn->query($sql) === TRUE) {      
-        header("location:trans_print.php?print=$filename");
+        header("location:http://localhost:5000/scanface.html?print=$filename&name=$name&label=$label");
      }else{
 
      }

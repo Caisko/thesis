@@ -57,6 +57,7 @@ header("location:index.php");
     }
 
 		@media print {
+     
       .th{
         display: block !important;
       }
@@ -65,10 +66,28 @@ header("location:index.php");
 			}
       .show{
         display: block !important;
+    
       }
       .trans{
         background: transparent !important;
       }
+      .card.recent-sales.overflow-auto.trans {
+    overflow: visible !important;
+    
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  
+   
+  }
+  .header {
+    overflow: visible !important;
+    
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
 		}
     .modal {
   display: none; /* Hidden by default */
@@ -135,6 +154,7 @@ header("location:index.php");
           $status = "SELECT * FROM admins where id_number = '" . $_SESSION["uname"] . "'";
           $result = mysqli_query($conn, $status);
           $row    = mysqli_fetch_assoc($result);
+          $sign =$row['sign'];
          ?>
          
 
@@ -303,7 +323,7 @@ header("location:index.php");
           <div class="row trans"> 
   <!-- Recent Sales -->
 
-              <div class="card recent-sales overflow-auto trans">
+              <div class="card recent-sales overflow-auto trans "  style="height:500px;">
 
                 <div class="card-body ">
                   <h5 class="card-title hidden">Borrowers Records<h5>
@@ -312,7 +332,7 @@ header("location:index.php");
 
      
  </div>
- <div class="col-sm hidden trans">             
+ <div class="col-sm hidden trans ">             
   <div class="input-group mb-3"> 
     <select class="form-select" id="searchCategory">
       <option value="0" default>Categories</option>
@@ -337,17 +357,18 @@ header("location:index.php");
   </div>
 </div>
 </div>
-<img src="assets/img/logo.png"   style="margin:auto;width:500px;display:none;" class="show">
+<img src="assets/img/logo.png"   style="margin:auto;width:250px;display:none;margin-top:-50px;position:relative;" class="show"><br>
 <div class="row">
-
-<table class="table border table-hover" id="mytable">
+<div class="table-responsive">
+<table class="table border table-hover " id="mytable">
 
   <thead class="center">
     <tr>
     <th scope="col">Transaction ID</th>
       <th scope="col">Borrowers Name</th>
       <th scope="col">Department</th>
-      <th scope="col">Item/QTY</th>
+      <th scope="col">Item</th>
+      <th scope="col">QTY</th>
       <th scope="col">Date Borrowed</th>
       <th scope="col">End Date</th>
       <th scope="col"> Date Return</th>
@@ -360,13 +381,13 @@ header("location:index.php");
   <?php 
   $sql = "SELECT b.id, b.id_num, i.date_return_item,i.remarks as remarks,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
   i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
-  i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
-  ,GROUP_CONCAT(DISTINCT ce.item_name,'-',i.quantity SEPARATOR '<BR>') as name1, ce.description as desc1, ce.quantity as quantity
+  i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se
+  ,ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
 FROM item_borrow as i
 JOIN borrowers as b ON i.borrower_id_num = b.id
 JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-WHERE ce.id = i.qr_id_cvsu AND transaction != '' 
-GROUP BY transaction ORDER BY i.status ASC;
+WHERE transaction != '' 
+ORDER BY i.status ASC;
 ";
 $result = $conn->query($sql);
 
@@ -384,6 +405,7 @@ if ($result->num_rows > 0) {
         <td><?php echo $all; ?></td>
         <td><?php echo $row['de'];?></td>
         <td><?php echo $row['name1']?></td>
+        <td><?php echo $row['quan']?></td>
         <td><?php echo date('F j, Y', strtotime($row['date_borrow'])); ?></td>
         <td><?php echo date('F j, Y', strtotime($row['date_return'])); ?></td>
         <td><?php
@@ -405,9 +427,10 @@ if ($result->num_rows > 0) {
 }
 ?>
 </table>
-
+</div>
 
 </div>
+
                 </div>
 
 
@@ -500,9 +523,14 @@ if ($result->num_rows > 0) {
        
 
         </div><!-- End Right side columns -->
-        
+             
+<div class="row show" style="float:right;position:relative;margin-top:50px;display:none;">
+<img src="./assets/img/sign/<?php echo $sign; ?>">
+<p style="position:absolute;top:100px;right:-120px;">Prepared by: Ms. Nelia Ocampo</p>
+</div>
 
       </div>
+
     </section>
 
   </main><!-- End #main -->

@@ -13,17 +13,7 @@ from PIL import Image
 
 import sys
 
-def handle_exception(exc_type, exc_value, exc_traceback):
-    # Check if the exception is ConnectionAbortedError
-    if exc_type is ConnectionAbortedError:
-        # Ignore the error and return
-        return
 
-    # Handle other exceptions normally
-    sys.__excepthook__(exc_type, exc_value, exc_traceback)
-
-# Set the global exception handler
-sys.excepthook = handle_exception
 
 
 thesis_path ="C:/xampp/htdocs/thesis"
@@ -39,17 +29,18 @@ resizedFolder = "C:/xampp/htdocs/thesis/flaskTesting/flask/Image recognition pro
 
 global model
 global scanningboolean
-
+global returnscanning
+returnscanning = False
 scanningboolean = False
 model = "Facenet512"
 
 blackimage = thesis_path + '/black.jpg'
 
-#------------------------------------------
-try:
-    results = DeepFace.find(img_path= blackimage, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=True)
-except:
-    print("Now Ready")
+# #------------------------------------------
+# try:
+#     results = DeepFace.find(img_path= blackimage, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=True)
+# except:
+#     print("Now Ready")
 
 
 
@@ -70,6 +61,7 @@ def registerface():
     global id_number_Register
     global NameRegister
     global path
+    global fullname
 
     id_number_Register = request.args.get('id')
     sname = request.args.get('sname')
@@ -83,7 +75,18 @@ def registerface():
     return render_template('registerface.html')
 
 
-            
+@app.route('/RegisterPassing')
+
+def RegisterPassing():
+    global ibabato
+    url = 'http://localhost/thesis/HiddenFunction.php'
+    data = {'name': NameRegister, 'label': id_number_Register, 'session': True, 'img' : ibabato }
+    query_string = urllib.parse.urlencode(data)
+    url_with_query_string = url + '?' + query_string
+    return redirect(url_with_query_string)
+
+
+                
         
 
 
@@ -106,15 +109,19 @@ def capture_images():
     CapturingMessage = 'Capturing Images Please Stay still...'
     # Set the number of seconds to capture images
     capture_duration = .4
+    global ibabato
 
     end_time = time.time() + capture_duration
 
     count = 0
     os.makedirs(path)
     os.chdir(path)
+    ibabato = ''
     while time.time() < end_time:
         frame = camera.get_frame()
         image_path = os.path.join(path, f'{NameRegister}{count}.jpg')
+        ibabato = image_path = os.path.join(path, f'{NameRegister}0.jpg')
+        ibabato = './flaskTesting/flask/Image recognition project/TemporaryImages/' + str(id_number_Register) + '/' + NameRegister + '0.jpg'
         with open(image_path, 'wb') as f:
             f.write(frame)
         count += 1
@@ -263,6 +270,12 @@ def ClosingCamera():
 #------------------------------------------------------------
 @app.route('/scanface.html')
 def scanface():
+    global printing
+    global labelling
+    global naming
+    printing = request.args.get('print')
+    labelling = request.args.get('label')
+    naming = request.args.get('name')
     return render_template('scanface.html')
 
 #------------------------------------------------------------
@@ -279,6 +292,7 @@ def scancapture():
     global predicted_name
     global label
     global scanningboolean
+    global returnscanning
     scanningboolean = True
     MessageIDnumber = ''
     
@@ -318,6 +332,7 @@ def scancapture():
 
     # Huhulaan na kung sino
     while scanningboolean:
+        
         try:
             detecting = DeepFace.extract_faces(img_path=SingleCapture, enforce_detection=False)
             results = DeepFace.find(img_path= SingleCapture, db_path= parent_dir, model_name= model, distance_metric="cosine", enforce_detection=False)
@@ -348,12 +363,23 @@ def scancapture():
                     CapturingMessageScan = "No Matched Face."
                     MessageIDnumber = ''
                 else:
-                    CapturingMessageScan = ("Name: " + predicted_name )
-                    MessageIDnumber = ("ID Number: " + str(label))
-                    scanningboolean = False
+                    if returnscanning:
+                        print("Gumanaaaaaaaaaaaaa")
+                        CapturingMessageScan = ("Name: " + predicted_name )
+                        MessageIDnumber = ("ID Number: " + str(label))
+                        scanningboolean = False
+                        returnscanning = False
+                    else:
+                        if labelling == str(label):
+                            CapturingMessageScan = ("Name: " + predicted_name )
+                            MessageIDnumber = ("ID Number: " + str(label))
+                            scanningboolean = False
+                        else:
+                            CapturingMessageScan = "No Matched Face."
+                            MessageIDnumber = ''
 
             else:
-    
+                
                 CapturingMessageScan = "No Face Detected Please Try again."
                 MessageIDnumber = ''
 
@@ -425,8 +451,9 @@ def gen(camera):
 @app.route('/ProceedQR')
 
 def ProceedQR():
-    url = 'http://localhost/thesis/borrow_qr.php'
-    data = {'name': predicted_name, 'label': label}
+    
+    url = 'http://localhost/thesis/checkingface.php'
+    data = {'name': naming, 'label': labelling, 'print': printing}
     query_string = urllib.parse.urlencode(data)
     url_with_query_string = url + '?' + query_string
     return redirect(url_with_query_string)
@@ -435,7 +462,7 @@ def ProceedQR():
 @app.route('/ProceedReturn')
 
 def ProceedReturn():
-    url = 'http://localhost/thesis/return_item.php'
+    url = 'http://localhost/thesis/returningitem.php'
     data = {'name': predicted_name, 'label': label}
     query_string = urllib.parse.urlencode(data)
     url_with_query_string = url + '?' + query_string
@@ -447,8 +474,11 @@ def ProceedReturn():
 
 def booleanfalse():
     global scanningboolean
+    global returnscanning
+    returnscanning = False
     scanningboolean = False
     print("Naclose")
+
     return 'Done'
 
 
@@ -463,7 +493,13 @@ def blackimage():
     return 'Done'
 
 
+#------------------------------------------------------------
+@app.route('/returnscanning')
 
+def returnscanning():
+    global returnscanning 
+    returnscanning = True
+    return 'Done'
 
 
 if __name__ == '__main__':
