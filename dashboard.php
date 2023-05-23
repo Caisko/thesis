@@ -55,7 +55,7 @@ header("location:index.php");
 }
 
 /* Modal Content/Box */
-.modal-content {
+.-content {
   background-color: #fefefe;
   margin:2% auto; /* 15% from the top and centered */
   padding: 20px;
@@ -515,32 +515,32 @@ header("location:index.php");
               <div class="card recent-sales overflow-auto">
 
               
-            
+     
 
 <?php
             
-            if ($position == "Priority 2"){
-             $status = "SELECT b.id, b.id_num, i.date_return_item,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
-             i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
-             i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
-             ,GROUP_CONCAT(DISTINCT ce.item_name,'/',i.quantity SEPARATOR '<BR>') as name1,b.borrower_img as img,i.scanned as scan, ce.description as desc1, ce.quantity as quantity
-           FROM item_borrow as i
-           JOIN borrowers as b ON i.borrower_id_num = b.id
-           JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
-           WHERE i.status = 'pending'
-           ORDER BY `id` DESC
-                    LIMIT 1 
-             ;";
-             $result = mysqli_query($conn, $status);
-             $row    = mysqli_fetch_assoc($result);
-           
-             if($row['status'] == 'pending'){
-            
+            if ($position == "Priority 2"){?>
+    <?php 
+$status = "SELECT b.id, b.id_num, i.date_return_item,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
+i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se,sum(i.quantity) as counting
+,GROUP_CONCAT(DISTINCT ce.item_name,'/',i.quantity SEPARATOR '<BR>') as name1,b.borrower_img as img,i.scanned as scan, ce.description as desc1, ce.quantity as quantity
+FROM item_borrow as i
+JOIN borrowers as b ON i.borrower_id_num = b.id
+JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
+WHERE i.status = 'pending' AND not i.status='borrowed'
+ORDER BY `id`";
+$result = mysqli_query($conn, $status);
+$row = mysqli_fetch_assoc($result);?>
+  
+<?php
+
              ?>
              <!-- The Modal -->
-             <table id="pop_table">
-              <td>
-                 <div id="myModal" class="modal" id="moodal" style="display:block;">
+      <div id="myModalWrapper" style="display:none;">
+          
+           
+                 <div id="myModal" class="modal" style="display:none;">
                  <!-- Modal content -->
                  <div class="modal-content" style="width: 100%; max-width: 600px; margin: 0 auto;">
                
@@ -557,7 +557,6 @@ header("location:index.php");
   <thead>
     <tr>
       <th scope="col">QTY</th>
-      
       <th scope="col">ITEM NAME</th>
       <th scope="col">Scan</th>
     
@@ -638,16 +637,14 @@ header("location:index.php");
                
 </div>     </div>     </div>
      
+                      
+           </div>
                 
-                   <script>
-                   var modalq = document.getElementById('myModal');
-                   console.log(modalq)
-                   modalq.style.display = 'block';
-                   </script> 
               <!--update borrowers accept-->
           <?php
              }
-            }
+            
+            
             if(isset($_POST['submit'])){
               $transaction = $_POST['trans'];
               $sql = "UPDATE item_borrow SET status='borrowed' WHERE transaction = '$transaction'";
@@ -662,14 +659,7 @@ header("location:index.php");
                 echo "Error updating record: " . $conn->error;
               }
             }
-           ?>
-           </td>
-           </table>
-           
-            
-          
-                
-              
+           ?> 
              
                 <div class="card-body">
                   <h5 class="card-title">Gate Pass <span>| Move In/Out </span></h5>
@@ -1025,46 +1015,59 @@ searchInput.addEventListener("keydown", function(event) {
          
                  
       </script>
-      <script>
+<script>
+
+
+  function checkStatus() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var response = this.responseText.trim();
+        if (response === "none") {
+          console.log("No pending transactions.");
+        } else {
+          var transactions = response.split(",");
+          for (var i = 0; i < transactions.length; i++) {
+            var transaction = transactions[i].trim();
+          
+
+            displayModal(transaction);// Call a function to display the modal for each pending transaction
+          }
+        }
+      } else if (this.readyState == 4) {
+        console.error("Error: " + this.status);
+      }
+    };
+    xhttp.open("GET", "check_status.php", true);
+    xhttp.send();
+  }
+
+  function displayModal(transaction) {
+    // Code to display the modal for the given transaction
+    // You can customize this part to show the modal using your preferred method
+    // Make sure to include the necessary HTML and CSS for the modal
+    var modalWrapper = document.getElementById("myModalWrapper");
+    var modal_ito = document.getElementById("myModal");
+    if (modalWrapper) {
+      modalWrapper.style.display = "block";
+      modal_ito.style.display="block";
+      
+      // Update the modal content, such as transaction details, based on the current transaction
+      // ...
+    } else {
+      console.error("Modal wrapper element not found.");
+    }
+  }
+
+  setInterval(checkStatus, 1000);
   $(document).ready(function() {
     setInterval(function() {
       $("#modal_table").load(location.href + " #modal_table");
     }, 1000);
     setInterval(function() {
       $("#modal_table_but").load(location.href + " #modal_table_but");
-    }, 1000);
-   
+    }, 1000);});
 
-    var intervalID = setInterval(function() {
-  if ($('#myModal').css('display') === 'block') {
-    clearInterval(intervalID); // Itigil ang interval kapag ang modal ay nagpapakita
-  } else if ($('#myModal').css('display') === 'none') {
-    // Dito idagdag ang code para tignan kung naka-block ang modal
-    // ...
-console.log(modalIsBlocked);
-    // Kung naka-block ang modal, ipakita ang modal
-    if (modalIsBlocked) {
-      $('#myModal').modal('show');
-    }
-  }
-}, 1000);
-
-$('#myModal').on('show.bs.modal', function () {
-  clearInterval(intervalID); // I-clear ang interval kapag lumabas ang modal
-});
-
-$('#submitBtn').on('click', function(e) {
-  e.preventDefault(); // Pigilan ang default na pag-submit ng form
-
-  // Dito idagdag ang code para sa pagsusuri o pagproseso ng form
-  // ...
-
-  // Pagkatapos ng pagsusuri o pagproseso ng form, maaari mong gamitin ang sumusunod na code para mag-load ulit:
-  $("#table_pop").load(location.href + " #table_pop");
-});
-
-
-  });
 </script>
 
   

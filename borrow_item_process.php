@@ -2,7 +2,6 @@
 include 'assets/connection/connect.php';
 session_start();
 
-
 // //Initialize variables
 // $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : null;
 // $item = isset($_REQUEST['insert']) ? $_REQUEST['insert'] : null;
@@ -64,7 +63,7 @@ if($quantity <= $total){
 $sql = "INSERT INTO `item_borrow` (`borrower_id_num`, `qr_id_cvsu`, `quantity`) VALUES ($id_bo, $id_item, $quantity)";
 
 if ($conn->query($sql) === TRUE) {
-  header("location:borrow_qr.php?name=$name&label=$id_num&category=$equipment");
+  header("location:borrow_qr.php?name=$name&label=$id_num&category=");
 } else {
   echo "Error: " . $sql . "<br>" . $conn->error;
 }

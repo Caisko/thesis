@@ -222,23 +222,8 @@ $name = $_GET['name'];
           <div class="card">
             
             <div class="card-body" style="padding:30px;">
-                    <?php if (isset($_GET['category'])){ echo $category =  $_GET['category'];?>
-                    
-                  
-<select class="form-select"  id="categorySelect" aria-label="Default select example" style="position:relative;">
-<option hidden Default>Item Categories</option>
-<?php   $sql = "SELECT * FROM  item_category where category_name = '$category'";
-    
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-      // output data of each row
-      while($row = $result->fetch_assoc()) {
-  ?>
+
  
-  <option value="<?php echo strtoupper($row['category_name']);?>"><?php echo strtoupper($row['category_name']);?></option>
-  
-<?php } }?>
-<?php } else{?>
   <select class="form-select"  id="categorySelect" aria-label="Default select example" style="position:relative;">
 <option hidden Default>Item Categories</option>
 <?php   $sql = "SELECT * FROM  item_category";
@@ -252,7 +237,7 @@ $name = $_GET['name'];
   <option value="<?php echo strtoupper($row['category_name']);?>"><?php echo strtoupper($row['category_name']);?></option>
   
 <?php } }?>
-  <?php } ?>
+
 <div class="row" >
 </select><br>
 
@@ -279,7 +264,7 @@ if ($result->num_rows > 0) {
     $quantity = $row['quantity'];
 
     // Query para sa total na quantity na natira
-    $status = "SELECT SUM(quantity) AS borrowed_quantity FROM item_borrow WHERE qr_id_cvsu = $id and status = 'borrowed'";
+    $status = "SELECT SUM(quantity) AS borrowed_quantity FROM item_borrow WHERE qr_id_cvsu = $id or status = 'return'";
     $borrowedResult = $conn->query($status);
     $borrowedRow = $borrowedResult->fetch_assoc();
     $borrowedQuantity = $borrowedRow['borrowed_quantity'];
@@ -522,6 +507,14 @@ submitBtn.onclick = function() {
   console.log("Quantity: " + quantity);
 }
 
+$(document).ready(function() {
+    setInterval(function() {
+      $("#modal_table").load(location.href + " #modal_table");
+    }, 1000);
+    setInterval(function() {
+      $("#modal_table_but").load(location.href + " #modal_table_but");
+    }, 1000);
+  });
 </script>
 </body>
 
