@@ -199,8 +199,10 @@ header("location:index.php");
     </nav><!-- End Icons Navigation -->
 
   </header><!-- End Header -->
+
+  
  <!-- ======= Sidebar ======= -->
- <aside id="sidebar" class="sidebar hidden">
+ <aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -226,9 +228,9 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="return_item.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowers</span>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
@@ -302,6 +304,7 @@ header("location:index.php");
 </ul>
 
 </aside><!-- End Sidebar-->
+
 
   <main id="main" class="main trans">
 
@@ -411,12 +414,13 @@ if ($result->num_rows > 0) {
         <td><?php
         if(!empty($row['date_return_item'])){
         echo date('F j, Y', strtotime($row['date_return_item'])); }else{}?></td>
-        <td><?php echo strtoupper($row['remarks'])?></td>
-        <?php if($row['status'] == 'borrow'){?>
+         <?php if($row['status'] == 'borrow'){?>
     <td ><p style="color:gold;">IN USE</p></td>
     <?php }else if($row['status'] == 'return'){ ?>
       <td ><p style="color:green;">RETURNED</p></td>
       <?php } ?>
+        <td><?php echo strtoupper($row['remarks'])?></td>
+       
       
      
     </tr>

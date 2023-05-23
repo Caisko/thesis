@@ -127,8 +127,8 @@ header("location:index.php");
 
   </header><!-- End Header -->
 
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+ <!-- ======= Sidebar ======= -->
+ <aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -154,9 +154,9 @@ header("location:index.php");
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="borrowers.php">
+  <a class="nav-link collapsed" href="return_item.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowers</span>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 

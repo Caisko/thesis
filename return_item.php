@@ -162,106 +162,106 @@ header("location:index.php");
 </header><!-- End Header -->
 
 
-<!-- ======= Sidebar ======= -->
-<aside id="sidebar" class="sidebar">
+ <!-- ======= Sidebar ======= -->
+ <aside id="sidebar" class="sidebar">
 
 <ul class="sidebar-nav" id="sidebar-nav">
 
-<li class="nav-item">
-<a class="nav-link collapsed" href="dashboard.php">
-  <i class="bi bi-grid"></i>
-  <span>Dashboard</span>
-</a>
-</li><!-- End Dashboard Nav -->
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="dashboard.php">
+      <i class="bi bi-grid"></i>
+      <span>Dashboard</span>
+    </a>
+  </li><!-- End Dashboard Nav -->
 
 <?php if ($row["position"] == "Priority 2") { ?>
-<li class="nav-item">
-<a class="nav-link collapsed" href="account.php">
-  <i class="bi bi-person-square"></i>
-  <span>Register Accounts</span>
-</a>
-</li><!-- End Register gate pass Nav -->
-<li class="nav-item">
-<a class="nav-link collapsed" href="cvsu_equipment.php">
-<i class="bi bi-card-heading"></i>
-<span>Add Equipment</span>
-</a>
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="account.php">
+      <i class="bi bi-person-square"></i>
+      <span>Register Accounts</span>
+    </a>
+  </li><!-- End Register gate pass Nav -->
+  <li class="nav-item">
+  <a class="nav-link collapsed" href="cvsu_equipment.php">
+    <i class="bi bi-card-heading"></i>
+    <span>Add Equipment</span>
+  </a>
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-<a class="nav-link collapsed" href="return_item.php">
-<i class="bi bi-person-bounding-box"></i>
-<span>Returning Item</span>
-</a>
+  <a class="nav-link collapsed" href="return_item.php">
+  <i class="bi bi-person-bounding-box"></i>
+    <span>Returning Item</span>
+  </a>
 </li><!-- End Register gate pass Nav -->
 
 <!-- <li class="nav-item">
-<a class="nav-link collapsed" href="borrow_scan.php">
-<i class="bi bi-arrow-bar-right"></i>
-<span>Borrowing Scanning</span>
-</a>
+  <a class="nav-link collapsed" href="borrow_scan.php">
+  <i class="bi bi-arrow-bar-right"></i>
+    <span>Borrowing Scanning</span>
+  </a>
 </li> End Register gate pass Nav 
 <li class="nav-item">
-<a class="nav-link collapsed" href="return_scanning.php">
-<i class="bi bi-arrow-bar-left"></i>
-<span>Return Scanning</span>
-</a>
+  <a class="nav-link collapsed" href="return_scanning.php">
+  <i class="bi bi-arrow-bar-left"></i>
+    <span>Return Scanning</span>
+  </a>
 </li>End Register gate pass Nav -->
 <li class="nav-item">
-<a class="nav-link collapsed" href="records.php">
-<i class="bi bi-archive"></i>
-<span>Records</span>
-</a>
+  <a class="nav-link collapsed" href="records.php">
+    <i class="bi bi-archive"></i>
+    <span>Records</span>
+  </a>
 </li><!-- End Register gate pass Nav -->
 <li class="nav-item">
-<a class="nav-link collapsed" href="inventory.php">
-<i class="bi-list-check"></i>
-<span>Inventory</span>
-</a>
+  <a class="nav-link collapsed" href="inventory.php">
+  <i class="bi-list-check"></i>
+    <span>Inventory</span>
+  </a>
 </li><!-- End Register gate pass Nav -->
 
-<?php } else if ($row["position"] == "Unit Checker") {  ?>
-<li class="nav-item">
-<a class="nav-link collapsed" href="gadget.php">
-  <i class="bi bi-credit-card-2-front"></i>
-  <span>Register Gate Pass</span>
-</a>
-</li><!-- End Register gate pass Nav --> 
+  <?php } else if ($row["position"] == "Unit Checker") {  ?>
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="gadget.php">
+      <i class="bi bi-credit-card-2-front"></i>
+      <span>Register Gate Pass</span>
+    </a>
+  </li><!-- End Register gate pass Nav --> 
 
-<?php } ?>
-<li class="nav-item">
-<a class="nav-link collapsed" href="movein.php">
-  <i class="bi bi-check-square"></i>
-  <span>Move In  Gate Pass</span>
-</a>
-</li><!-- End Register gate pass Nav --> 
-
-<li class="nav-item">
-<a class="nav-link collapsed" href="moveout.php">
-  <i class="bi bi-x-square"></i>
-  <span>Move Out Gate Pass</span>
-</a>
-<!--</li> End Register gate pass Nav 
-<li class="nav-item">
-<a class="nav-link collapsed" href="check.php">
-  <i class="bi bi-folder2"></i>
-  <span>View Approve Gatepass</span>
-</a>
-</li> End Register gate pass Nav -->
-
-
-
-<!-- <li class="nav-heading">Pages</li>-->
+  <?php } ?>
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="movein.php">
+      <i class="bi bi-check-square"></i>
+      <span>Move In  Gate Pass</span>
+    </a>
+  </li><!-- End Register gate pass Nav --> 
+  
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="moveout.php">
+      <i class="bi bi-x-square"></i>
+      <span>Move Out Gate Pass</span>
+    </a>
+  <!--</li> End Register gate pass Nav 
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="check.php">
+      <i class="bi bi-folder2"></i>
+      <span>View Approve Gatepass</span>
+    </a>
+  </li> End Register gate pass Nav -->
 
 
-<!--  <li class="nav-item">
-<a class="nav-link collapsed" href="pages-faq.html">
-  <i class="bi bi-question-circle"></i>
-  <span>F.A.Q</span>
-</a>
-</li> --><!-- End F.A.Q Page Nav -->
 
+ <!-- <li class="nav-heading">Pages</li>-->
 
+ 
+ <!--  <li class="nav-item">
+    <a class="nav-link collapsed" href="pages-faq.html">
+      <i class="bi bi-question-circle"></i>
+      <span>F.A.Q</span>
+    </a>
+  </li> --><!-- End F.A.Q Page Nav -->
+
+ 
 </ul>
 
 </aside><!-- End Sidebar-->
@@ -431,7 +431,6 @@ $label = $trans_data['header']['bid'];
    <label for="color">Remarks:</label>
 <select name="remarks" id="color" class="form-select">
 	<option value="good_condition">Good Condition</option>
-	<option value="slightly_damaged">Slightly Damaged</option>
 	<option value="destroyed">Destroyed</option>
 
 </select>

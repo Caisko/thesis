@@ -538,7 +538,8 @@ header("location:index.php");
             
              ?>
              <!-- The Modal -->
-             
+             <table id="pop_table">
+              <td>
                  <div id="myModal" class="modal" id="moodal" style="display:block;">
                  <!-- Modal content -->
                  <div class="modal-content" style="width: 100%; max-width: 600px; margin: 0 auto;">
@@ -625,7 +626,7 @@ header("location:index.php");
         ?>
         <form style="display:inline-block;" method="post">
         <input type="hidden" name="trans" value="<?php echo $trans;?>">
-        <button type="submit" name="submit" class="btn btn-success">Accept</button>
+        <button type="submit" name="submit" id="submitBtn" class="btn btn-success">Accept</button>
            </form>
         <?php } 
       
@@ -662,6 +663,8 @@ header("location:index.php");
               }
             }
            ?>
+           </td>
+           </table>
            
             
           
@@ -1027,11 +1030,40 @@ searchInput.addEventListener("keydown", function(event) {
     setInterval(function() {
       $("#modal_table").load(location.href + " #modal_table");
     }, 1000);
-  });
-  $(document).ready(function() {
     setInterval(function() {
       $("#modal_table_but").load(location.href + " #modal_table_but");
     }, 1000);
+   
+
+    var intervalID = setInterval(function() {
+  if ($('#myModal').css('display') === 'block') {
+    clearInterval(intervalID); // Itigil ang interval kapag ang modal ay nagpapakita
+  } else if ($('#myModal').css('display') === 'none') {
+    // Dito idagdag ang code para tignan kung naka-block ang modal
+    // ...
+console.log(modalIsBlocked);
+    // Kung naka-block ang modal, ipakita ang modal
+    if (modalIsBlocked) {
+      $('#myModal').modal('show');
+    }
+  }
+}, 1000);
+
+$('#myModal').on('show.bs.modal', function () {
+  clearInterval(intervalID); // I-clear ang interval kapag lumabas ang modal
+});
+
+$('#submitBtn').on('click', function(e) {
+  e.preventDefault(); // Pigilan ang default na pag-submit ng form
+
+  // Dito idagdag ang code para sa pagsusuri o pagproseso ng form
+  // ...
+
+  // Pagkatapos ng pagsusuri o pagproseso ng form, maaari mong gamitin ang sumusunod na code para mag-load ulit:
+  $("#table_pop").load(location.href + " #table_pop");
+});
+
+
   });
 </script>
 

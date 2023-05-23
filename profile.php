@@ -143,29 +143,29 @@ header("location:index.php");
   <li class="nav-item">
     <a class="nav-link collapsed" href="account.php">
       <i class="bi bi-person-square"></i>
-      <span>Create Accounts</span>
+      <span>Register Accounts</span>
     </a>
   </li><!-- End Register gate pass Nav -->
   <li class="nav-item">
   <a class="nav-link collapsed" href="cvsu_equipment.php">
     <i class="bi bi-card-heading"></i>
-    <span>Register Equipment</span>
+    <span>Add Equipment</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="face_registration.php">
+  <a class="nav-link collapsed" href="return_item.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Register Face</span>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
-<li class="nav-item">
+<!-- <li class="nav-item">
   <a class="nav-link collapsed" href="borrow_scan.php">
   <i class="bi bi-arrow-bar-right"></i>
     <span>Borrowing Scanning</span>
   </a>
-</li><!-- End Register gate pass Nav 
+</li> End Register gate pass Nav 
 <li class="nav-item">
   <a class="nav-link collapsed" href="return_scanning.php">
   <i class="bi bi-arrow-bar-left"></i>
@@ -230,7 +230,6 @@ header("location:index.php");
 </ul>
 
 </aside><!-- End Sidebar-->
-
   <main id="main" class="main">
 
     <div class="pagetitle">

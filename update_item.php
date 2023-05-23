@@ -121,7 +121,7 @@ ob_start();
 <ul class="sidebar-nav" id="sidebar-nav">
 
   <li class="nav-item">
-    <a class="nav-link collapsed">
+    <a class="nav-link collapsed" href="dashboard.php">
       <i class="bi bi-grid"></i>
       <span>Dashboard</span>
     </a>
@@ -129,31 +129,31 @@ ob_start();
 
 <?php if ($row["position"] == "Priority 2") { ?>
   <li class="nav-item">
-    <a class="nav-link collapsed" >
+    <a class="nav-link collapsed" href="account.php">
       <i class="bi bi-person-square"></i>
-      <span>Create Accounts</span>
+      <span>Register Accounts</span>
     </a>
   </li><!-- End Register gate pass Nav -->
   <li class="nav-item">
-  <a class="nav-link collapsed" >
+  <a class="nav-link collapsed" href="cvsu_equipment.php">
     <i class="bi bi-card-heading"></i>
-    <span>Register Equipment</span>
+    <span>Add Equipment</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed">
+  <a class="nav-link collapsed" href="return_item.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Register Face</span>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
-<li class="nav-item">
-  <a class="nav-link collapsed" >
+<!-- <li class="nav-item">
+  <a class="nav-link collapsed" href="borrow_scan.php">
   <i class="bi bi-arrow-bar-right"></i>
     <span>Borrowing Scanning</span>
   </a>
-</li><!-- End Register gate pass Nav 
+</li> End Register gate pass Nav 
 <li class="nav-item">
   <a class="nav-link collapsed" href="return_scanning.php">
   <i class="bi bi-arrow-bar-left"></i>
@@ -161,13 +161,13 @@ ob_start();
   </a>
 </li>End Register gate pass Nav -->
 <li class="nav-item">
-  <a class="nav-link collapsed" >
+  <a class="nav-link collapsed" href="records.php">
     <i class="bi bi-archive"></i>
     <span>Records</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 <li class="nav-item">
-  <a class="nav-link collapsed" >
+  <a class="nav-link collapsed" href="inventory.php">
   <i class="bi-list-check"></i>
     <span>Inventory</span>
   </a>
@@ -175,7 +175,7 @@ ob_start();
 
   <?php } else if ($row["position"] == "Unit Checker") {  ?>
   <li class="nav-item">
-    <a class="nav-link collapsed" >
+    <a class="nav-link collapsed" href="gadget.php">
       <i class="bi bi-credit-card-2-front"></i>
       <span>Register Gate Pass</span>
     </a>
@@ -183,14 +183,14 @@ ob_start();
 
   <?php } ?>
   <li class="nav-item">
-    <a class="nav-link collapsed" >
+    <a class="nav-link collapsed" href="movein.php">
       <i class="bi bi-check-square"></i>
       <span>Move In  Gate Pass</span>
     </a>
   </li><!-- End Register gate pass Nav --> 
   
   <li class="nav-item">
-    <a class="nav-link collapsed" >
+    <a class="nav-link collapsed" href="moveout.php">
       <i class="bi bi-x-square"></i>
       <span>Move Out Gate Pass</span>
     </a>

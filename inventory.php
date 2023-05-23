@@ -114,7 +114,6 @@ ob_start();
 
   </header><!-- End Header -->
 
-
  <!-- ======= Sidebar ======= -->
  <aside id="sidebar" class="sidebar">
 
@@ -142,9 +141,9 @@ ob_start();
 </li><!-- End Register gate pass Nav -->
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="borrowers.php">
+  <a class="nav-link collapsed" href="return_item.php">
   <i class="bi bi-person-bounding-box"></i>
-    <span>Borrowers</span>
+    <span>Returning Item</span>
   </a>
 </li><!-- End Register gate pass Nav -->
 
@@ -330,6 +329,12 @@ if ($result->num_rows > 0) {
  
   <!-- Template Main JS File -->
  
+  <script src="assets/js/main.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js"></script>
+
+
 </body>
 
 </html>

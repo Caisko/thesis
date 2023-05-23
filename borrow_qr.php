@@ -279,7 +279,7 @@ if ($result->num_rows > 0) {
     $quantity = $row['quantity'];
 
     // Query para sa total na quantity na natira
-    $status = "SELECT SUM(quantity) AS borrowed_quantity FROM item_borrow WHERE qr_id_cvsu = $id";
+    $status = "SELECT SUM(quantity) AS borrowed_quantity FROM item_borrow WHERE qr_id_cvsu = $id and status = 'borrowed'";
     $borrowedResult = $conn->query($status);
     $borrowedRow = $borrowedResult->fetch_assoc();
     $borrowedQuantity = $borrowedRow['borrowed_quantity'];

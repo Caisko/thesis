@@ -33,7 +33,7 @@ $status = $row['status'] ;
 
 if($remarks == 'good_condition' || $remarks == 'slightly_damaged'){
   if($row['quan'] == $quan){
-$sql = "UPDATE item_borrow SET quantity_return = quantity - $quan, status = 'return',date_return_item = '$current_date',remarks = '$remarks' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
+$sql = "UPDATE item_borrow SET quantity_return = $quan,quantity = quantity - $quan, status = 'return',date_return_item = '$current_date',remarks = '$remarks' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
 
 if ($conn->query($sql) === TRUE) {
     header("location:return_item.php");
@@ -42,7 +42,7 @@ if ($conn->query($sql) === TRUE) {
   echo "Error updating record: " . $conn->error;
 }
 }else{
-    $sql = "UPDATE item_borrow SET quantity_return = quantity - $quan, status = 'return',date_return_item = '$current_date',remarks = '$remarks' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
+    $sql = "UPDATE item_borrow SET quantity_return = $quan,quantity = quantity - $quan, status = 'return',date_return_item = '$current_date',remarks = '$remarks' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
 if ($conn->query($sql) === TRUE) {
   $sql = "SELECT min(quantity_return) as quantity_return from item_borrow WHERE transaction = '$trans';"; 
   
@@ -72,7 +72,7 @@ if($row['transaction'] == $trans || $balance != 0){
   }
 }else if($remarks == 'destroyed'){
   if(!empty($row['se'])){
-    $sql = "UPDATE item_borrow SET quantity_return = quantity - $quan, status = 'return',date_return_item = '$current_date',remarks = '$remarks' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
+    $sql = "UPDATE item_borrow SET quantity_return = $quan,quantity = quantity - $quan, status = 'return',date_return_item = '$current_date',remarks = '$remarks' WHERE transaction = '$trans' AND qr_id_cvsu = '$ced'";
 
     if ($conn->query($sql) === TRUE) {
       $sql = "UPDATE cvsu_equipment SET `item_stats` = 'unavailable' where id = '$ced'";
