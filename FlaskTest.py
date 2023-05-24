@@ -120,7 +120,6 @@ def capture_images():
     while time.time() < end_time:
         frame = camera.get_frame()
         image_path = os.path.join(path, f'{NameRegister}{count}.jpg')
-        ibabato = image_path = os.path.join(path, f'{NameRegister}0.jpg')
         ibabato = './flaskTesting/flask/Image recognition project/TemporaryImages/' + str(id_number_Register) + '/' + NameRegister + '0.jpg'
         with open(image_path, 'wb') as f:
             f.write(frame)
