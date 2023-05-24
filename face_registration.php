@@ -143,7 +143,7 @@ include 'assets/connection/connect.php';
 <div class="col-sm">
 <!-- acad -->
 <label for="yourEmail" class="form-label label_dept" id="show_label">Department:<sup>*</sup></label>
-<select class="form-select acad-department" name="department" id="acad" >
+<select class="form-select acad-department" name="dep" id="acad" >
   <option value="" selected disabled hidden>Choose Department</option>
   <option value="Department of Computer Studies">Department of Computer Studies</option>
   <option value="Department of Hospitality Management">Department of Hospitality Management</option>

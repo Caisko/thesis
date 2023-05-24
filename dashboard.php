@@ -529,10 +529,10 @@ FROM item_borrow as i
 JOIN borrowers as b ON i.borrower_id_num = b.id
 JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
 WHERE i.status = 'pending' AND not i.status='borrowed'
-ORDER BY `id`";
+GROUP BY transaction ";
+
 $result = mysqli_query($conn, $status);
 $row = mysqli_fetch_assoc($result);?>
-  
 <?php
 
              ?>
@@ -545,15 +545,23 @@ $row = mysqli_fetch_assoc($result);?>
                  <div class="modal-content" style="width: 100%; max-width: 600px; margin: 0 auto;">
                
                    
-                   <p class="title"><i class="bi bi-question-diamond-fill"></i> </p>
-                   <p class="ds">Approval</p>
+                   <p class="title" id="icon"><i class="bi bi-question-diamond-fill"></i> </p>
+                   <p class="ds" id="app">Approval</p>
 
                   <br>
-                <img src="<?php echo $row['img'];?>" style="border-radius:10px;width:130px;height:130px;position:absolute;left:445px;">
-                   <label for="yourName" class="form-label">NAME: <?php echo $row['sname'],",",$row['gname']," ",$row['mname'];?></label>
-                   <label for="yourName" class="form-label">Transaction ID: <?php echo $trans = $row['transaction'];?></label><br>
-                    
-                     <table class="table" id="modal_table">
+                  
+              
+                  <label for="yourName" class="form-label"  id="img_pro" style="display:none;"><?php  echo $image = $row['img'];?></label>
+                  <label for="yourName" class="form-label" id="fname_bor">NAME: <?php echo $row['sname'],",",$row['gname']," ",$row['mname'];?></label>
+
+                 
+                  <label for="yourName" class="form-label"  id="trans_name">Transaction ID: <?php echo $trans = $row['transaction'];?></label>
+                  
+                  <label for="yourName" class="form-label"  id="input_trans" style="display:none;" ><?php echo $trans = $row['transaction'];?></label>
+                  
+                <img id="change_image" style="border-radius:10px;width:130px;height:130px;position:absolute;left:445px;top:20px;">
+                   
+                     <table class="table" id="modal_table" >
   <thead>
     <tr>
       <th scope="col">QTY</th>
@@ -605,28 +613,56 @@ $row = mysqli_fetch_assoc($result);?>
                                                    </form>
                                                 </div>
                                             </div>
+                                            
                                                
-                                                  <!-- <h4>RESULT:</h4>
-                                                   <div class="row text-control" id="display">
-                                                        Display Ajax  
-                                                   </div> -->
+                                                  <h4 style="display:none;">RESULT:</h4>
+                                                   <div class="row text-control" style="display:none;" id="display">
+                                                        <!-- Display Ajax  -->
+                                                   </div> 
+   
+                                                      
       <div class="modal-footer">
-      <table id="modal_table_but">
-    <td>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Decline</button>
-        <?php 
-           $status = "SELECT COUNT(*) AS total_items, COUNT(CASE WHEN scanned = 'ok' THEN 1 END) AS ok_items
-                      FROM `item_borrow`
-                      WHERE transaction = '$trans'";
-           $result = mysqli_query($conn, $status);
-           $row    = mysqli_fetch_assoc($result);
+      <table id="modal_table_but" style="width:100%;  border-collapse: collapse;">
+        <thead>
+    <th colspan="2" style="border:none;padding:20px;float:right;" >
+    <?php 
         
-           if ($row['total_items'] > 0 && $row['total_items'] == $row['ok_items']) {
-        ?>
-        <form style="display:inline-block;" method="post">
+        $status = "SELECT COUNT(*) AS total_items, COUNT(CASE WHEN scanned = 'not ok' THEN 1 END) AS not_ok_items
+                   FROM `item_borrow`
+                   WHERE transaction = '$trans'";
+        $result = mysqli_query($conn, $status);
+        $row    = mysqli_fetch_assoc($result);
+       $row['total_items'] ;
+      $row['not_ok_items'];
+        if ($row['not_ok_items'] == 0) {
+     ?>
+
+<form style="display:inline-block;" method="post">
         <input type="hidden" name="trans" value="<?php echo $trans;?>">
-        <button type="submit" name="submit" id="submitBtn" class="btn btn-success">Accept</button>
+        <button type="submit" name="submit" id="submitBtn" class="btn btn-success"  style="float:right;">Accept</button>
            </form>
+   
+         <br>
+      
+    </th>
+        </thead>
+        
+       
+                <?php }else{ ?>    
+                <td align="right" style="border:none;">
+                <form method="post" style="display:none;" id="delete_form">
+        <input type="hidden" class="form_control"  name="delete_trans" id="new_var" >
+        <select class="form-select" required>
+          <option value="" hidden>Reason For Decline</option>
+          <option value="Option A">Option A</option>
+          <option value="Option B">Option B</option>
+        </select>
+        <br>
+        <button type="button"  onclick="showme()"  class="btn btn-primary" >Cancel</button>
+        <input type="submit" class="btn btn-danger" value="Decline" name="delete_this">
+      
+        </form>    
+        <button type="button" name="submit" onclick="hidelall()" id="hideme" class="btn btn-danger"  style="float:right;">Decline</button>
         <?php } 
       
         ?>
@@ -652,13 +688,30 @@ $row = mysqli_fetch_assoc($result);?>
               if ($conn->query($sql) === TRUE) {
                 echo "<script>
                 var modalq = document.getElementById('myModal');
-                console.log(modalq)
+            
                 modalq.style.display = 'none';
                 </script>";
               } else {
                 echo "Error updating record: " . $conn->error;
               }
             }
+             if(isset($_POST['delete_this'])){
+              // sql to delete a record
+              $delete_t = $_POST['delete_trans'];
+              $sql = "DELETE FROM item_borrow WHERE transaction ='$delete_t'";
+
+              if ($conn->query($sql) === TRUE) {
+                echo "<script>
+                var modalq = document.getElementById('myModal');
+                modalq.style.display = 'none';
+                
+                </script>";
+              } else {
+                echo "Error deleting record: " . $conn->error;
+              }
+
+            }
+            
            ?> 
              
                 <div class="card-body">
@@ -982,7 +1035,6 @@ searchInput.addEventListener("keydown", function(event) {
          function onScanSuccess(qrCodeMessage) {
              document.getElementById("search").value = qrCodeMessage;
              showHint(qrCodeMessage);
-             
          }
          function onScanError(errorMessage) {
            //handle scan error
@@ -990,26 +1042,30 @@ searchInput.addEventListener("keydown", function(event) {
          var html5QrcodeScanner = new Html5QrcodeScanner(
              "reader", { fps: 10, qrbox: 250 });
          html5QrcodeScanner.render(onScanSuccess, onScanError);
-         
-      </script>
-      <script>
        
          function showHint(str) {
-                 if (str.length == 0) {
-         document.getElementById("display").innerHTML = "";
-         return;
-         } else {
-         var xmlhttp = new XMLHttpRequest();
-         xmlhttp.onreadystatechange = function() {
-           if (this.readyState == 4 && this.status == 200) {
-             document.getElementById("display").innerHTML = this.responseText;
-           }
-         };
+    if (str.length == 0) {
+        document.getElementById("display").innerHTML = "";
+        return;
+    } else {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("display").innerHTML = this.responseText;
+            }
+        };
+        xmlhttp.open("GET", "scan_approved.php?insert=" + str, true);
+        xmlhttp.send();
+    }
+}
 
-         xmlhttp.open("GET", "scan_approved.php?trans=<?php echo $trans; ?>&insert=" + str, true);
-         xmlhttp.send();
-         }
-         }
+// Trigger search when user types
+var inputField = document.getElementById("search"); // Replace "yourInputFieldId" with the actual ID of your input field
+inputField.addEventListener("input", function() {
+    var searchQuery = inputField.value;
+    showHint(searchQuery);
+});
+
     
          
          
@@ -1023,15 +1079,16 @@ searchInput.addEventListener("keydown", function(event) {
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         var response = this.responseText.trim();
+      
         if (response === "none") {
           console.log("No pending transactions.");
         } else {
           var transactions = response.split(",");
+  
           for (var i = 0; i < transactions.length; i++) {
             var transaction = transactions[i].trim();
           
-
-            displayModal(transaction);// Call a function to display the modal for each pending transaction
+            displayModal();// Call a function to display the modal for each pending transaction
           }
         }
       } else if (this.readyState == 4) {
@@ -1042,7 +1099,7 @@ searchInput.addEventListener("keydown", function(event) {
     xhttp.send();
   }
 
-  function displayModal(transaction) {
+  function displayModal() {
     // Code to display the modal for the given transaction
     // You can customize this part to show the modal using your preferred method
     // Make sure to include the necessary HTML and CSS for the modal
@@ -1060,17 +1117,80 @@ searchInput.addEventListener("keydown", function(event) {
   }
 
   setInterval(checkStatus, 1000);
-  $(document).ready(function() {
-    setInterval(function() {
-      $("#modal_table").load(location.href + " #modal_table");
-    }, 1000);
-    setInterval(function() {
+var naclick = false;
+ $(document).ready(function() { 
+  const interval =  setInterval(function() {
+    $("#modal_table").load(location.href + " #modal_table");
+    if (naclick === false){
       $("#modal_table_but").load(location.href + " #modal_table_but");
-    }, 1000);});
+    }
+    
+  }, 1000);
 
-</script>
+    setInterval(function() {
+      $("#input_trans").load(location.href + " #input_trans");
+      $("#trans_name").load(location.href + " #trans_name");
+      $("#fname_bor").load(location.href + " #fname_bor");
+      $("#img_pro").load(location.href + " #img_pro");
+      var image = document.getElementById("img_pro");
+      var text = image.textContent;
+      var get_var = document.getElementById("input_trans");
+      var text_var = get_var.textContent;
+      document.getElementById("new_var").value = text_var;
+     console.log(text_var);
+      document.getElementById("change_image").src = text;
+    }, 1000);
+  });
 
-  
+   function hidelall(){
+
+          naclick = true;
+          var bor_fname =document.getElementById("fname_bor");
+          bor_fname.style.display = "none";
+          var modal_table =document.getElementById("modal_table");
+          modal_table.style.display = "none";
+          var trans_name =document.getElementById("trans_name");
+          trans_name.style.display = "none";
+          var change_image =document.getElementById("change_image");
+          change_image.style.display = "none";
+          var read =document.getElementById("reader");
+          read.style.display = "none";
+          var delete_form =document.getElementById("delete_form");
+          delete_form.style.display = "block";
+          var icon =document.getElementById("icon");
+          icon.style.display = "none";
+          var app =document.getElementById("app");
+          app.style.display = "none";
+          var hideme =document.getElementById("hideme");
+          hideme.style.display = "none";
+          clearInterval(interval);
+        }
+function showme(){
+
+naclick = false;
+var icon =document.getElementById("icon");
+          icon.style.display = "block";
+          var app =document.getElementById("app");
+          app.style.display = "block";
+var bor_fname =document.getElementById("fname_bor");
+bor_fname.style.display = "block";
+var modal_table =document.getElementById("modal_table");
+modal_table.style.display = "block";
+var trans_name =document.getElementById("trans_name");
+trans_name.style.display = "block";
+var change_image =document.getElementById("change_image");
+change_image.style.display = "block";
+var read =document.getElementById("reader");
+read.style.display = "block";
+var delete_form =document.getElementById("delete_form");
+delete_form.style.display = "none";
+
+var hideme =document.getElementById("hideme");
+hideme.style.display = "block";
+setInterval(interval);
+}
+        
+        </script>
 </body>
 
 </html>

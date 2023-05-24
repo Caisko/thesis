@@ -89,6 +89,9 @@ if($row['status'] == "borrowed"){
 }else if($row['status'] == "borrow"){
     header("Location: borrow_qr.php?name=$name&label=$label");
 }
+if($row['status'] == null){
+  header("Location: borrowers.php");
+}
 
 
 // Periodically refresh the page
