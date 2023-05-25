@@ -262,14 +262,20 @@ if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     $id = $row['id'];
     $quantity = $row['quantity'];
+    $damage = $row['damage'];
+    $total_quantity = $quantity - $damage;
 
     // Query para sa total na quantity na natira
-    $status = "SELECT SUM(quantity) AS borrowed_quantity FROM item_borrow WHERE qr_id_cvsu = $id or status = 'return'";
+    $status = "SELECT SUM(quantity) AS borrowed_quantity
+    FROM item_borrow
+    WHERE qr_id_cvsu = $id
+      AND (status = 'borrowed' OR status = 'borrow' OR status = 'checking')
+    ";
     $borrowedResult = $conn->query($status);
     $borrowedRow = $borrowedResult->fetch_assoc();
     $borrowedQuantity = $borrowedRow['borrowed_quantity'];
 
-    $total = $quantity - $borrowedQuantity;
+    $total =  $total_quantity - $borrowedQuantity;
 
     if ($total != 0) {
       

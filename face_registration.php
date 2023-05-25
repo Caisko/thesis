@@ -119,7 +119,7 @@ include 'assets/connection/connect.php';
 </div>
 <div class="col-sm">
   <label for="yourName" class="form-label">Middle Name:</label>
-  <input type="text"  class="form-control" name="mname"   >
+  <input type="text"  class="form-control" name="mname" placeholder="Optional"  >
 </div>
 </div>
 

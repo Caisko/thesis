@@ -389,21 +389,20 @@ $label = $trans_data['header']['bid'];
 
   <td ><?php echo $item = $item_data['name'];?></td>
     <td ><?php echo $quan = $item_data['quantity'];?></td>
-    <td><button class="btn btn-secondary open-modal" 
-            data-transact-id="<?php echo $trans_data['header']['transaction']; ?>"
-            data-item="<?php echo $item_data['name']; ?>"
-            data-quantity="<?php echo $item_data['quantity']; ?>"
-            label="<?php echo $trans_data['header']['bid']; ?>"
-            name="<?php echo $name; ?>">
-            <i class="bi bi-arrow-right"></i>
-    </button>
+    <td style="display:none;"><?php echo $cvsu = $item_data['cvsu_id'];?></td>
+    <td>
+      <a href="process_item_return.php?trans_id=<?php echo $transac_id1; ?>&item_id=<?php echo $cvsu; ?>" class="btn btn-warning"><i class="bi bi-arrow-right"></i></a>
+    
 </td>
 
   </tr>
+  
   <?php }?>
 </tbody>
 
 </table>
+<a href="end_process.php?trans_id=<?php echo $transac_id1; ?>" class="btn btn-secondary">End Process</a>
+   
 <br>
 <?php
   }
@@ -430,8 +429,8 @@ $label = $trans_data['header']['bid'];
 
    <label for="color">Remarks:</label>
 <select name="remarks" id="color" class="form-select">
-	<option value="good_condition">Good Condition</option>
-	<option value="destroyed">Destroyed</option>
+	<option value="Good Condition">Good Condition</option>
+	<option value="Damage">Damage</option>
 
 </select>
 

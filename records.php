@@ -89,7 +89,9 @@ header("location:index.php");
   }
 
 		}
-    .modal {
+
+    /* The Modal (background) */
+.modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
 
@@ -107,9 +109,10 @@ header("location:index.php");
 .modal-content {
   background-color: #fefefe;
   margin: auto;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #888;
   width: 80%;
+  height:10%;
 }
 
 /* The Close Button */
@@ -126,6 +129,7 @@ header("location:index.php");
   text-decoration: none;
   cursor: pointer;
 }
+
     </style>
 </head>
 
@@ -382,10 +386,10 @@ header("location:index.php");
     </tr>
   </thead>
   <?php 
-  $sql = "SELECT b.id, b.id_num, i.date_return_item,i.remarks as remarks,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
+  $sql = "SELECT b.id, b.id_num, i.date_return_item,b.Deparment as de, b.sname as sname, b.gname as gname, b.mname as mname,
   i.borrower_id_num as bnum, i.transaction as transaction, i.id as id_del, i.qr_id_cvsu, i.date_borrow as date_borrow,
   i.date_return as date_return,i.quantity as quan, i.status as status, ce.id as ced, ce.serial as se
-  ,ce.item_name as name1, ce.description as desc1, ce.quantity as quantity
+  ,ce.item_name as name1, ce.description as desc1, ce.quantity as quantity,ce.damage as damage,i.quantity_return as quantity_return
 FROM item_borrow as i
 JOIN borrowers as b ON i.borrower_id_num = b.id
 JOIN cvsu_equipment as ce ON ce.id = i.qr_id_cvsu
@@ -399,6 +403,11 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $trans = $row['transaction'];
         $all = implode(array($row['sname'], ",", $row['gname'], " ", $row['mname']));
+         $ced = $row['ced'];
+         $serial = $row['se'];
+         $quan = $row['quan'];
+         $damage = $row['damage'];
+         $total_return = $quan - $damage;
         
 ?>
 
@@ -408,19 +417,38 @@ if ($result->num_rows > 0) {
         <td><?php echo $all; ?></td>
         <td><?php echo $row['de'];?></td>
         <td><?php echo $row['name1']?></td>
-        <td><?php echo $row['quan']?></td>
+      <?php if(!empty($row['quantity_return'])){ ?>
+        <td><?php echo  $total_return?></td>
+        <?php } else if(empty($row['quantity_return'])){ ?>
+          <td><?php echo  $quan; ?></td>
+      <?php  } ?>
         <td><?php echo date('F j, Y', strtotime($row['date_borrow'])); ?></td>
         <td><?php echo date('F j, Y', strtotime($row['date_return'])); ?></td>
         <td><?php
-        if(!empty($row['date_return_item'])){
+        if(!empty($row['date_return_item'])  || $row['quantity_return'] == 0 ){
         echo date('F j, Y', strtotime($row['date_return_item'])); }else{}?></td>
-         <?php if($row['status'] == 'borrow'){?>
-    <td ><p style="color:gold;">IN USE</p></td>
-    <?php }else if($row['status'] == 'return'){ ?>
+         <?php if($row['status'] == 'borrowed' || $row['status'] == 'return_pending'){?>
+    <td ><p style="color:orange;">IN USE</p></td>
+    <?php }else if($row['status'] == 'return' || $row['status'] == 'checking' || $row['status'] == 'Damage' || $row['status'] == 'Good Condition'){ ?>
       <td ><p style="color:green;">RETURNED</p></td>
+
       <?php } ?>
-        <td><?php echo strtoupper($row['remarks'])?></td>
-       
+        <td><?php if($row['status'] == 'checking') {?>
+
+         <button class="btn default open-modal" style="padding:0;width:100px;height:25px;"
+            data-transact-id="<?php echo $trans; ?>"
+            data-item="<?php echo $row['name1']; ?>"
+            data-quantity="<?php echo $row['quan']; ?>"
+            data-ce_id="<?php echo $ced; ?>"
+            data-serial="<?php echo $serial; ?>">
+            <p class="text-primary">CHECKING</p>
+    </button> 
+     <?php }else if($row['status'] == 'Damage'){ ?>
+        <p class="text-danger">DAMAGED</p>
+
+      <?php }else if($row['status'] == 'Good Condition'){ ?>
+            <p class="text-success">GOOD CONDITION</p>
+      <?php } ?> 
       
      
     </tr>
@@ -431,6 +459,39 @@ if ($result->num_rows > 0) {
 }
 ?>
 </table>
+
+<div class="modal"  id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <strong><input type="hidden" name="transact_id1" class="no-outline" style="border:none" readonly></strong>
+      <div >
+        <form method="post" action="return_process.php">
+      <input type="hidden" name="transact_id" >
+      <input type="hidden" name="ced" >
+      <input type="hidden" class="form-control" name="item"  readonly><br>
+ 
+    <label class="form-label">Status:</label>
+<select name="remarks" id="color" class="form-select">
+	<option default value="Good Condition">Good Condition</option>
+	<option value="Damage">Damaged</option>
+</select>
+<br>
+<label class="form-label" style="display:none;" id="damage_d">Damaged Item Quantity:</label>
+<input type="hidden"  name="quantity"   id="quant1" class="form-control"   min = "1"  required><br>
+      </div>
+     <div class="modal-footer">
+        <button type="submit" name="submit" class="btn btn-primary" >Done</button>
+        
+        </form>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="close" aria-label="Close"  >Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
 </div>
 
 </div>
@@ -610,6 +671,99 @@ if ($result->num_rows > 0) {
 }
 
 
+
+// get the modal element
+var modal = document.querySelector('.modal');
+
+// get the close button
+var closeBtn = modal.querySelector('#close');
+
+// get the form elements
+var transactIdInput = modal.querySelector('input[name="transact_id"]');
+var transactIdInput1 = modal.querySelector('input[name="transact_id1"]');
+var ced1 = modal.querySelector('input[name="ced"]');
+var itemInput = modal.querySelector('input[name="item"]');
+var quantityInput = modal.querySelector('input[name="quantity"]');
+var labelInput = modal.querySelector('input[name="label"]');
+// add click event listener to all open-modal buttons
+var openModalButtons = document.querySelectorAll('.open-modal');
+openModalButtons.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    // set the values of the input elements in the modal based on the data attributes of the button
+  
+    
+    var sr = btn.dataset.serial
+console.log(sr);
+    if(sr !== null && sr !== undefined && sr !== ''){
+      quantityInput.value = btn.dataset.quantity;
+      itemInput.value = btn.dataset.item;
+      transactIdInput.value = btn.dataset.transactId;
+    ced1.value = btn.dataset.ce_id;
+        
+document.getElementById('color').addEventListener('change', function() {
+  var selectedValue = this.value;
+
+  if (selectedValue === 'Damage') {
+    var quant1 = document.getElementById('quant1');
+    quant1.type = 'hidden';
+    var damage = document.getElementById('damage_d');
+    damage.style.display = 'none';
+  }
+});
+    }else{
+      quantityInput.value = btn.dataset.quantity;
+      itemInput.value = btn.dataset.item;
+      transactIdInput.value = btn.dataset.transactId;
+    ced1.value = btn.dataset.ce_id;
+    
+    
+document.getElementById('color').addEventListener('change', function() {
+  var selectedValue = this.value;
+
+  if (selectedValue === 'Damage') {
+    var quant1 = document.getElementById('quant1');
+    var damage = document.getElementById('damage_d');
+    quant1.type = 'number';
+    damage.style.display = 'block';
+  } else {
+    var quant1 = document.getElementById('quant1');
+    quant1.type = 'hidden';
+    var damage = document.getElementById('damage_d');
+    damage.style.display = 'none';
+  }
+});
+
+    }
+   
+    
+    
+    // show the modal
+    modal.style.display = 'block';
+  });
+});
+const selectElement = document.getElementById('color');
+// add click event listener to close button
+closeBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
+  selectElement.value = 'Good Condition';
+  var quant1 = document.getElementById('quant1');
+    quant1.type = 'hidden';
+    var damage = document.getElementById('damage_d');
+    damage.style.display = 'none';
+});
+
+// add click event listener to window to close modal if clicked outside modal
+window.addEventListener('click', function(event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+    
+    selectElement.value = 'Good Condition';
+    var quant1 = document.getElementById('quant1');
+    quant1.type = 'hidden';
+    var damage = document.getElementById('damage_d');
+    damage.style.display = 'none';
+  }
+});
 
 </script>
 
