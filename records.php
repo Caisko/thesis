@@ -481,7 +481,6 @@ if ($result->num_rows > 0) {
       </div>
      <div class="modal-footer">
         <button type="submit" name="submit" class="btn btn-primary" >Done</button>
-        
         </form>
         <button type="button" class="btn btn-danger" data-dismiss="modal" id="close" aria-label="Close"  >Cancel</button>
         </div>

@@ -49,6 +49,48 @@ ob_start();
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+      /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 10px;
+  border: 1px solid #888;
+  width: 80%;
+  height:10%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+    </style>
 </head>
 
 <body>
@@ -245,55 +287,103 @@ ob_start();
         <!-- Left side columns -->
         <div class="col-lg-12">
           <div class="row">
-
-         
-
-<?php 
- $sql = "SELECT ce.*, i.qr_id_cvsu, ce.quantity AS cequan, ce.id, SUM(i.quantity) AS iquan,ce.serial as serial,
- COUNT(i.status) AS status_count,ce.equipment as equipment,count(ce.equipment) as sum_e FROM cvsu_equipment AS ce 
-LEFT JOIN item_borrow AS i ON i.qr_id_cvsu = ce.id AND i.status != 'return'  GROUP BY equipment; ";
- 
+          <div class="table-responsive">
+          <table class="table table-hover table-bordered"  id="itemTable" style=" text-align: center;">
+  <thead >
+    <tr>
+    <th scope="col">QR Code ID</th>
+    <th scope="col">Item</th>
+    <th scope="col" style="display:none;">Category</th>
+    <th scope="col">Serial</th>
+    <th scope="col">Description</th>
+    <th scope="col">QTY</th>
+    <th scope="col"> Damaged&nbsp;QTY </th>
+      <th scope="col">Total </th>
+      <th scope="col" colspan=2>Available&nbsp;QTY</th>
     
+
+    
+     
+    </tr>
+  </thead>
+  <?php
+$sql = "SELECT * FROM cvsu_equipment Order By equipment ";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
   // output data of each row
-  while($row = $result->fetch_assoc()) {
-?>
-   <!-- Sales Card -->
+  while ($row = $result->fetch_assoc()) {
+    $id = $row['id'];
+    $quantity = $row['quantity'];
+   $qr = $row['qr_id'];
+    $serial = $row['serial'];
+    $damage = $row['damage'];
+   $des = $row['description'];
+    $total_quantity = $quantity - $damage;
 
-   <div class="col-xxl-4 col-md-4">
-              <div class="card info-card revenue-card">
+    // Query para sa total na quantity na natira
+    $status = "SELECT SUM(quantity) AS borrowed_quantity
+    FROM item_borrow WHERE qr_id_cvsu = $id AND(status = 'borrowed' OR status = 'borrow' OR status = 'checking') ORDER BY borrowed_quantity asc";
+    $borrowedResult = $conn->query($status);
+    $borrowedRow = $borrowedResult->fetch_assoc();
+    $borrowedQuantity = $borrowedRow['borrowed_quantity'];
+    $total =  $total_quantity - $borrowedQuantity;
+    
+      ?>
+      <tbody>
+        <tr>
+        <td><?php echo $qr; ?></td>
 
-                <div class="card-body" >
-                  <h5 class="card-title" ><?php echo strtoupper($row['equipment']);?><span> </span></h5>
-          <?php
-          
-          ?>
-          <?php if(!empty($row['serial'])){?>
-                  <div class="d-flex align-items-center">
-                      <?php echo $row["status_count"],"/",$row['sum_e'];?>
-                    <div class="ps-3">
-                     <?php } ?>
-                    <?php if(empty($row['serial'])){?>
-              <div class="d-flex align-items-center">
-                     
-                      <?php if(empty($row['iquan'])){echo 0,"/",$row['cequan']; }else {echo $row["iquan"],"/",$row['cequan'];}?>
-                    <div class="ps-3">
-                     <?php } ?>
-                    </div>
-                  </div>
-                </div>
+          <td><?php echo strtoupper($row['item_name']); ?></td>
+          <td style="display:none;" ><?php echo strtoupper($row['equipment']); ?></td>
+          <td><?php echo $serial; ?></td>
+          <td><?php echo $des; ?></td>
+          <td><?php echo $quantity; ?></td>
+          <td> 
+            
+          <button class="btn default open-modal" style="padding:0;width:100px;height:25px;"
+            data-transact-id="<?php echo $qr; ?>"
+            data-damage_quan="<?php echo $damage; ?>"
+            data-quantity="<?php echo $quantity; ?>"
+             >
+            <p class=""><?php echo $damage; ?></p>
+    </button> </td>
+          <td><?php echo $total_quantity; ?></td>
 
-              </div>
-           
-              </div><!-- End Sales Card -->
-
-<?php
+          <td><?php if($total < 0){}else{ echo $total;} ?></td>
+        </tr>
+      </tbody>
+      <?php
+    }
   }
-}
-?>
 
+?>
+</table> 
+
+
+<div class="modal"  id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <strong><input type="hidden" name="transact_id1" class="no-outline" style="border:none" readonly></strong>
+      <div >
+        <form method="post" action="damage_form.php">
+      <input type="hidden" name="qr_id" >
+ 
+      <input type="hidden" class="form-control" name="qr_id_in"  readonly><br>
+
+      <label class="form-label"  id="damage_d">Damaged Item Quantity:</label>
+      <input type="number"  name="quantity"   id="quantity_max" class="form-control"   required><br>
+          </div>
+     <div class="modal-footer">
+        <button type="submit" name="submit" class="btn btn-primary" >Done</button>
+        </form>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="close" aria-label="Close"  >Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
             </div>
   </div><!-- End Customers Card -->
 
@@ -334,7 +424,50 @@ if ($result->num_rows > 0) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js"></script>
 
+<script>
+   
 
+// get the modal element
+var modal = document.querySelector('.modal');
+
+// get the close button
+var closeBtn = modal.querySelector('#close');
+
+// get the form elements
+
+var ced1 = modal.querySelector('input[name="qr_id_in"]');
+var quantityInput = modal.querySelector('input[name="quantity"]');
+
+// add click event listener to all open-modal buttons
+var openModalButtons = document.querySelectorAll('.open-modal');
+openModalButtons.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    // set the values of the input elements in the modal based on the data attributes of the button
+  
+      quantityInput.value = btn.dataset.damage_quan;
+      ced1.value = btn.dataset.transactId;
+     var quan =  btn.dataset.quantity;
+      // show the modal
+      var max1 = btn.dataset.damage_quan;
+     var checking_mac = document.getElementById("quantity_max").max = quan;
+     document.getElementById("quantity_max").min = 0;
+     console.log(checking_mac);
+      modal.style.display = 'block';
+  });
+}); 
+closeBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
+ 
+});
+
+// add click event listener to window to close modal if clicked outside modal
+window.addEventListener('click', function(event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+});
+
+  </script>
 </body>
 
 </html>

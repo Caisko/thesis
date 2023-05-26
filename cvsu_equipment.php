@@ -461,20 +461,18 @@ $all = [$date, $dash, $random];
         // output data of each row
         while($row = $result->fetch_assoc()) {
         ?>
-        <option value="<?php echo $row["category_name"]; ?>"><?php echo $row["category_name"]; ?></option>
+        <option value="<?php echo $row["category_name"]; ?>"><?php echo $category = $row["category_name"]; ?></option>
          <?php
         }
       } else {
         echo "0 results";
       }
-      $conn->close();
+     
       ?>
       <option value="">Add New Category</option>
     </select>
   </div>
 </div>
-
-
 
 <div class="row">
   <div class="col-sm">
@@ -485,8 +483,12 @@ $all = [$date, $dash, $random];
 
 <div class="row">
   <div class="col-sm">
+
+
     <label for="yourName" class="form-label" >Item name:</label>
-    <input type="text" class="form-control" name="item_name" id="item" required>
+   
+  
+    <input type="text" class="form-control" name="item_name" id="item" required> 
   </div>
 </div>
 
@@ -516,7 +518,7 @@ $all = [$date, $dash, $random];
       
       <div class="col-sm">
         <label for="yourName" class="form-label">Quantity:</label>
-        <input type="text" id="unit" class="form-control" name="quantity" required>
+        <input type="number" id="quantity_con" class="form-control" name="quantity" required>
       </div>
       </div><!--End of row-->
 
@@ -587,11 +589,15 @@ $all = [$date, $dash, $random];
       document.getElementById("unit").style.display = "block";
       document.getElementById("unit1").style.display = "block";
       document.getElementById("unit").readOnly = false;
+      document.getElementById("quantity_con").readOnly = true;
+      document.getElementById("quantity_con").value = 1;
     }else{
       document.getElementById("unit").style.display = "none";
       document.getElementById("unit1").style.display = "none";
       document.getElementById("unit").readOnly = true;
       document.getElementById("unit").value = "";
+      document.getElementById("quantity_con").readOnly = false;
+      document.getElementById("quantity_con").value = "";
     }
   }
 </script>
