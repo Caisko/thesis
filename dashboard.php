@@ -271,6 +271,12 @@ header("location:index.php");
       <span>Register Gate Pass</span>
     </a>
   </li><!-- End Register gate pass Nav --> 
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="qr_code_generate.php">
+      <i class="bi bi-credit-card-2-front"></i>
+      <span>Generate Qr Code</span>
+    </a>
+  </li><!-- End Register gate pass Nav --> 
 
   <?php } ?>
   <li class="nav-item">
@@ -512,6 +518,13 @@ header("location:index.php");
      
   <!-- Recent Sales -->
   <div class="col-12">
+  <div class="card recent-sales overflow-auto">
+  <div class="card-body">
+    
+</div>
+</div>
+</div>
+    <div class="col-12">
               <div class="card recent-sales overflow-auto">
 
               
