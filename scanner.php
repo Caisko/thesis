@@ -124,14 +124,13 @@ session_start();
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
 
-  <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <script type="text/javascript">
          function onScanSuccess(qrCodeMessage) {
              document.getElementById("search").value = qrCodeMessage;
              showHint(qrCodeMessage);
-             playAudio();
+            
          
          }
          function onScanError(errorMessage) {
@@ -143,8 +142,7 @@ session_start();
          
       </script>
       <script>
-         var x = document.getElementById("myAudio1");
-var x2 = document.getElementById("myAudio2");     
+         
          function showHint(str) {
                  if (str.length == 0) {
          document.getElementById("display").innerHTML = "";
@@ -153,17 +151,22 @@ var x2 = document.getElementById("myAudio2");
          var xmlhttp = new XMLHttpRequest();
          xmlhttp.onreadystatechange = function() {
            if (this.readyState == 4 && this.status == 200) {
-             document.getElementById("display").innerHTML = this.responseText;
+
+            var think = this.responseText;
+
+             if(this.responseText == "No Data "){
+              document.getElementById("display").innerHTML = " <p class='alert alert-danger text-center' style='font-align:center;'>" + this.responseText + "</p>";
+             }else{
+              location.href = this.responseText;
+             }
+
            }
          };
          xmlhttp.open("GET", "ajax.php?search=" + str, true);
          xmlhttp.send();
          }
          }
-         function playAudio() { 
-  x.play(); 
-} 
-
+       
          
          
                  

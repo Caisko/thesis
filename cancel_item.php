@@ -16,7 +16,7 @@ echo $eto = $row["id"];
   if ($conn->query($sql) === TRUE) {
     $sql = "DELETE  FROM gatepass WHERE id = '$eto' ";
     if ($conn->query($sql) === TRUE) {
-      header("Location: gadget.php");
+      header("Location:pages-error-404.html");
     }else {
       echo "Error deleting record: " . $conn->error;
     }

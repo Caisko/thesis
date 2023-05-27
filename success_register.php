@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Pages / Not Found 404 - NiceAdmin Bootstrap Template</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -41,10 +40,14 @@
 
   <main>
     <div class="container">
+<?php
+ include 'assets/connection/connect.php';
 
+
+?>
       <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
-        <h1 style="color:green;">404</h1>
-        <h2 style="color:green;">The page you are looking for doesn't exist.</h2>
+        <h2 style="color:green;">Successfully Register</h2>
+        <h3 style="color:green;">WAIT FOR GUARD APPROVAL</h3>
    
         <div class="credits">
           <!-- All the links in the footer should remain intact. -->
@@ -69,7 +72,16 @@
   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
+  ​<script type="text/javascript">
+history.pushState(null, document.title, location.href);
 
+window.addEventListener('popstate', function (event)
+{
+  history.pushState(null, document.title, location.href);
+ 
+  
+});
+</script>
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 

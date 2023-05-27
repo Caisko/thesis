@@ -308,7 +308,7 @@ if ($conn->query($sql) === TRUE) {
 
         
 
-        for ($x = 0; $x <= 76; $x++) {
+        for ($x = 0; $x <= 69; $x++) {
 
             while (true){
             
@@ -320,10 +320,11 @@ if ($conn->query($sql) === TRUE) {
 
                 $QR_CODE = [$date,$dash,$random];
 
-
+         
                 $qr_generate = implode($QR_CODE);
-                $codeString =   $qr_generate ;
-                
+                 $link = "http://localhost/thesis/process_the_qr.php?qr_gen=$qr_generate";
+                $codeString =  $qr_generate ;
+                $codeString = $link;
                 
                 $status = "SELECT * FROM gatepass";
                 $result = mysqli_query($conn, $status);
@@ -353,8 +354,8 @@ if ($conn->query($sql) === TRUE) {
             array_push($generated_filename,$filename);
 
             
-                $sql = "INSERT INTO gatepass (gatepass_id, qr,passing_qr)
-                VALUES ('$codeString', '$filename','$random')";
+                $sql = "INSERT INTO gatepass (gatepass_id, qr,passing_qr,link,fk_admins)
+                VALUES ('$qr_generate', '$filename','$random','$link',(SELECT id FROM admins where id =  '$id_admin'))";
 
                 if ($conn->query($sql) === TRUE) {
                 echo "";

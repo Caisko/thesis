@@ -288,14 +288,29 @@ header("location:index.php");
                         
                         ?>
                         </thead>
+                        <?php 
+                        $result = $conn->query($status);
+                        
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+                        ?>
                         <tr>
                         <th scope="row"><?php echo $row["quan"] ?></th>
                         <td><?php echo $row["serialnum"];?></td>
                         <td><?php echo $row["description"];?></td>
                         </tr>
-     
+     <?php } }
+     ?>
                     </tbody>
                   </table><br><br>
+                  <?php      $status = "SELECT admins.position as position, gatepass.comment as comment,gatepass.date_register as register,gatepass.fk_admins as admins,gatepass.gatepass_status as status,gatepass.transaction as transaction,.gatepass.gatepass_id as gatepass_id,gatepass.id,unit_number.description as description,gatepass.technical_name as technical_name,admins.id,admins.given_name as fname,admins.surname as lname,admins.middle_name as mname,gatepass.name as name,unit_number.unit_num_serial as serialnum,unit_number.quantity as quan,admins.sign as sign FROM gatepass LEFT OUTER JOIN unit_number on gatepass.id = unit_number.user_id JOIN admins on gatepass.fk_admins = admins.id WHERE  gatepass.id = '" . $_GET["id"] . "'";
+            $result = mysqli_query($conn, $status);
+            $row    = mysqli_fetch_assoc($result);
+        $com = $row["comment"];
+        $admin = $row["admins"];
+        $trans = $row["transaction"];
+        ?>
                   <div class="row align-items-start">
                     <div class="col">
                     <p class="form-control-plaintext">Requested By:</p>
@@ -356,12 +371,12 @@ header("location:index.php");
                     <div class="col">
                     <?php $status = $row["status"];
 
-                    $sql = "SELECT * FROM admins WHERE position='Priority 3' ";
+                    $sql = "SELECT * FROM admins WHERE position ='Priority 3'";
                     $result = mysqli_query($conn, $sql);
                     
                     if (mysqli_num_rows($result) > 0) {
                     while($row = mysqli_fetch_assoc($result)) {
-                    if ($status == "transaction 2" && $row["position"] == 'Priority 3' ||$status== "transaction 5" ||$status == "transaction 3" || $status == "transaction 4") { ?>
+                    if ($row["position"] == 'Priority 3'  && $status== "transaction 5" || $status == "transaction 4") { ?>
                 <div class="row align-items-start">
                     <div class="col">
                     </div>
@@ -383,7 +398,7 @@ echo "No results found.";
                     
                     if (mysqli_num_rows($result) > 0) {
                     while($row = mysqli_fetch_assoc($result)) {
-                    if ( $row["position"] == 'Priority 2' && $status== "transaction 5" ||$status == "transaction 3" || $status == "transaction 4") { ?>
+                    if ( $row["position"] == 'Priority 2' && $status== "transaction 5" ||$status == "transaction 3"|| $status == "transaction 2" || $status == "transaction 4") { ?>
                 <div class="row align-items-start">
                     <div class="col">
                     </div>
